@@ -7,7 +7,7 @@ export class CreateSurveyInput {
   @Field()
   @Column()
   @IsNumber()
-  adminId: number;
+  userId: number;
 
   @Field()
   @Column()

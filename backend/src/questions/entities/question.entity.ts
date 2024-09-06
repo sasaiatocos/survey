@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID } from 'type-graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
 

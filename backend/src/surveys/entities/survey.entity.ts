@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID } from 'type-graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from '../../questions/entities/question.entity';
 import { User } from '../../users/entities/user.entity';
@@ -39,7 +39,7 @@ export class Survey {
 
   @Field(() => [Question])
   @OneToMany(() => Question, (question) => question.survey)
-  readonly questions?: Question[];
+  questions: Question[];
 
   @Field(() => [Survey])
   @ManyToOne(() => User, (user) => user.surveys, {
@@ -49,5 +49,5 @@ export class Survey {
     name: 'user_id',
     referencedColumnName: 'id',
   })
-  readonly user: User[];
+  readonly user?: User[];
 }

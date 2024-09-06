@@ -1,0 +1,97 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateQuestionInput {
+  description: String
+  title: String!
+}
+
+input CreateSurveyInput {
+  description: String
+  title: String!
+  userId: Float!
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createQuestion(createQuestionInput: CreateQuestionInput!): Question!
+  createSurvey(createSurveyInput: CreateSurveyInput!): Survey!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteQuestion(id: Int!): Boolean!
+  deleteSurvey(id: Int!): Boolean!
+  deleteUser(id: Int!): Boolean!
+  updateQuestion(id: Int!, updateQuestionInput: UpdateQuestionInput!): Question!
+  updateSurvey(id: Int!, updateSurveyInput: UpdateSurveyInput!): Survey!
+  updateUser(id: Int!, updateUserInput: UpdateUserInput!): User!
+}
+
+type Query {
+  findQuestion(id: Int!): Question!
+  findSurvey(id: Int!): Survey!
+  findUser(id: Int!): User!
+  questions: [Question!]!
+  surveys: [Survey!]!
+  users: [User!]!
+}
+
+type Question {
+  createdAt: DateTime!
+  description: [String!]!
+  id: ID!
+  survey: [Question!]
+  title: [String!]!
+  updatedAt: DateTime!
+}
+
+type Survey {
+  createdAt: DateTime!
+  description: [String!]!
+  id: ID!
+  questions: [Question!]!
+  title: [String!]!
+  updatedAt: DateTime!
+  user: [Survey!]
+}
+
+input UpdateQuestionInput {
+  description: String
+  title: String!
+}
+
+input UpdateSurveyInput {
+  description: String
+  title: String!
+  userId: Float
+}
+
+input UpdateUserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  name: String!
+  role: UserRole!
+  surveys: [Survey!]
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  ADMIN
+  GENERAL
+}

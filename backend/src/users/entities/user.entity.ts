@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID, registerEnumType } from 'type-graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength, IsEmail, IsNumber } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
 
