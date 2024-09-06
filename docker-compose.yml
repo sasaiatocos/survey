@@ -1,0 +1,27 @@
+services:
+  mysql:
+    platform: linux/amd64
+    image: mysql:8.0.26
+    container_name: mysql
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nest_db
+      MYSQL_USER: nest_user
+      MYSQL_PASSWORD: nest_pass
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=nest_user
+      - PMA_PASSWORD=nest_pass
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
