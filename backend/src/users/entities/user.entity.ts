@@ -1,13 +1,21 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  ObjectType,
+  ID,
+  registerEnumType,
+  HideField,
+} from '@nestjs/graphql';
 import { MaxLength, IsEmail, IsNumber } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
+import * as bcrypt from 'bcrypt';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -36,6 +44,11 @@ export class User {
   @IsEmail()
   email: string;
 
+  @Column({ type: 'varchar', length: 50 })
+  @HideField()
+  @MaxLength(50)
+  password: string;
+
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -55,4 +68,13 @@ export class User {
   @Field(() => [Survey])
   @OneToMany(() => Survey, (survey) => survey.user)
   readonly surveys?: Survey[];
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  async comparePassword(attempt: string): Promise<boolean> {
+    return await bcrypt.compare(attempt, this.password);
+  }
 }

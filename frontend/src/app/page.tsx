@@ -1,14 +1,9 @@
-import { GetLaunches } from "./components/api/GetLaunches";
-import { WithApolloProvider } from "./providers/WithApolloProvider";
+import { UserData } from "./components/api/GetUsers";
 
 export default function Home() {
   return (
     <div>
-      <h1>SpaceX Launches</h1>
-      <p>---------------------</p>
-      <WithApolloProvider>
-        <GetLaunches />
-      </WithApolloProvider>
+      <UserData />
     </div>
   );
 }

@@ -1,44 +1,49 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
-import { UserService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 import { CreateUserInput, UpdateUserInput } from 'src/users/dto/user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [User])
   users(): Promise<User[]> {
-    return this.userService.getAll();
+    return this.usersService.getAll();
   }
 
   @Query(() => User)
-  async findUser(@Args({ name: 'id', type: () => Int }) id: number) {
-    const user = await this.userService.getOne(id);
+  @UseGuards(JwtAuthGuard)
+  async findUser(@Args({ name: 'email', type: () => String }) email: string) {
+    const user = await this.usersService.getOne(email);
     if (!user) {
-      throw new NotFoundException(id);
+      throw new NotFoundException(email);
     }
     return user;
   }
 
   @Mutation(() => User)
+  @UseGuards(JwtAuthGuard)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
-    return await this.userService.create(createUserInput);
+    return await this.usersService.create(createUserInput);
   }
 
   @Mutation(() => User)
+  @UseGuards(JwtAuthGuard)
   async updateUser(
-    @Args({ name: 'id', type: () => Int }) id: number,
+    @Args({ name: 'email', type: () => String }) email: string,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ) {
-    return await this.userService.update(id, updateUserInput);
+    return await this.usersService.update(email, updateUserInput);
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(JwtAuthGuard)
   async deleteUser(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.userService.delete(id);
+    return await this.usersService.delete(id);
   }
 }

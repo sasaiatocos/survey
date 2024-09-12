@@ -5,9 +5,14 @@ import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SurveyModule } from './surveys/surveys.module';
-import { UserModule } from './users/users.module';
 import { QuestionModule } from './questions/questions.module';
-import { UserService } from './users/users.service';
+import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
+import { UserResolver } from './users/users.resolver';
+import { AuthResolver } from './auth/auth.resolver';
+import { User } from './users/entities/user.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { GraphqlController } from './graphql/graphql.controller';
 
 @Module({
   imports: [
@@ -40,9 +45,11 @@ import { UserService } from './users/users.service';
       inject: [ConfigService],
     }),
     SurveyModule,
-    UserModule,
     QuestionModule,
+    TypeOrmModule.forFeature([User]),
+    JwtModule,
   ],
-  providers: [UserService],
+  providers: [UsersService, UserResolver, AuthService, AuthResolver],
+  controllers: [GraphqlController],
 })
 export class AppModule {}

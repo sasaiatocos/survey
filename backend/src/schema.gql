@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+type AuthResponse {
+  accessToken: String!
+  user: User!
+}
+
 input CreateQuestionInput {
   description: String
   title: String!
@@ -31,15 +41,16 @@ type Mutation {
   deleteQuestion(id: Int!): Boolean!
   deleteSurvey(id: Int!): Boolean!
   deleteUser(id: Int!): Boolean!
+  login(authInput: AuthInput!): AuthResponse!
   updateQuestion(id: Int!, updateQuestionInput: UpdateQuestionInput!): Question!
   updateSurvey(id: Int!, updateSurveyInput: UpdateSurveyInput!): Survey!
-  updateUser(id: Int!, updateUserInput: UpdateUserInput!): User!
+  updateUser(email: String!, updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   findQuestion(id: Int!): Question!
   findSurvey(id: Int!): Survey!
-  findUser(id: Int!): User!
+  findUser(email: String!): User!
   questions: [Question!]!
   surveys: [Survey!]!
   users: [User!]!

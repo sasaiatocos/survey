@@ -5,7 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateUserInput, UpdateUserInput } from 'src/users/dto/user.dto';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -15,8 +15,8 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async getOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+  async getOne(email: string) {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async create(data: CreateUserInput): Promise<User> {
@@ -25,8 +25,8 @@ export class UserService {
     return user;
   }
 
-  async update(id: number, updateUserInput: UpdateUserInput) {
-    const user = this.getOne(id);
+  async update(email: string, updateUserInput: UpdateUserInput) {
+    const user = this.getOne(email);
     if (user) {
       await this.userRepository.save(updateUserInput);
     }
