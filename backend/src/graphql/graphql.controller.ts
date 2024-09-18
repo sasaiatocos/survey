@@ -6,32 +6,20 @@ import {
   Request,
   Response,
 } from '@node-libraries/nest-apollo-server';
-import { gql } from 'graphql-tag';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchemaSync } from '@graphql-tools/load';
 
-export const typeDefs = gql`
-  scalar Date
-  type Query {
-    date: Date!
-  }
-`;
-
-export const resolvers = {
-  Query: {
-    date: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      return new Date();
-    },
-  },
-};
+const schema = loadSchemaSync('src/schema.gql', {
+  loaders: [new GraphQLFileLoader()],
+});
 
 const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema: schema,
 });
 
 apolloServer.start();
 
-@Controller('/graphql')
+@Controller('graphql')
 export class GraphqlController {
   @All()
   async graphql(@Req() req: Request, @Res() res: Response) {

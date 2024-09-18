@@ -1,9 +1,10 @@
-import { UserData } from "./components/api/GetUsers";
+import { GetUsers } from "./components/users/index";
 
 export default function Home() {
   return (
     <div>
-      <UserData />
+      <h1>users</h1>
+      <GetUsers />
     </div>
   );
 }

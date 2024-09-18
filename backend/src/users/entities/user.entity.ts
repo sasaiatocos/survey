@@ -6,13 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import {
-  Field,
-  ObjectType,
-  ID,
-  registerEnumType,
-  HideField,
-} from '@nestjs/graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength, IsEmail, IsNumber } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
 import * as bcrypt from 'bcrypt';
@@ -32,7 +26,7 @@ export class User {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   @IsNumber()
-  readonly id: number;
+  id: number;
 
   @Column({ type: 'varchar', length: 50 })
   @Field()
@@ -45,7 +39,7 @@ export class User {
   email: string;
 
   @Column({ type: 'varchar', length: 50 })
-  @HideField()
+  @Field()
   @MaxLength(50)
   password: string;
 

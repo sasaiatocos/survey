@@ -8,7 +8,10 @@ async function bootstrap() {
   };
   const app = await NestFactory.create(AppModule, options);
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors();
+  app.enableCors({
+    credentials: true,
+    origin: '*',
+  });
   await app.listen(3000);
 }
 bootstrap();
