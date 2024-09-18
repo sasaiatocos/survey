@@ -11,6 +11,7 @@ export class UserResolver {
 
   @Query(() => [User])
   users(): Promise<User[]> {
+    console.log('TEST');
     return this.usersService.getAll();
   }
 

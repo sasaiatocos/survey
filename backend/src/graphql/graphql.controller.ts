@@ -1,33 +1,54 @@
-import { All, Controller, Req, Res } from '@nestjs/common';
+import { readFileSync } from 'fs';
+import gql from 'graphql-tag';
+import {
+  All,
+  Controller,
+  Req,
+  Res,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { ApolloServer } from '@apollo/server';
+import { buildSubgraphSchema } from '@apollo/subgraph';
 import {
   executeHTTPGraphQLRequest,
   Raw,
   Request,
   Response,
 } from '@node-libraries/nest-apollo-server';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadSchemaSync } from '@graphql-tools/load';
 
-const schema = loadSchemaSync('src/schema.gql', {
-  loaders: [new GraphQLFileLoader()],
-});
+export const typeDefs = gql(
+  readFileSync('src/schema.gql', {
+    encoding: 'utf-8',
+  }),
+);
 
-const apolloServer = new ApolloServer({
-  schema: schema,
-});
-
-apolloServer.start();
-
-@Controller('graphql')
-export class GraphqlController {
+@Controller('/graphql')
+export class GraphqlController implements OnModuleInit, OnModuleDestroy {
+  apolloServer: ApolloServer;
+  onModuleInit() {
+    console.log('init');
+    this.apolloServer = new ApolloServer({
+      schema: buildSubgraphSchema({
+        typeDefs,
+      }),
+    });
+    return this.apolloServer.start();
+  }
+  onModuleDestroy() {
+    this.apolloServer.stop();
+  }
   @All()
   async graphql(@Req() req: Request, @Res() res: Response) {
     await executeHTTPGraphQLRequest({
       req,
       res,
-      apolloServer,
+      apolloServer: this.apolloServer,
       context: async () => ({ req: Raw(req), res: Raw(res) }),
+      options: {
+        //Maximum upload file size set at 10 MB
+        maxFileSize: 10 * 1024 * 1024,
+      },
     });
   }
 }
