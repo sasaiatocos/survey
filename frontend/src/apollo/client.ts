@@ -21,5 +21,6 @@ export const { getClient } = registerApolloClient(() =>
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: from([errorLink, httpLink]),
+    credentials: 'include',
   });
 });

@@ -22,7 +22,7 @@ registerEnumType(UserRole, {
 
 @Entity('users')
 @ObjectType()
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   @IsNumber()
@@ -38,9 +38,8 @@ export class User {
   @IsEmail()
   email: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar' })
   @Field()
-  @MaxLength(50)
   password: string;
 
   @Column({

@@ -8,11 +8,10 @@ import { upperDirectiveTransformer } from './common/directives/upper-case.direct
 import { SurveyModule } from './surveys/surveys.module';
 import { QuestionModule } from './questions/questions.module';
 import { UsersService } from './users/users.service';
-import { AuthService } from './auth/auth.service';
 import { UserResolver } from './users/users.resolver';
-import { AuthResolver } from './auth/auth.resolver';
-import { User } from './users/entities/user.entity';
+import { UserEntity } from './users/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -54,9 +53,10 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     SurveyModule,
     QuestionModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserEntity]),
     JwtModule,
+    AuthModule,
   ],
-  providers: [UsersService, UserResolver, AuthService, AuthResolver],
+  providers: [UsersService, UserResolver],
 })
 export class AppModule {}

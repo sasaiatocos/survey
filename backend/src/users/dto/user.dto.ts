@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Column } from 'typeorm';
 
 @InputType()
@@ -16,23 +16,26 @@ export class CreateUserInput {
 
   @Field()
   @Column()
-  @MinLength(8)
   password: string;
 }
 
-@InputType()
-export class UpdateUserInput {
-  @Field()
-  @Column()
-  name: string;
+@ObjectType()
+class getAttributesAllUser {
+  @Field(() => Int)
+  id: number;
 
   @Field()
-  @Column()
-  @IsEmail()
   email: string;
 
   @Field()
-  @Column()
-  @MinLength(8)
-  password: string;
+  name: string;
+}
+
+@ObjectType()
+export class AllUserResponseDTO {
+  @Field(() => getAttributesAllUser)
+  CurrentUser: getAttributesAllUser;
+
+  @Field(() => [getAttributesAllUser])
+  AllUserData: getAttributesAllUser[];
 }

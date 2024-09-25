@@ -1,34 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { AuthResponse } from './dto/auth.response';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { constant } from 'src/auth/common/constants';
+import { comparePassword } from 'src/auth/common/helper';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import {
+  BadGatewayException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private jwtService: JwtService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
+  async validateUser(Email: string, Password: string): Promise<UserEntity> {
+    const lowerEmail = Email.toLowerCase();
+    const findUserData = await this.userRepository.findOne({
+      where: {
+        email: lowerEmail,
+      },
+      select: ['id', 'email', 'name', 'password'],
+    });
+    if (!findUserData) {
+      throw new NotFoundException(constant.EMAIL_NOT_FOUND);
     }
-    return null;
-  }
-
-  async login(user: User): Promise<AuthResponse> {
-    const payload = { email: user.email, sub: user.id };
-
-    return {
-      accessToken: this.jwtService.sign(payload),
-      user: user,
-    };
+    const IsValidPassword = await comparePassword(
+      Password,
+      findUserData.password,
+    );
+    if (!IsValidPassword) {
+      throw new BadGatewayException(constant.PROVIDED_WRONG_PASSWORD);
+    }
+    delete findUserData.password;
+    return findUserData;
   }
 }

@@ -1,39 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { CreateUserInput, UpdateUserInput } from 'src/users/dto/user.dto';
+import { Not, Repository } from 'typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { CreateUserInput } from 'src/users/dto/user.dto';
+import { constant } from 'src/auth/common/constants';
+import { hashPassword } from 'src/auth/common/helper';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
-  getAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async getOne(email: string) {
-    return this.userRepository.findOne({ where: { email } });
-  }
-
-  async create(data: CreateUserInput): Promise<User> {
-    const user = this.userRepository.create(data);
-    await this.userRepository.save(user);
-    return user;
-  }
-
-  async update(email: string, updateUserInput: UpdateUserInput) {
-    const user = this.getOne(email);
-    if (user) {
-      await this.userRepository.save(updateUserInput);
+  async createUser(createUser: CreateUserInput): Promise<UserEntity> {
+    const { name, email, password } = createUser;
+    const lowerEmail = email.toLowerCase();
+    const findOneData = await this.userRepository.findOne({
+      where: { email: lowerEmail },
+      select: ['email'],
+    });
+    if (findOneData && findOneData.email) {
+      throw new BadRequestException(constant.USER_ALREADY_EXIST);
     }
+    const hashPasswordValue = await hashPassword(password);
+    const data: CreateUserInput = {
+      name,
+      email: lowerEmail,
+      password: hashPasswordValue,
+    };
+    const createUserQuery = this.userRepository.create(data);
+    const saveUserData = await this.userRepository.save(createUserQuery);
+    return saveUserData;
   }
 
-  async delete(id: number) {
-    const result = await this.userRepository.delete(id);
-    return result.affected > 0;
+  async getAllUserData(UserID: number): Promise<UserEntity[]> {
+    const findAllData = await this.userRepository.find({
+      where: { id: Not(UserID) },
+      select: ['id', 'name', 'email'],
+    });
+    return findAllData;
   }
 }

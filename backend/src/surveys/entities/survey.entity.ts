@@ -10,7 +10,7 @@ import {
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from '../../questions/entities/question.entity';
-import { User } from '../../users/entities/user.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity('surveys')
 @ObjectType()
@@ -42,12 +42,12 @@ export class Survey {
   questions: Question[];
 
   @Field(() => [Survey])
-  @ManyToOne(() => User, (user) => user.surveys, {
+  @ManyToOne(() => UserEntity, (user) => user.surveys, {
     cascade: true,
   })
   @JoinColumn({
     name: 'user_id',
     referencedColumnName: 'id',
   })
-  readonly user?: User[];
+  readonly user?: UserEntity[];
 }
