@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,7 +8,6 @@ import {
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength, IsEmail, IsNumber } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
-import * as bcrypt from 'bcrypt';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -61,13 +59,4 @@ export class UserEntity {
   @Field(() => [Survey])
   @OneToMany(() => Survey, (survey) => survey.user)
   readonly surveys?: Survey[];
-
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-
-  async comparePassword(attempt: string): Promise<boolean> {
-    return await bcrypt.compare(attempt, this.password);
-  }
 }
