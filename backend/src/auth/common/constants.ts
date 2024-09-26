@@ -1,8 +1,8 @@
 export const constant = {
-  USER_ALREADY_EXIST: 'provided email address already exist in system',
+  USER_ALREADY_EXIST: 'このメールアドレスは既に使用されています。',
   HASH_SALT_COUNT: 10,
-  EMAIL_NOT_FOUND: 'Sorry, provided email address does not exist in the system',
-  PROVIDED_WRONG_PASSWORD: 'Provided password is in-correct please try again?',
-  LOGIN_SUCCESSFUL: 'You are  login successfully',
-  UNAUTHORIZED_ACCESS_MESSAGE: 'Please, login to again access',
+  EMAIL_NOT_FOUND: 'メールアドレスが見つかりませんでした。',
+  PROVIDED_WRONG_PASSWORD: 'パスワードが違います。再度お試しください。',
+  LOGIN_SUCCESSFUL: 'ログインに成功しました。',
+  UNAUTHORIZED_ACCESS_MESSAGE: 'ログインしてください。',
 };

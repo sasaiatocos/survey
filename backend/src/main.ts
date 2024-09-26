@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import session, { SessionOptions } from 'express-session';
 import passport from 'passport';
-import { sessionConfig } from './auth/common/session.config';
+import { sessionConfig } from './config/session.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

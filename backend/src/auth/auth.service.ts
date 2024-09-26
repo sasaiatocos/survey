@@ -16,8 +16,8 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async validateUser(Email: string, Password: string): Promise<UserEntity> {
-    const lowerEmail = Email.toLowerCase();
+  async validateUser(email: string, password: string): Promise<UserEntity> {
+    const lowerEmail = email.toLowerCase();
     const findUserData = await this.userRepository.findOne({
       where: {
         email: lowerEmail,
@@ -28,7 +28,7 @@ export class AuthService {
       throw new NotFoundException(constant.EMAIL_NOT_FOUND);
     }
     const IsValidPassword = await comparePassword(
-      Password,
+      password,
       findUserData.password,
     );
     if (!IsValidPassword) {

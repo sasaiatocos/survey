@@ -2,9 +2,9 @@ import bcrypt from 'bcrypt';
 import { constant } from './constants';
 
 export interface IGenerateToken {
-  ID: number;
-  Name: string;
-  Email: string;
+  id: number;
+  name: string;
+  email: string;
 }
 
 const hashPassword = (plainPassword: string) =>

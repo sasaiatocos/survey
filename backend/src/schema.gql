@@ -44,29 +44,34 @@ type Survey {
   user: [Survey!]
 }
 
+type AuthResponse {
+  LoginSuccessMessage: String!
+  user: UserEntity!
+}
+
 type getAttributesAllUser {
   id: Int!
   email: String!
   name: String!
 }
 
+type CheckConnectionDTO {
+  connectionStatus: String!
+}
+
 type AllUserResponseDTO {
-  CurrentUser: getAttributesAllUser!
+  user: getAttributesAllUser!
   AllUserData: [getAttributesAllUser!]!
 }
 
-type AuthResponse {
-  LoginSuccessMessage: String!
-  user: UserEntity!
-}
-
 type Query {
-  getAllUserData: AllUserResponseDTO!
   surveys: [Survey!]!
   findSurvey(id: Int!): Survey!
   questions: [Question!]!
   findQuestion(id: Int!): Question!
   login(AuthInput: AuthInput!): AuthResponse!
+  checkServer: CheckConnectionDTO!
+  getAllUserData: AllUserResponseDTO!
 }
 
 input AuthInput {
@@ -75,19 +80,13 @@ input AuthInput {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): UserEntity!
   createSurvey(createSurveyInput: CreateSurveyInput!): Survey!
   updateSurvey(id: Int!, updateSurveyInput: UpdateSurveyInput!): Survey!
   deleteSurvey(id: Int!): Boolean!
   createQuestion(createQuestionInput: CreateQuestionInput!): Question!
   updateQuestion(id: Int!, updateQuestionInput: UpdateQuestionInput!): Question!
   deleteQuestion(id: Int!): Boolean!
-}
-
-input CreateUserInput {
-  name: String!
-  email: String!
-  password: String!
+  createUser(createUserInput: CreateUserInput!): UserEntity!
 }
 
 input CreateSurveyInput {
@@ -110,4 +109,10 @@ input CreateQuestionInput {
 input UpdateQuestionInput {
   title: String!
   description: String
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
 }

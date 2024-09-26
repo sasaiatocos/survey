@@ -32,9 +32,15 @@ class getAttributesAllUser {
 }
 
 @ObjectType()
+export class CheckConnectionDTO {
+  @Field()
+  connectionStatus: string;
+}
+
+@ObjectType()
 export class AllUserResponseDTO {
   @Field(() => getAttributesAllUser)
-  CurrentUser: getAttributesAllUser;
+  user: getAttributesAllUser;
 
   @Field(() => [getAttributesAllUser])
   AllUserData: getAttributesAllUser[];

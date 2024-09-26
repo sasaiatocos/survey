@@ -1,35 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DirectiveLocation, GraphQLDirective } from 'graphql';
-import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
 import { SurveyModule } from './surveys/surveys.module';
 import { QuestionModule } from './questions/questions.module';
-import { UsersService } from './users/users.service';
-import { UserResolver } from './users/users.resolver';
-import { UserEntity } from './users/entities/user.entity';
-import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLConfig } from './config/graphql.config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: 'src/schema.gql',
-      transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
-      installSubscriptionHandlers: true,
-      buildSchemaOptions: {
-        directives: [
-          new GraphQLDirective({
-            name: 'upper',
-            locations: [DirectiveLocation.FIELD_DEFINITION],
-          }),
-        ],
-      },
-    }),
+    GraphQLModule.forRoot(GraphQLConfig),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -53,10 +35,8 @@ import { AuthModule } from './auth/auth.module';
     }),
     SurveyModule,
     QuestionModule,
-    TypeOrmModule.forFeature([UserEntity]),
-    JwtModule,
     AuthModule,
+    UsersModule,
   ],
-  providers: [UsersService, UserResolver],
 })
 export class AppModule {}

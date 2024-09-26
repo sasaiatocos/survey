@@ -1,14 +1,23 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { AllUserResponseDTO, CreateUserInput } from 'src/users/dto/user.dto';
+import {
+  AllUserResponseDTO,
+  CheckConnectionDTO,
+  CreateUserInput,
+} from 'src/users/dto/user.dto';
 import { UseGuards } from '@nestjs/common';
-import { IsAuthenticated } from 'src/auth/guards/check.authentication.guard';
+import { IsAuthenticated } from 'src/auth/guards/checkAuthentication';
 import { User } from 'src/users/user.decoder';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
   constructor(private readonly usersService: UsersService) {}
+
+  @Query(() => CheckConnectionDTO)
+  checkServer(): CheckConnectionDTO {
+    return { connectionStatus: 'connected with graphql' };
+  }
 
   @Mutation(() => UserEntity)
   async createUser(
@@ -23,6 +32,6 @@ export class UserResolver {
     const userData: UserEntity[] | [] = await this.usersService.getAllUserData(
       user.id,
     );
-    return { AllUserData: userData, CurrentUser: user };
+    return { AllUserData: userData, user: user };
   }
 }
