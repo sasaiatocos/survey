@@ -36,6 +36,7 @@
     "express-session": "^1.18.0",
     "graphql": "^16.9.0",
     "graphql-query-complexity": "^1.0.0",
+    "graphql-scalars": "^1.23.0",
     "graphql-tag": "^2.12.6",
     "graphql-tools": "^9.0.1",
     "mysql2": "^3.11.0",

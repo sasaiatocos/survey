@@ -4,11 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Survey } from '../../surveys/entities/survey.entity';
+import { Selection } from 'src/selections/entities/selection.entity';
+import { Answer } from 'src/answers/entities/answer.entity';
 
 @Entity('questions')
 @ObjectType()
@@ -21,11 +24,6 @@ export class Question {
   @Field(() => [String])
   @MaxLength(50)
   title: string;
-
-  @Column({ type: 'varchar', length: 191 })
-  @Field(() => [String])
-  @MaxLength(191)
-  description: string;
 
   @CreateDateColumn()
   @Field()
@@ -44,4 +42,12 @@ export class Question {
     referencedColumnName: 'id',
   })
   readonly survey?: Survey[];
+
+  @Field(() => [Selection])
+  @OneToMany(() => Selection, (selection) => selection.question)
+  selections: Selection[];
+
+  @Field(() => [Answer])
+  @OneToMany(() => Answer, (answer) => answer.question)
+  answers: Answer[];
 }

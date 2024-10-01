@@ -1,9 +1,14 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { Column } from 'typeorm';
+import { Column, PrimaryColumn } from 'typeorm';
 
 @InputType()
-export class CreateUserInput {
+export class CreateUser {
+  @Field()
+  @PrimaryColumn()
+  @IsNotEmpty()
+  id: string;
+
   @Field()
   @Column()
   @IsNotEmpty()
@@ -16,32 +21,5 @@ export class CreateUserInput {
 
   @Field()
   @Column()
-  password: string;
-}
-
-@ObjectType()
-class getAttributesAllUser {
-  @Field(() => Int)
-  id: number;
-
-  @Field()
-  email: string;
-
-  @Field()
-  name: string;
-}
-
-@ObjectType()
-export class CheckConnectionDTO {
-  @Field()
-  connectionStatus: string;
-}
-
-@ObjectType()
-export class AllUserResponseDTO {
-  @Field(() => getAttributesAllUser)
-  user: getAttributesAllUser;
-
-  @Field(() => [getAttributesAllUser])
-  AllUserData: getAttributesAllUser[];
+  provider: string;
 }

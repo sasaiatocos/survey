@@ -3,11 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
-import { MaxLength, IsEmail, IsNumber } from 'class-validator';
-import { Survey } from '../../surveys/entities/survey.entity';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { MaxLength, IsEmail, IsString } from 'class-validator';
+import { Answer } from 'src/answers/entities/answer.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -20,11 +20,11 @@ registerEnumType(UserRole, {
 
 @Entity('users')
 @ObjectType()
-export class UserEntity {
-  @PrimaryGeneratedColumn()
-  @Field(() => ID)
-  @IsNumber()
-  id: number;
+export class User {
+  @PrimaryColumn()
+  @Field()
+  @IsString()
+  id: string;
 
   @Column({ type: 'varchar', length: 50 })
   @Field()
@@ -38,7 +38,7 @@ export class UserEntity {
 
   @Column({ type: 'varchar' })
   @Field()
-  password: string;
+  provider: string;
 
   @Column({
     type: 'enum',
@@ -56,7 +56,7 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  @Field(() => [Survey])
-  @OneToMany(() => Survey, (survey) => survey.user)
-  readonly surveys?: Survey[];
+  @Field(() => [Answer])
+  @OneToMany(() => Answer, (answer) => answer.user)
+  readonly answers?: Answer[];
 }

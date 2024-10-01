@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SurveyModule } from './surveys/surveys.module';
 import { QuestionModule } from './questions/questions.module';
-import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLConfig } from './config/graphql.config';
 import { UsersModule } from './users/users.module';
+import { AnswerModule } from './answers/answers.module';
+import { SelectionModule } from './selections/selections.module';
 
 @Module({
   imports: [
@@ -35,8 +36,9 @@ import { UsersModule } from './users/users.module';
     }),
     SurveyModule,
     QuestionModule,
-    AuthModule,
     UsersModule,
+    SelectionModule,
+    AnswerModule,
   ],
 })
 export class AppModule {}

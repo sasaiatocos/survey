@@ -1,37 +1,14 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import {
-  AllUserResponseDTO,
-  CheckConnectionDTO,
-  CreateUserInput,
-} from 'src/users/dto/user.dto';
-import { UseGuards } from '@nestjs/common';
-import { IsAuthenticated } from 'src/auth/guards/checkAuthentication';
-import { User } from 'src/users/user.decoder';
+import { CreateUser } from 'src/users/dto/user.dto';
 
-@Resolver(() => UserEntity)
+@Resolver(() => User)
 export class UserResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => CheckConnectionDTO)
-  checkServer(): CheckConnectionDTO {
-    return { connectionStatus: 'connected with graphql' };
-  }
-
-  @Mutation(() => UserEntity)
-  async createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<UserEntity> {
-    return await this.usersService.createUser(createUserInput);
-  }
-
-  @UseGuards(IsAuthenticated)
-  @Query(() => AllUserResponseDTO)
-  async getAllUserData(@User() user: UserEntity): Promise<AllUserResponseDTO> {
-    const userData: UserEntity[] | [] = await this.usersService.getAllUserData(
-      user.id,
-    );
-    return { AllUserData: userData, user: user };
+  @Mutation(() => User)
+  async createUser(@Args('createUser') createUser: CreateUser): Promise<User> {
+    return await this.usersService.createUser(createUser);
   }
 }

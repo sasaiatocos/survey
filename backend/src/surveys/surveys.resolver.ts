@@ -1,9 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import {
-  CreateSurveyInput,
-  UpdateSurveyInput,
-} from 'src/surveys/dto/survey.dto';
+import { CreateSurveyInput } from 'src/surveys/dto/survey.dto';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { SurveyService } from 'src/surveys/surveys.service';
 
@@ -30,18 +27,5 @@ export class SurveyResolver {
     @Args('createSurveyInput') createSurveyInput: CreateSurveyInput,
   ): Promise<Survey> {
     return await this.surveyService.create(createSurveyInput);
-  }
-
-  @Mutation(() => Survey)
-  async updateSurvey(
-    @Args({ name: 'id', type: () => Int }) id: number,
-    @Args('updateSurveyInput') updateSurveyInput: UpdateSurveyInput,
-  ) {
-    return await this.surveyService.update(id, updateSurveyInput);
-  }
-
-  @Mutation(() => Boolean)
-  async deleteSurvey(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.surveyService.delete(id);
   }
 }

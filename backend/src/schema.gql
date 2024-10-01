@@ -4,13 +4,12 @@
 
 directive @upper on FIELD_DEFINITION
 
-type Question {
+type Selection {
   id: ID!
-  title: [String!]!
-  description: [String!]!
+  option: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  survey: [Question!]
+  question: [Selection!]
 }
 
 """
@@ -18,15 +17,32 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type UserEntity {
+type Question {
   id: ID!
+  title: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  survey: [Question!]
+  selections: [Selection!]!
+}
+
+type Survey {
+  id: ID!
+  title: [String!]!
+  expired_at: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  questions: [Question!]!
+}
+
+type User {
+  id: String!
   name: String!
   email: String!
-  password: String!
+  provider: String!
   role: UserRole!
   createdAt: DateTime!
   updatedAt: DateTime!
-  surveys: [Survey!]
 }
 
 enum UserRole {
@@ -34,85 +50,50 @@ enum UserRole {
   GENERAL
 }
 
-type Survey {
+type Answer {
   id: ID!
-  title: [String!]!
-  description: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  questions: [Question!]!
-  user: [Survey!]
-}
-
-type AuthResponse {
-  LoginSuccessMessage: String!
-  user: UserEntity!
-}
-
-type getAttributesAllUser {
-  id: Int!
-  email: String!
-  name: String!
-}
-
-type CheckConnectionDTO {
-  connectionStatus: String!
-}
-
-type AllUserResponseDTO {
-  user: getAttributesAllUser!
-  AllUserData: [getAttributesAllUser!]!
+  user_id: String!
+  question_id: Float!
 }
 
 type Query {
   surveys: [Survey!]!
   findSurvey(id: Int!): Survey!
-  questions: [Question!]!
+  questions: [Answer!]!
   findQuestion(id: Int!): Question!
-  login(AuthInput: AuthInput!): AuthResponse!
-  checkServer: CheckConnectionDTO!
-  getAllUserData: AllUserResponseDTO!
-}
-
-input AuthInput {
-  email: String!
-  password: String!
 }
 
 type Mutation {
   createSurvey(createSurveyInput: CreateSurveyInput!): Survey!
-  updateSurvey(id: Int!, updateSurveyInput: UpdateSurveyInput!): Survey!
-  deleteSurvey(id: Int!): Boolean!
   createQuestion(createQuestionInput: CreateQuestionInput!): Question!
-  updateQuestion(id: Int!, updateQuestionInput: UpdateQuestionInput!): Question!
-  deleteQuestion(id: Int!): Boolean!
-  createUser(createUserInput: CreateUserInput!): UserEntity!
+  createUser(createUser: CreateUser!): User!
+  createSelection(createSelectionInput: CreateSelectionInput!): Selection!
+  createAnswer(createAnswerInput: CreateAnswerInput!): Answer!
 }
 
 input CreateSurveyInput {
-  userId: Float!
   title: String!
-  description: String
-}
-
-input UpdateSurveyInput {
-  userId: Float
-  title: String!
-  description: String
+  expired_at: String!
 }
 
 input CreateQuestionInput {
   title: String!
-  description: String
 }
 
-input UpdateQuestionInput {
-  title: String!
-  description: String
-}
-
-input CreateUserInput {
+input CreateUser {
+  id: String!
   name: String!
   email: String!
-  password: String!
+  provider: String!
+}
+
+input CreateSelectionInput {
+  option: String!
+}
+
+input CreateAnswerInput {
+  question_id: Float!
+  user_id: String!
 }

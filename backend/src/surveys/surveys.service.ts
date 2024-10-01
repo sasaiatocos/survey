@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  CreateSurveyInput,
-  UpdateSurveyInput,
-} from 'src/surveys/dto/survey.dto';
+import { CreateSurveyInput } from 'src/surveys/dto/survey.dto';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { Repository } from 'typeorm';
 
@@ -26,17 +23,5 @@ export class SurveyService {
     const survey = this.surveyRepository.create(data);
     await this.surveyRepository.save(survey);
     return survey;
-  }
-
-  async update(id: number, updateSurveyInput: UpdateSurveyInput) {
-    const question = this.getOne(id);
-    if (question) {
-      await this.surveyRepository.save(updateSurveyInput);
-    }
-  }
-
-  async delete(id: number) {
-    const result = await this.surveyRepository.delete(id);
-    return result.affected > 0;
   }
 }
