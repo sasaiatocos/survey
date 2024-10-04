@@ -1,38 +1,32 @@
-import Link from 'next/link';
+import { getSurveys } from '@/app/services/getSurveys';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
-import { LinkButton } from '@/app/ui/LinkButton';
-import { RecipeCard } from '@/app/ui/RecipeCard';
 import { Section } from '@/app/ui/Section';
-import { getSurveys } from '@/app/services/getSurveys';
+import { SurveyIdsContainer } from '@/app/_components/SurveyViewNavigator/container';
 import styles from './style.module.css';
+import React from 'react';
 
-export async function TopSurveys() {
-    const data = await getSurveys();
-    return (
-        <Section>
-            <HeadGroup>
-                <Heading level={2} size='small'>
-                    Categories
-                </Heading>
-                <LinkButton href='/categories' size='small' color='white'>
-                    カテゴリー一覧
-                </LinkButton>
-            </HeadGroup>
-            <div className={styles.cardContainer}>
-                {data.categories?.map((category) => (
-                        <Link href={process.env.NEXT_PUBLIC_API_URL + `/api/categories/${category.name}`} key={category.id}>
-                            <RecipeCard
-                                imageUrl={category.imageUrl}
-                                title={category.label}
-                                size='small'
-                                ratio='square'
-                                rounded={false}
-                            />
-                        </Link>
-                    )
-                )}
+export const TopSurveys = async () => {
+  const surveys = await getSurveys();
+
+  return (
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='medium'>
+            アンケート一覧
+          </Heading>
+        </HeadGroup>
+        <div className={styles.cardContainer}>
+          <SurveyIdsContainer surveyIds={surveys && surveys.map((survey) => survey.id)}>
+            {surveys && surveys.map((survey) => (
+            <div key={survey.id}>
+              {`${survey.id}: ${survey.title}`}
             </div>
-        </Section>
-    );
+          ))}
+          </SurveyIdsContainer>
+        </div>
+      </Section>
+    </>
+  )
 }

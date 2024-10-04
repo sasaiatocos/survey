@@ -3,10 +3,10 @@
 import React from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { signIn, signOut } from 'next-auth/react';
 import { Button } from '../../Button';
 import { LinkButton } from '../../LinkButton';
 import styles from './style.module.css';
+
 
 type Props = {
     isLogin?: boolean;
@@ -26,7 +26,7 @@ export function Header({
             )}
             <div className={styles.link}>
                 <Link href='/'>
-                    <p className={styles.siteName}>NutriCook</p>
+                    <p className={styles.siteName}>Survey</p>
                 </Link>
                 <div className={styles.avatar}>
                     <div className={clsx(styles.action, isLogin && styles.isLogin)}>

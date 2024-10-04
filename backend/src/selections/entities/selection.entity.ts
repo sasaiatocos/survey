@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -17,7 +16,7 @@ import { Answer } from 'src/answers/entities/answer.entity';
 export class Selection {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
-  readonly id: number;
+  id: number;
 
   @Column({ type: 'varchar', length: 50 })
   @Field(() => [String])
@@ -35,10 +34,6 @@ export class Selection {
   @Field(() => [Selection])
   @ManyToOne(() => Question, (question) => question.selections, {
     cascade: true,
-  })
-  @JoinColumn({
-    name: 'question_id',
-    referencedColumnName: 'id',
   })
   readonly question?: Question[];
 

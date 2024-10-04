@@ -1,13 +1,12 @@
 import {
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { Question } from 'src/questions/entities/question.entity';
-import { User } from 'src/users/entities/user.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 import { Selection } from 'src/selections/entities/selection.entity';
 
 @Entity('answers')
@@ -29,29 +28,17 @@ export class Answer {
   @ManyToOne(() => Question, (question) => question.answers, {
     cascade: true,
   })
-  @JoinColumn({
-    name: 'question_id',
-    referencedColumnName: 'id',
-  })
-  readonly question?: Question[];
+  question?: Question[];
 
   @Field(() => [Selection])
   @ManyToOne(() => Selection, (selection) => selection.answers, {
     cascade: true,
   })
-  @JoinColumn({
-    name: 'selection_id',
-    referencedColumnName: 'id',
-  })
-  readonly selection?: Selection[];
+  selection?: Selection[];
 
-  @Field(() => [User])
-  @ManyToOne(() => User, (user) => user.answers, {
+  @Field(() => [UserEntity])
+  @ManyToOne(() => UserEntity, (user) => user.answers, {
     cascade: true,
   })
-  @JoinColumn({
-    name: 'user_id',
-    referencedColumnName: 'id',
-  })
-  readonly user?: User[];
+  user?: UserEntity[];
 }

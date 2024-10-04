@@ -75,21 +75,6 @@
   -webkit-mask-image: url('./assets/alarm.svg');
 }
 
-.recipe::before {
-  mask-image: url('./assets/recipe.svg');
-  -webkit-mask-image: url('./assets/recipe.svg');
-}
-
-.camera::before {
-  mask-image: url('./assets/camera.svg');
-  -webkit-mask-image: url('./assets/camera.svg');
-}
-
-.comments::before {
-  mask-image: url('./assets/comments.svg');
-  -webkit-mask-image: url('./assets/comments.svg');
-}
-
 .paper_plane::before {
   mask-image: url('./assets/paper_plane.svg');
   -webkit-mask-image: url('./assets/paper_plane.svg');
@@ -103,16 +88,6 @@
 .home::before {
   mask-image: url('./assets/home.svg');
   -webkit-mask-image: url('./assets/home.svg');
-}
-
-.star::before {
-  mask-image: url('./assets/star.svg');
-  -webkit-mask-image: url('./assets/star.svg');
-}
-
-.star_white::before {
-  mask-image: url('./assets/star_white.svg');
-  -webkit-mask-image: url('./assets/star_white.svg');
 }
 
 .write::before {

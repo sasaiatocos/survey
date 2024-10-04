@@ -1,9 +1,9 @@
-import React from "react";
-import { forwardRef, type ComponentPropsWithRef } from "react";
-import clsx from "clsx";
-import styles from "./style.module.css";
+import React from 'react';
+import { forwardRef, type ComponentPropsWithRef } from 'react';
+import clsx from 'clsx';
+import styles from './style.module.css';
 
-type Props = ComponentPropsWithRef<"textarea"> & {
+type Props = ComponentPropsWithRef<'textarea'> & {
     resize?: boolean;
 };
 

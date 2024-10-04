@@ -3,13 +3,11 @@
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getServerSession } from '@/app/lib/auth';
-import { postRecipes } from '@/services/postRecipes';
+import { postQuestions } from '@/app/services/postQuestions';
 
 type Payload = {
-    imageUrl: string;
     title: string;
-    categoryId: string;
-    description: string;
+    surveyId: string;
 };
 
 export async function postQuestionAction(payload: Payload) {
@@ -17,19 +15,16 @@ export async function postQuestionAction(payload: Payload) {
     if (!session) {
         return { message: 'Unauthorized' };
     }
-    let recipeId = '';
+    let questionId = '';
     try {
-        const { recipe } = await postRecipes({
-            userId: session.user.id,
-            imageUrl: payload.imageUrl,
+        const { question } = await postQuestions({
             title: payload.title,
-            categoryId: payload.categoryId,
-            description: payload.description,
+            surveyId: payload.surveyId,
         });
-        revalidateTag(`recipes?authorId=${session.user.id}`);
-        recipeId = recipe.id;
+        revalidateTag(`questions?authorId=${session.user.id}`);
+        questionId = question.id;
     } catch (err) {
         return { message: 'Internal Server Error' };
     }
-    redirect(`/recipes/${recipeId}`);
+    redirect(`/questions/${questionId}`);
 }

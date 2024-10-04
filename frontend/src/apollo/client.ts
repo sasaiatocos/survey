@@ -1,26 +1,40 @@
-import { ApolloClient, HttpLink, InMemoryCache, from } from "@apollo/client";
-import { registerApolloClient } from "@apollo/experimental-nextjs-app-support";
-import { onError } from "@apollo/client/link/error";
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  registerApolloClient,
+} from '@apollo/experimental-nextjs-app-support';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
-  if (networkError) console.log(`[Network error]: ${networkError}`);
-});
-
-const httpLink = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_API_URL,
-});
-
-export const { getClient } = registerApolloClient(() =>
-{
+export const { getClient } = registerApolloClient(async () => {
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link: from([errorLink, httpLink]),
-    credentials: 'include',
+    link: getLink(),
   });
 });
+const getLink = () => {
+  const httpLink = new HttpLink({
+    uri: process.env.API_ENDPOINT,
+    fetchOptions: { cache: 'no-store' },
+    credentials: 'include',
+  });
+  const authLink = setContext(async (_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        authorization: 'Bearer XXX',
+      },
+    };
+  });
+  const redirectLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors)
+      graphQLErrors.forEach(({ message, locations, path }) =>
+        console.error(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+        ),
+      );
+    if (networkError) {
+      console.error(`[Network error]: ${networkError}`);
+    }
+  });
+  return authLink.concat(redirectLink).concat(httpLink);
+};

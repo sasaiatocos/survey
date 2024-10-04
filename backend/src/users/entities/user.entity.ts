@@ -3,10 +3,10 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { MaxLength, IsEmail, IsString } from 'class-validator';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { MaxLength, IsEmail } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 
 export enum UserRole {
@@ -20,11 +20,10 @@ registerEnumType(UserRole, {
 
 @Entity('users')
 @ObjectType()
-export class User {
-  @PrimaryColumn()
-  @Field()
-  @IsString()
-  id: string;
+export class UserEntity {
+  @PrimaryGeneratedColumn()
+  @Field(() => ID)
+  id: number;
 
   @Column({ type: 'varchar', length: 50 })
   @Field()
@@ -38,7 +37,7 @@ export class User {
 
   @Column({ type: 'varchar' })
   @Field()
-  provider: string;
+  password: string;
 
   @Column({
     type: 'enum',

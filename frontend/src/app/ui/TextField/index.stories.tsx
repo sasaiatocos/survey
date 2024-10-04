@@ -1,9 +1,9 @@
-import { TextField } from "./";
-import type { Meta, StoryObj } from "@storybook/react";
+import { TextField } from './';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
     component: TextField,
-    args: { placeholder: "入力してください" },
+    args: { placeholder: '入力してください' },
 } satisfies Meta<typeof TextField>;
 
 export default meta;

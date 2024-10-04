@@ -1,0 +1,7 @@
+query getSurveys {
+  surveys {
+    id,
+    title,
+    expiredAt,
+  }
+}

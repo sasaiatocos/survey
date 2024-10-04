@@ -10,15 +10,15 @@
             -45deg,
             transparent,
             transparent 10px,
-            rgba(241, 141, 73, 0.312) 8px,
-            rgba(241, 141, 73, 0.312) 18px
+            rgba(81, 241, 73, 0.312) 8px,
+            rgba(73, 241, 230, 0.312) 18px
         ),
         repeating-linear-gradient(
             45deg,
             transparent,
             transparent 10px,
-            rgba(255, 163, 3, 0.328) 8px,
-            rgba(255, 163, 3, 0.328) 18px
+            rgba(81, 241, 73, 0.312) 8px,
+            rgba(73, 241, 230, 0.312) 18px
         );
 }
 

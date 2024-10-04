@@ -1,31 +1,37 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { CreateUser } from 'src/users/dto/user.dto';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { CreateUserInput } from './dto/user.dto';
+import { constant } from 'src/auth/common/constants';
+import { hashPassword } from 'src/auth/common/helper';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
-  async createUser(createUser: CreateUser): Promise<User> {
-    const { id, name, email, provider } = createUser;
+  async getOne(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async createUser(createUser: CreateUserInput): Promise<UserEntity> {
+    const { name, email, password } = createUser;
     const lowerEmail = email.toLowerCase();
     const findOneData = await this.userRepository.findOne({
       where: { email: lowerEmail },
       select: ['email'],
     });
     if (findOneData && findOneData.email) {
-      throw new BadRequestException();
+      throw new BadRequestException(constant.USER_ALREADY_EXIST);
     }
-    const data: CreateUser = {
-      id,
+    const hashPasswordValue = await hashPassword(password);
+    const data: CreateUserInput = {
       name,
       email: lowerEmail,
-      provider,
+      password: hashPasswordValue,
     };
     const createUserQuery = this.userRepository.create(data);
     const saveUserData = await this.userRepository.save(createUserQuery);

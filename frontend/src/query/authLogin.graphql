@@ -1,0 +1,10 @@
+query login($AuthInput: AuthInput!) {
+  login(AuthInput: $AuthInput) {
+    LoginSuccessMessage
+    user {
+      id
+      name
+      email
+    }
+  }
+}

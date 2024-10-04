@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSurveyInput } from 'src/surveys/dto/survey.dto';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { Repository } from 'typeorm';
+import { Args } from '@nestjs/graphql';
 
 @Injectable()
 export class SurveyService {
@@ -19,9 +19,13 @@ export class SurveyService {
     return this.surveyRepository.findOne({ where: { id } });
   }
 
-  async create(data: CreateSurveyInput): Promise<Survey> {
-    const survey = this.surveyRepository.create(data);
-    await this.surveyRepository.save(survey);
-    return survey;
+  async create(
+    @Args('title') title: string,
+    @Args('expiredAt') expiredAt: string,
+  ): Promise<Survey> {
+    const survey = new Survey();
+    survey.expiredAt = expiredAt;
+    survey.title = title;
+    return this.surveyRepository.save(survey);
   }
 }

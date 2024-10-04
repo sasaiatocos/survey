@@ -17,13 +17,13 @@ export class Survey {
   readonly id: number;
 
   @Column({ type: 'varchar', length: 50 })
-  @Field(() => [String])
+  @Field()
   @MaxLength(50)
   title: string;
 
   @Column({ type: 'date' })
   @Field()
-  expired_at: Date;
+  expiredAt: string;
 
   @CreateDateColumn()
   @Field()

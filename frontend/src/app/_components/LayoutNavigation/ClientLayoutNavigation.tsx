@@ -7,16 +7,11 @@ import { useSession, signIn } from 'next-auth/react';
 import { Icon } from '@/app/ui/Icon';
 import * as Layout from '@/app/ui/Layout';
 import { renderLink } from '@/app/ui/Layout/Navigation';
-import type { GetCategoriesResponse } from '@/services/getCategories';
 import { roboto } from '@/app/fonts';
 import { QuestionCreateModalContainer } from '../QuestionCreateModalContainer';
 import styles from './style.module.css';
 
-type Props = {
-    categories: GetCategoriesResponse['categories'];
-};
-
-export function ClientLayoutNavigation({ categories }: Props) {
+export function ClientLayoutNavigation() {
     const { data: session } = useSession();
     const currentPathname = usePathname();
     const linkClassName = roboto.className;
@@ -37,11 +32,10 @@ export function ClientLayoutNavigation({ categories }: Props) {
             <li className={styles.list_item}>
                 {session?.user ? (
                     <QuestionCreateModalContainer
-                        categories={categories}
                         toggleClassName={clsx(styles.listitemChild, linkClassName)}
                     >
                         <Icon type='write' />
-                            post
+                            create survey
                     </QuestionCreateModalContainer>
                 ) : (
                     <button

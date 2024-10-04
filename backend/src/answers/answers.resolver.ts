@@ -13,8 +13,10 @@ export class AnswerResolver {
 
   @Mutation(() => Answer)
   async createAnswer(
-    @Args('createAnswerInput') createAnswerInput: CreateAnswerInput,
+    @Args('userId') userId: number,
+    @Args('selectionId') selectionId: number,
+    @Args('questionId') questionId: number,
   ): Promise<Answer> {
-    return await this.answerService.create(createAnswerInput);
+    return await this.answerService.create(userId, selectionId, questionId);
   }
 }

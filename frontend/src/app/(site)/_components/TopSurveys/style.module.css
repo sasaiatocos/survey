@@ -4,4 +4,5 @@
     gap: 0px;
     border-radius: var(--border-radius);
     overflow: hidden;
+    color: black;
 }

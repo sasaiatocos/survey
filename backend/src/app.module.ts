@@ -8,6 +8,7 @@ import { GraphQLConfig } from './config/graphql.config';
 import { UsersModule } from './users/users.module';
 import { AnswerModule } from './answers/answers.module';
 import { SelectionModule } from './selections/selections.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SelectionModule } from './selections/selections.module';
     UsersModule,
     SelectionModule,
     AnswerModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

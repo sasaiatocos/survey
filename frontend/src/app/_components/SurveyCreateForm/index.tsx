@@ -3,14 +3,12 @@
 import { useState } from 'react';
 import { Icon } from '@/app/ui/Icon';
 import { Typography } from '@/app/ui/Typography';
-import type { GetCategoriesResponse } from '@/services/getCategories';
-import { QuestionMeta } from './QuestionMeta';
-import { postQuestionAction } from './action';
+import { SurveyMeta } from './SurveyMeta';
+import { postSurvey } from '@/app/services/postSurvey';
 import styles from './style.module.css';
 import React from 'react';
 
 type Props = {
-    categories: GetCategoriesResponse['categories'];
     close: () => void;
 };
 
@@ -20,7 +18,7 @@ type State = {
     description: string;
 };
 
-export function QuestionCreateForm({ categories, close }: Props) {
+export function SurveyCreateForm({ close }: Props) {
     const [{ title, categoryId, description }, setState] = useState<State>({
         title: '',
         categoryId: '',
@@ -36,7 +34,7 @@ export function QuestionCreateForm({ categories, close }: Props) {
     };
     return (
         <form className={styles.form} action={handleSubmit}>
-            <QuestionMeta categories={categories} onChange={handleChangeMeta} />
+            <SurveyMeta onChange={handleChangeMeta} />
         </form>
     );
 }

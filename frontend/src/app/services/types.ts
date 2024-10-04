@@ -1,5 +1,5 @@
 export type Survey = {
-    id: string;
+    id: number;
     createdAt: string;
     updatedAt: string;
     title: string;

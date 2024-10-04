@@ -1,9 +1,9 @@
-import { TextArea } from "./";
-import type { Meta, StoryObj } from "@storybook/react";
+import { TextArea } from './';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
     component: TextArea,
-    args: { placeholder: "入力してください" },
+    args: { placeholder: '入力してください' },
 } satisfies Meta<typeof TextArea>;
 
 export default meta;

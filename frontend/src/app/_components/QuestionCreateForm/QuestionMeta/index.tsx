@@ -4,25 +4,22 @@ import { useEffect, useId, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label';
-import { Select } from '@/app/ui/Select';
 import { TextArea } from '@/app/ui/TextArea';
 import { TextField } from '@/app/ui/TextField';
-import type { GetCategoriesResponse } from '@/services/getCategories';
 import styles from './style.module.css';
 
 type Props = {
     onChange: (state: State) => void;
-} & GetCategoriesResponse;
+};
 type State = {
     title: string;
     categoryId: string;
     description: string;
 };
 
-export function QuestionMeta({ categories, onChange }: Props) {
+export function QuestionMeta({ onChange }: Props) {
     const componentId = useId();
     const titleId = `${componentId}-title`;
-    const categoryId = `${componentId}-category`;
     const descriptionId = `${componentId}-description`;
     const [state, setState] = useState<State>({
         title: '',
@@ -49,27 +46,6 @@ export function QuestionMeta({ categories, onChange }: Props) {
                         setState({ ...state, title: event.target.value });
                     }}
                 />
-            </div>
-            <div className={styles.row}>
-                <Label size='xsmall' htmlFor={categoryId}>
-                    カテゴリー
-                </Label>
-                {categories && (
-                    <Select
-                        className={styles.select}
-                        id={categoryId}
-                        onChange={(event) => {
-                            setState({ ...state, categoryId: event.target.value });
-                        }}
-                    >
-                        <option value=''>カテゴリーを選択...</option>
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.label}
-                            </option>
-                        ))}
-                    </Select>
-                )}
             </div>
             <div className={styles.row}>
                 <Label size='xsmall' htmlFor={descriptionId}>

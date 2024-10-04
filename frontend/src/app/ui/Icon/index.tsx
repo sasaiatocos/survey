@@ -7,24 +7,16 @@ export type Props = {
     | 'account'
     | 'alarm'
     | 'attention'
-    | 'bookmark'
-    | 'camera'
-    | 'comments'
-    | 'cutlery'
     | 'gear'
     | 'home'
     | 'login'
     | 'logout'
     | 'paper_plane'
-    | 'recipe'
     | 'register'
     | 'search'
-    | 'star_white'
-    | 'star'
     | 'trash'
     | 'write'
-    | 'zoom'
-    | 'upload';
+    | 'zoom';
     size?: 'xsmall' | 'small' | 'medium' | 'large';
     color?: 'black' | 'gray' | 'orange' | 'white';
     className?: string;

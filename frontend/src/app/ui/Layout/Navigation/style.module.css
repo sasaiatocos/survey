@@ -1,8 +1,8 @@
 .nav {
     min-width: 80px;
     max-width: 80px;
-    border-right: 1px solid rgba(229, 231, 235);
-    background-color: rgba(159, 80, 80, 0.459);
+    border-right: 1px solid rgb(229, 230, 235);
+    background-color: rgba(80, 106, 159, 0.908);
 }
 
 .list {
@@ -32,7 +32,7 @@
 }
 
 .list_item a[aria-current='page'] {
-    color: rgb(222, 112, 49);
+    color: rgb(0, 0, 0);
 }
 
 .modalContainerToggle {

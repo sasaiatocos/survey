@@ -1,15 +1,11 @@
-import { handleFailed, handleSucceed } from '../';
-import type { Survey } from '../types';
+'use server';
 
-export type GetSurveysResponse = {
-    surveys: (Omit<Survey, 'surveys'> & { totalSurveyCount: number })[];
+import { getClient } from '@/apollo/client';
+import { GetSurveysDocument, GetSurveysQuery } from '@/gql/components';
+export const getSurveys = async () => {
+    const getClientFunc = await getClient();
+    const { data } = await getClientFunc.query<GetSurveysQuery>({
+      query: GetSurveysDocument,
+    });
+    return data?.surveys;
 };
-
-export async function getSurveys(): Promise<GetSurveysResponse> {
-    return fetch(process.env.NEXT_PUBLIC_API_URL + '/graphql', {
-        cache: 'force-cache',
-        next: { tags: ['surveys'] },
-    })
-    .then(handleSucceed)
-    .catch(handleFailed);
-}

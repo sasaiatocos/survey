@@ -17,12 +17,12 @@ export function SurveyViewNavigator({ surveyId }: { surveyId: string }) {
 
     useKey('ArrowLeft', () => {
         if (prevSurveyId) {
-            router.replace(`/recipes/${prevSurveyId}/view`, { scroll: false });
+            router.replace(`/surveys/${prevSurveyId}/view`, { scroll: false });
         }
     });
     useKey('ArrowRight', () => {
         if (nextSurveyId) {
-            router.replace(`/recipes/${nextSurveyId}/view`, { scroll: false });
+            router.replace(`/surveys/${nextSurveyId}/view`, { scroll: false });
         }
     });
 

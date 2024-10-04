@@ -1,14 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { Column, PrimaryColumn } from 'typeorm';
+import { Column } from 'typeorm';
 
 @InputType()
-export class CreateUser {
-  @Field()
-  @PrimaryColumn()
-  @IsNotEmpty()
-  id: string;
-
+export class CreateUserInput {
   @Field()
   @Column()
   @IsNotEmpty()
@@ -21,5 +16,5 @@ export class CreateUser {
 
   @Field()
   @Column()
-  provider: string;
+  password: string;
 }

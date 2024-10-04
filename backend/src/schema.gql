@@ -4,18 +4,44 @@
 
 directive @upper on FIELD_DEFINITION
 
-type Selection {
+type UserEntity {
   id: ID!
-  option: [String!]!
+  name: String!
+  email: String!
+  password: String!
+  role: UserRole!
   createdAt: DateTime!
   updatedAt: DateTime!
-  question: [Selection!]
+  answers: [Answer!]
+}
+
+enum UserRole {
+  ADMIN
+  GENERAL
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Answer {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  question: [Question!]
+  selection: [Selection!]
+  user: [UserEntity!]
+}
+
+type Selection {
+  id: ID!
+  option: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  question: [Selection!]
+  answers: [Answer!]!
+}
 
 type Question {
   id: ID!
@@ -24,38 +50,21 @@ type Question {
   updatedAt: DateTime!
   survey: [Question!]
   selections: [Selection!]!
+  answers: [Answer!]!
 }
 
 type Survey {
   id: ID!
-  title: [String!]!
-  expired_at: DateTime!
+  title: String!
+  expiredAt: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   questions: [Question!]!
 }
 
-type User {
-  id: String!
-  name: String!
-  email: String!
-  provider: String!
-  role: UserRole!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-enum UserRole {
-  ADMIN
-  GENERAL
-}
-
-type Answer {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  user_id: String!
-  question_id: Float!
+type AuthResponse {
+  LoginSuccessMessage: String!
+  user: UserEntity!
 }
 
 type Query {
@@ -63,37 +72,33 @@ type Query {
   findSurvey(id: Int!): Survey!
   questions: [Answer!]!
   findQuestion(id: Int!): Question!
+  findUserByEmail(email: String!): UserEntity!
+  login(AuthInput: AuthInput!): AuthResponse!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
 }
 
 type Mutation {
-  createSurvey(createSurveyInput: CreateSurveyInput!): Survey!
+  createSurvey(title: String!, expiredAt: String!): Survey!
   createQuestion(createQuestionInput: CreateQuestionInput!): Question!
-  createUser(createUser: CreateUser!): User!
+  createUser(createUserInput: CreateUserInput!): UserEntity!
   createSelection(createSelectionInput: CreateSelectionInput!): Selection!
-  createAnswer(createAnswerInput: CreateAnswerInput!): Answer!
-}
-
-input CreateSurveyInput {
-  title: String!
-  expired_at: String!
+  createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
 }
 
 input CreateQuestionInput {
   title: String!
 }
 
-input CreateUser {
-  id: String!
+input CreateUserInput {
   name: String!
   email: String!
-  provider: String!
+  password: String!
 }
 
 input CreateSelectionInput {
   option: String!
-}
-
-input CreateAnswerInput {
-  question_id: Float!
-  user_id: String!
 }
