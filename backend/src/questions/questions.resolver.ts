@@ -1,6 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateQuestionInput } from 'src/questions/dto/question.dto';
 import { Question } from 'src/questions/entities/question.entity';
 import { QuestionService } from 'src/questions/questions.service';
 
@@ -24,8 +23,9 @@ export class QuestionResolver {
 
   @Mutation(() => Question)
   async createQuestion(
-    @Args('createQuestionInput') createQuestionInput: CreateQuestionInput,
+    @Args('title') title: string,
+    @Args('surveyId') surveyId: number,
   ): Promise<Question> {
-    return await this.questionService.create(createQuestionInput);
+    return await this.questionService.create(title, surveyId);
   }
 }

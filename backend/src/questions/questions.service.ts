@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Args } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateQuestionInput } from 'src/questions/dto/question.dto';
 import { Question } from 'src/questions/entities/question.entity';
 import { Repository } from 'typeorm';
 
@@ -19,9 +19,13 @@ export class QuestionService {
     return this.questionRepository.findOne({ where: { id } });
   }
 
-  async create(data: CreateQuestionInput): Promise<Question> {
-    const question = this.questionRepository.create(data);
-    await this.questionRepository.save(question);
-    return question;
+  async create(
+    @Args('title') title: string,
+    @Args('surveyId') surveyId: number,
+  ): Promise<Question> {
+    const question = new Question();
+    question.surveyId = surveyId;
+    question.title = title;
+    return this.questionRepository.save(question);
   }
 }

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
@@ -32,11 +33,14 @@ export class Question {
   @Field()
   updatedAt: Date;
 
-  @Field(() => [Question])
+  @Field(() => [Survey])
   @ManyToOne(() => Survey, (survey) => survey.questions, {
     cascade: true,
   })
-  readonly survey?: Survey[];
+  survey: Survey[];
+
+  @RelationId((question: Question) => question.survey)
+  surveyId: number;
 
   @Field(() => [Selection])
   @OneToMany(() => Selection, (selection) => selection.question)

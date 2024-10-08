@@ -7,7 +7,7 @@ export class AnswerResolver {
   constructor(private readonly answerService: AnswerService) {}
 
   @Query(() => [Answer])
-  questions(): Promise<Answer[]> {
+  answers(): Promise<Answer[]> {
     return this.answerService.getAll();
   }
 

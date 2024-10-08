@@ -16,7 +16,8 @@ export type Props = {
     | 'search'
     | 'trash'
     | 'write'
-    | 'zoom';
+    | 'zoom'
+    | 'result';
     size?: 'xsmall' | 'small' | 'medium' | 'large';
     color?: 'black' | 'gray' | 'orange' | 'white';
     className?: string;

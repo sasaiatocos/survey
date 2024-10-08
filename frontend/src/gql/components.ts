@@ -40,10 +40,6 @@ export type AuthResponse = {
   user: UserEntity;
 };
 
-export type CreateQuestionInput = {
-  title: Scalars['String']['input'];
-};
-
 export type CreateSelectionInput = {
   option: Scalars['String']['input'];
 };
@@ -72,7 +68,8 @@ export type MutationCreateAnswerArgs = {
 
 
 export type MutationCreateQuestionArgs = {
-  createQuestionInput: CreateQuestionInput;
+  surveyId: Scalars['Float']['input'];
+  title: Scalars['String']['input'];
 };
 
 
@@ -127,7 +124,8 @@ export type Question = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   selections: Array<Selection>;
-  survey?: Maybe<Array<Question>>;
+  survey: Array<Survey>;
+  surveyId: Scalars['Float']['output'];
   title: Array<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -188,6 +186,14 @@ export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetSurveysQuery = { __typename?: 'Query', surveys: Array<{ __typename?: 'Survey', id: string, title: string, expiredAt: string }> };
 
+export type CreateQuestionMutationVariables = Exact<{
+  title: Scalars['String']['input'];
+  surveyId: Scalars['Float']['input'];
+}>;
+
+
+export type CreateQuestionMutation = { __typename?: 'Mutation', createQuestion: { __typename?: 'Question', title: Array<string>, surveyId: number } };
+
 export type CreateSurveyMutationVariables = Exact<{
   title: Scalars['String']['input'];
   expiredAt: Scalars['String']['input'];
@@ -234,6 +240,14 @@ export const GetSurveysDocument = gql`
   }
 }
     `;
+export const CreateQuestionDocument = gql`
+    mutation createQuestion($title: String!, $surveyId: Float!) {
+  createQuestion(title: $title, surveyId: $surveyId) {
+    title
+    surveyId
+  }
+}
+    `;
 export const CreateSurveyDocument = gql`
     mutation createSurvey($title: String!, $expiredAt: String!) {
   createSurvey(title: $title, expiredAt: $expiredAt) {
@@ -268,6 +282,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getSurveys(variables?: GetSurveysQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSurveysQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSurveysQuery>(GetSurveysDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSurveys', 'query', variables);
+    },
+    createQuestion(variables: CreateQuestionMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateQuestionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateQuestionMutation>(CreateQuestionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createQuestion', 'mutation', variables);
     },
     createSurvey(variables: CreateSurveyMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateSurveyMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateSurveyMutation>(CreateSurveyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createSurvey', 'mutation', variables);

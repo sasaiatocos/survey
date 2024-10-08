@@ -8,7 +8,7 @@ export class SelectionResolver {
   constructor(private readonly selectionService: SelectionService) {}
 
   @Query(() => [Selection])
-  questions(): Promise<Selection[]> {
+  selections(): Promise<Selection[]> {
     return this.selectionService.getAll();
   }
 

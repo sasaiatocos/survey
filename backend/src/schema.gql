@@ -48,9 +48,10 @@ type Question {
   title: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  survey: [Question!]
+  survey: [Survey!]!
   selections: [Selection!]!
   answers: [Answer!]!
+  surveyId: Float!
 }
 
 type Survey {
@@ -70,9 +71,11 @@ type AuthResponse {
 type Query {
   surveys: [Survey!]!
   findSurvey(id: Int!): Survey!
-  questions: [Answer!]!
+  questions: [Question!]!
   findQuestion(id: Int!): Question!
   findUserByEmail(email: String!): UserEntity!
+  selections: [Selection!]!
+  answers: [Answer!]!
   login(AuthInput: AuthInput!): AuthResponse!
 }
 
@@ -83,14 +86,10 @@ input AuthInput {
 
 type Mutation {
   createSurvey(title: String!, expiredAt: String!): Survey!
-  createQuestion(createQuestionInput: CreateQuestionInput!): Question!
+  createQuestion(title: String!, surveyId: Float!): Question!
   createUser(createUserInput: CreateUserInput!): UserEntity!
   createSelection(createSelectionInput: CreateSelectionInput!): Selection!
   createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
-}
-
-input CreateQuestionInput {
-  title: String!
 }
 
 input CreateUserInput {

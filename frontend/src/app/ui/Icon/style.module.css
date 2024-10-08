@@ -94,3 +94,8 @@
   mask-image: url('./assets/write.svg');
   -webkit-mask-image: url('./assets/write.svg');
 }
+
+.result::before {
+  mask-image: url('./assets/result.svg');
+  -webkit-mask-image: url('./assets/result.svg');
+}

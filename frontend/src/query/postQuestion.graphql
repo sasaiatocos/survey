@@ -1,0 +1,6 @@
+mutation createQuestion($title: String!, $surveyId: Float!) {
+  createQuestion(title: $title, surveyId: $surveyId) {
+    title
+    surveyId
+  }
+}
