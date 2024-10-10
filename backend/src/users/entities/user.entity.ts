@@ -20,7 +20,7 @@ registerEnumType(UserRole, {
 
 @Entity('users')
 @ObjectType()
-export class UserEntity {
+export class User {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id: number;

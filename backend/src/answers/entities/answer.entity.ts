@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { Question } from 'src/questions/entities/question.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Selection } from 'src/selections/entities/selection.entity';
 
 @Entity('answers')
@@ -36,9 +36,9 @@ export class Answer {
   })
   selection?: Selection[];
 
-  @Field(() => [UserEntity])
-  @ManyToOne(() => UserEntity, (user) => user.answers, {
+  @Field(() => [User])
+  @ManyToOne(() => User, (user) => user.answers, {
     cascade: true,
   })
-  user?: UserEntity[];
+  user?: User[];
 }

@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { AnswerModule } from './answers/answers.module';
 import { SelectionModule } from './selections/selections.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
     SelectionModule,
     AnswerModule,
     AuthModule,
+    JwtModule,
   ],
 })
 export class AppModule {}

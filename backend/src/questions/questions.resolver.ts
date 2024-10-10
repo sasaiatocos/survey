@@ -26,6 +26,7 @@ export class QuestionResolver {
     @Args('title') title: string,
     @Args('surveyId') surveyId: number,
   ): Promise<Question> {
+    console.log();
     return await this.questionService.create(title, surveyId);
   }
 }

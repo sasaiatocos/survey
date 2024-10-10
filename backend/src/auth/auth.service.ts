@@ -1,28 +1,34 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { constant } from 'src/auth/common/constants';
 import { comparePassword } from 'src/auth/common/helper';
-import { UserEntity } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 import {
   BadGatewayException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Response } from 'express';
+
+type PasswordOmitUser = Omit<User, 'password'>;
+
+export interface JwtPayload {
+  email: string;
+  id: number;
+}
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<UserEntity> {
-    const lowerEmail = email.toLowerCase();
+  async validateUser(email: string, password: string): Promise<User> {
     const findUserData = await this.userRepository.findOne({
-      where: {
-        email: lowerEmail,
-      },
-      select: ['id', 'email', 'name', 'password'],
+      where: { email },
     });
     if (!findUserData) {
       throw new NotFoundException(constant.EMAIL_NOT_FOUND);
@@ -36,5 +42,19 @@ export class AuthService {
     }
     delete findUserData.password;
     return findUserData;
+  }
+
+  async login(
+    user: PasswordOmitUser,
+    response: Response,
+  ): Promise<{ success: boolean }> {
+    const payload: JwtPayload = { email: user.email, id: user.id };
+    const accessToken = await this.jwtService.sign(payload);
+    response.cookie('jwt', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    return { success: true };
   }
 }

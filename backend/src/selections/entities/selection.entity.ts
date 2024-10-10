@@ -32,10 +32,8 @@ export class Selection {
   updatedAt: Date;
 
   @Field(() => [Selection])
-  @ManyToOne(() => Question, (question) => question.selections, {
-    cascade: true,
-  })
-  readonly question?: Question[];
+  @ManyToOne(() => Question, (question) => question.selections)
+  readonly question?: Question;
 
   @Field(() => [Answer])
   @OneToMany(() => Answer, (answer) => answer.selection)

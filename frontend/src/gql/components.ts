@@ -90,11 +90,13 @@ export type MutationCreateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  answers: Array<Answer>;
   findQuestion: Question;
   findSurvey: Survey;
   findUserByEmail: UserEntity;
   login: AuthResponse;
-  questions: Array<Answer>;
+  questions: Array<Question>;
+  selections: Array<Selection>;
   surveys: Array<Survey>;
 };
 
@@ -126,7 +128,7 @@ export type Question = {
   selections: Array<Selection>;
   survey: Array<Survey>;
   surveyId: Scalars['Float']['output'];
-  title: Array<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -192,7 +194,7 @@ export type CreateQuestionMutationVariables = Exact<{
 }>;
 
 
-export type CreateQuestionMutation = { __typename?: 'Mutation', createQuestion: { __typename?: 'Question', title: Array<string>, surveyId: number } };
+export type CreateQuestionMutation = { __typename?: 'Mutation', createQuestion: { __typename?: 'Question', id: string, title: string, surveyId: number } };
 
 export type CreateSurveyMutationVariables = Exact<{
   title: Scalars['String']['input'];
@@ -243,6 +245,7 @@ export const GetSurveysDocument = gql`
 export const CreateQuestionDocument = gql`
     mutation createQuestion($title: String!, $surveyId: Float!) {
   createQuestion(title: $title, surveyId: $surveyId) {
+    id
     title
     surveyId
   }

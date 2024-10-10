@@ -1,26 +1,24 @@
-import { NotFoundException } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserInput } from './dto/user.dto';
+import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-@Resolver(() => UserEntity)
+@Resolver(() => User)
 export class UserResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => UserEntity)
-  async findUserByEmail(@Args('email') email: string) {
-    const user = await this.usersService.getOne(email);
-    if (!user) {
-      throw new NotFoundException(email);
-    }
-    return user;
+  @Query(() => User)
+  @UseGuards(JwtAuthGuard)
+  async user(@CurrentUser() user: User) {
+    return this.usersService.getOne(user.email);
   }
 
-  @Mutation(() => UserEntity)
+  @Mutation(() => User)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<UserEntity> {
+  ): Promise<User> {
     return await this.usersService.createUser(createUserInput);
   }
 }

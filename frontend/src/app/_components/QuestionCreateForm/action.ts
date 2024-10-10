@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getServerSession } from '@/app/lib/auth';
-import { postQuestions } from '@/app/services/postQuestions';
+import { postQuestion } from '@/app/services/postQuestion';
 
 type Payload = {
     title: string;
@@ -17,7 +17,7 @@ export async function postQuestionAction(payload: Payload) {
     }
     let questionId = '';
     try {
-        const { question } = await postQuestions({
+        const { question } = await postQuestion({
             title: payload.title,
             surveyId: payload.surveyId,
         });

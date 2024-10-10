@@ -4,7 +4,7 @@
 
 directive @upper on FIELD_DEFINITION
 
-type UserEntity {
+type User {
   id: ID!
   name: String!
   email: String!
@@ -31,7 +31,7 @@ type Answer {
   updatedAt: DateTime!
   question: [Question!]
   selection: [Selection!]
-  user: [UserEntity!]
+  user: [User!]
 }
 
 type Selection {
@@ -45,7 +45,7 @@ type Selection {
 
 type Question {
   id: ID!
-  title: [String!]!
+  title: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   survey: [Survey!]!
@@ -65,7 +65,7 @@ type Survey {
 
 type AuthResponse {
   LoginSuccessMessage: String!
-  user: UserEntity!
+  user: User!
 }
 
 type Query {
@@ -73,23 +73,18 @@ type Query {
   findSurvey(id: Int!): Survey!
   questions: [Question!]!
   findQuestion(id: Int!): Question!
-  findUserByEmail(email: String!): UserEntity!
+  user: User!
   selections: [Selection!]!
   answers: [Answer!]!
-  login(AuthInput: AuthInput!): AuthResponse!
-}
-
-input AuthInput {
-  email: String!
-  password: String!
 }
 
 type Mutation {
   createSurvey(title: String!, expiredAt: String!): Survey!
   createQuestion(title: String!, surveyId: Float!): Question!
-  createUser(createUserInput: CreateUserInput!): UserEntity!
+  createUser(createUserInput: CreateUserInput!): User!
   createSelection(createSelectionInput: CreateSelectionInput!): Selection!
   createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
+  login(AuthInput: AuthInput!): AuthResponse!
 }
 
 input CreateUserInput {
@@ -100,4 +95,9 @@ input CreateUserInput {
 
 input CreateSelectionInput {
   option: String!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
 }

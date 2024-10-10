@@ -21,7 +21,7 @@ export class Question {
   id: number;
 
   @Column({ type: 'varchar', length: 50 })
-  @Field(() => [String])
+  @Field()
   @MaxLength(50)
   title: string;
 
@@ -34,10 +34,8 @@ export class Question {
   updatedAt: Date;
 
   @Field(() => [Survey])
-  @ManyToOne(() => Survey, (survey) => survey.questions, {
-    cascade: true,
-  })
-  survey: Survey[];
+  @ManyToOne(() => Survey, (survey) => survey.questions)
+  survey: Survey;
 
   @RelationId((question: Question) => question.survey)
   surveyId: number;

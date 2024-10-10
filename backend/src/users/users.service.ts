@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { CreateUserInput } from './dto/user.dto';
 import { constant } from 'src/auth/common/constants';
 import { hashPassword } from 'src/auth/common/helper';
@@ -9,15 +9,15 @@ import { hashPassword } from 'src/auth/common/helper';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async getOne(email: string) {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async createUser(createUser: CreateUserInput): Promise<UserEntity> {
+  async createUser(createUser: CreateUserInput): Promise<User> {
     const { name, email, password } = createUser;
     const lowerEmail = email.toLowerCase();
     const findOneData = await this.userRepository.findOne({

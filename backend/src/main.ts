@@ -1,17 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import session, { SessionOptions } from 'express-session';
-import passport from 'passport';
-import { sessionConfig } from './config/session.config';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  app.use(session(sessionConfig as SessionOptions));
-
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(cookieParser());
+  app.enableCors({
+    credentials: true,
+    origin: 'http://localhost:3001',
+  });
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

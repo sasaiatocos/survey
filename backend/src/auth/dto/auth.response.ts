@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Column } from 'typeorm';
 
 @ObjectType()
@@ -8,7 +8,7 @@ export class AuthResponse {
   @Column()
   LoginSuccessMessage: string;
 
-  @Field(() => UserEntity)
+  @Field(() => User)
   @Column()
-  user: UserEntity;
+  user: User;
 }

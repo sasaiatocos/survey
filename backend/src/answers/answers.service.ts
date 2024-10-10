@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Answer } from './entities/answer.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Selection } from 'src/selections/entities/selection.entity';
 import { Args } from '@nestjs/graphql';
@@ -23,7 +23,7 @@ export class AnswerService {
     @Args('selectionId') selectionId: number,
     @Args('questionId') questionId: number,
   ): Promise<Answer> {
-    const user = new UserEntity();
+    const user = new User();
     const selection = new Selection();
     const question = new Question();
     const setAnswer = new Answer();
