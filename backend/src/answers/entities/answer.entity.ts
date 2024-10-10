@@ -3,6 +3,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { Question } from 'src/questions/entities/question.entity';
@@ -30,15 +31,24 @@ export class Answer {
   })
   question?: Question[];
 
+  @RelationId((answer: Answer) => answer.question)
+  questionId: number;
+
   @Field(() => [Selection])
   @ManyToOne(() => Selection, (selection) => selection.answers, {
     cascade: true,
   })
   selection?: Selection[];
 
+  @RelationId((answer: Answer) => answer.selection)
+  selectionId: number;
+
   @Field(() => [User])
   @ManyToOne(() => User, (user) => user.answers, {
     cascade: true,
   })
   user?: User[];
+
+  @RelationId((answer: Answer) => answer.user)
+  userId: number;
 }

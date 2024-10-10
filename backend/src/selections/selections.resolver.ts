@@ -1,7 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Selection } from './entities/selection.entity';
 import { SelectionService } from './selections.service';
-import { CreateSelectionInput } from './dto/selection.dto';
 
 @Resolver(() => Selection)
 export class SelectionResolver {
@@ -14,8 +13,9 @@ export class SelectionResolver {
 
   @Mutation(() => Selection)
   async createSelection(
-    @Args('createSelectionInput') createSelectionInput: CreateSelectionInput,
+    @Args('option') option: string,
+    @Args('questionId') questionId: number,
   ): Promise<Selection> {
-    return await this.selectionService.create(createSelectionInput);
+    return await this.selectionService.create(option, questionId);
   }
 }

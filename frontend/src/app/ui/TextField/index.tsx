@@ -6,14 +6,14 @@ import styles from './style.module.css';
 type Props = ComponentPropsWithRef<'input'>;
 
 export const TextField = forwardRef<HTMLInputElement, Props>(
-    function TextFieldBase({ className, ...props }, ref) {
-        return (
-            <input
-                type='text'
-                {...props}
-                ref={ref}
-                className={clsx(styles.textfield, className)}
-            />
-        );
-    },
+  function TextFieldBase({ className, ...props }, ref) {
+    return (
+      <input
+        type='text'
+        {...props}
+        ref={ref}
+        className={clsx(styles.textfield, className)}
+      />
+    );
+  },
 );

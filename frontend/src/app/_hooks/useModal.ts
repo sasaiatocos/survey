@@ -4,18 +4,18 @@ import { useState, useCallback } from 'react';
 import { useKey } from './useKey';
 
 export function useModal(defaultOpen: boolean = false) {
-    const [state, setState] = useState<{
-        isOpen: boolean;
-    }>({ isOpen: defaultOpen });
+  const [state, setState] = useState<{
+    isOpen: boolean;
+  }>({ isOpen: defaultOpen });
 
-    const closeModal = useCallback(() => {
-        setState(() => ({ isOpen: false }));
-    }, []);
-    const openModal = useCallback(() => {
-        setState({ isOpen: true });
-    }, []);
+  const closeModal = useCallback(() => {
+    setState(() => ({ isOpen: false }));
+  }, []);
+  const openModal = useCallback(() => {
+    setState({ isOpen: true });
+  }, []);
 
-    useKey('Escape', closeModal);
+  useKey('Escape', closeModal);
 
-    return { openModal, closeModal, isOpen: state.isOpen };
+  return { openModal, closeModal, isOpen: state.isOpen };
 }

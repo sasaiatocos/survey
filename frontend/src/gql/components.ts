@@ -26,7 +26,7 @@ export type Answer = {
   question?: Maybe<Array<Question>>;
   selection?: Maybe<Array<Selection>>;
   updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<Array<UserEntity>>;
+  user?: Maybe<Array<User>>;
 };
 
 export type AuthInput = {
@@ -36,8 +36,7 @@ export type AuthInput = {
 
 export type AuthResponse = {
   __typename?: 'AuthResponse';
-  LoginSuccessMessage: Scalars['String']['output'];
-  user: UserEntity;
+  accessToken: Scalars['String']['output'];
 };
 
 export type CreateSelectionInput = {
@@ -56,7 +55,8 @@ export type Mutation = {
   createQuestion: Question;
   createSelection: Selection;
   createSurvey: Survey;
-  createUser: UserEntity;
+  createUser: User;
+  login: AuthResponse;
 };
 
 
@@ -88,16 +88,20 @@ export type MutationCreateUserArgs = {
   createUserInput: CreateUserInput;
 };
 
+
+export type MutationLoginArgs = {
+  AuthInput: AuthInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   answers: Array<Answer>;
   findQuestion: Question;
   findSurvey: Survey;
-  findUserByEmail: UserEntity;
-  login: AuthResponse;
   questions: Array<Question>;
   selections: Array<Selection>;
   surveys: Array<Survey>;
+  user: User;
 };
 
 
@@ -108,16 +112,6 @@ export type QueryFindQuestionArgs = {
 
 export type QueryFindSurveyArgs = {
   id: Scalars['Int']['input'];
-};
-
-
-export type QueryFindUserByEmailArgs = {
-  email: Scalars['String']['input'];
-};
-
-
-export type QueryLoginArgs = {
-  AuthInput: AuthInput;
 };
 
 export type Question = {
@@ -152,8 +146,8 @@ export type Survey = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type UserEntity = {
-  __typename?: 'UserEntity';
+export type User = {
+  __typename?: 'User';
   answers?: Maybe<Array<Answer>>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -169,19 +163,17 @@ export enum UserRole {
   GENERAL = 'GENERAL'
 }
 
-export type LoginQueryVariables = Exact<{
+export type LoginMutationVariables = Exact<{
   AuthInput: AuthInput;
 }>;
 
 
-export type LoginQuery = { __typename?: 'Query', login: { __typename?: 'AuthResponse', LoginSuccessMessage: string, user: { __typename?: 'UserEntity', id: string, name: string, email: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string } };
 
-export type FindUserByEmailQueryVariables = Exact<{
-  email: Scalars['String']['input'];
-}>;
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindUserByEmailQuery = { __typename?: 'Query', findUserByEmail: { __typename?: 'UserEntity', id: string, name: string, email: string } };
+export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string } };
 
 export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -209,24 +201,19 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'UserEntity', name: string, email: string, password: string } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', name: string, email: string, password: string } };
 
 
 export const LoginDocument = gql`
-    query login($AuthInput: AuthInput!) {
+    mutation login($AuthInput: AuthInput!) {
   login(AuthInput: $AuthInput) {
-    LoginSuccessMessage
-    user {
-      id
-      name
-      email
-    }
+    accessToken
   }
 }
     `;
-export const FindUserByEmailDocument = gql`
-    query findUserByEmail($email: String!) {
-  findUserByEmail(email: $email) {
+export const CurrentUserDocument = gql`
+    query currentUser {
+  user {
     id
     name
     email
@@ -277,11 +264,11 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    login(variables: LoginQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LoginQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<LoginQuery>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login', 'query', variables);
+    login(variables: LoginMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LoginMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LoginMutation>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login', 'mutation', variables);
     },
-    findUserByEmail(variables: FindUserByEmailQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindUserByEmailQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<FindUserByEmailQuery>(FindUserByEmailDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findUserByEmail', 'query', variables);
+    currentUser(variables?: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CurrentUserQuery>(CurrentUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentUser', 'query', variables);
     },
     getSurveys(variables?: GetSurveysQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSurveysQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSurveysQuery>(GetSurveysDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSurveys', 'query', variables);

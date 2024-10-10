@@ -1,14 +1,14 @@
-import type { NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('user')?.value
+  const currentUser = request.cookies.get('jwt')?.value;
 
   if (currentUser && !request.nextUrl.pathname.startsWith('/')) {
-    return Response.redirect(new URL('/', request.url))
+    return Response.redirect(new URL('/', request.url));
   }
 
   if (!currentUser && !request.nextUrl.pathname.startsWith('/login')) {
-    return Response.redirect(new URL('/login', request.url))
+    return Response.redirect(new URL('/login', request.url));
   }
 }
 

@@ -1,7 +1,0 @@
-query findUserByEmail($email: String!) {
-  findUserByEmail(email: $email) {
-    id,
-    name,
-    email,
-  }
-}

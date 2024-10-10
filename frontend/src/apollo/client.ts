@@ -1,9 +1,9 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
 import {
   registerApolloClient,
 } from '@apollo/experimental-nextjs-app-support';
-import { setContext } from '@apollo/client/link/context';
-import { onError } from '@apollo/client/link/error';
 
 export const { getClient } = registerApolloClient(async () => {
   return new ApolloClient({

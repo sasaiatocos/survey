@@ -8,6 +8,6 @@ import { SurveyModule } from 'src/surveys/surveys.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Question]), SurveyModule],
   providers: [QuestionService, QuestionResolver],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, QuestionService],
 })
 export class QuestionModule {}

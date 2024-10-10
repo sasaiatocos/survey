@@ -1,4 +1,4 @@
-query login($AuthInput: AuthInput!) {
+mutation login($AuthInput: AuthInput!) {
   login(AuthInput: $AuthInput) {
     accessToken
   }

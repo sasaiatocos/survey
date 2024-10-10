@@ -3,10 +3,11 @@ import { SelectionService } from './selections.service';
 import { SelectionResolver } from './selections.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Selection } from './entities/selection.entity';
+import { QuestionModule } from 'src/questions/questions.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Selection])],
+  imports: [TypeOrmModule.forFeature([Selection]), QuestionModule],
   providers: [SelectionResolver, SelectionService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, SelectionService],
 })
 export class SelectionModule {}

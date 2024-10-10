@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { QuestionMeta } from './QuestionMeta';
-import { postQuestion } from '@/app/services/postQuestion';
+import { postQuestionAction } from './action';
 import styles from './style.module.css';
 
 type Props = {
@@ -22,9 +22,12 @@ export function QuestionCreateForm({ close }: Props) {
   const handleChangeMeta = (state: State) => {
     setState(state);
   };
-  const [questionData, setQuestionData] = useState<Blob>();
   const handleSubmit = async () => {
-    if (!questionData) return;
+    try {
+      await postQuestionAction({ title, surveyId });
+    } catch (err) {
+      window.alert('質問の作成に失敗しました');
+    }
     close();
   };
   return (
@@ -32,4 +35,4 @@ export function QuestionCreateForm({ close }: Props) {
       <QuestionMeta onChange={handleChangeMeta} />
     </form>
   );
-}
+};

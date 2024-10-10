@@ -32,6 +32,9 @@ type Answer {
   question: [Question!]
   selection: [Selection!]
   user: [User!]
+  questionId: Float!
+  selectionId: Float!
+  userId: Float!
 }
 
 type Selection {
@@ -39,8 +42,9 @@ type Selection {
   option: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  question: [Selection!]
+  question: [Question!]
   answers: [Answer!]!
+  questionId: Float!
 }
 
 type Question {
@@ -81,7 +85,7 @@ type Mutation {
   createSurvey(title: String!, expiredAt: String!): Survey!
   createQuestion(title: String!, surveyId: Float!): Question!
   createUser(createUserInput: CreateUserInput!): User!
-  createSelection(createSelectionInput: CreateSelectionInput!): Selection!
+  createSelection(option: String!, questionId: Float!): Selection!
   createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
   login(AuthInput: AuthInput!): AuthResponse!
 }
@@ -90,10 +94,6 @@ input CreateUserInput {
   name: String!
   email: String!
   password: String!
-}
-
-input CreateSelectionInput {
-  option: String!
 }
 
 input AuthInput {
