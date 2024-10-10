@@ -9,7 +9,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Response } from 'express';
 
 type PasswordOmitUser = Omit<User, 'password'>;
 
@@ -44,17 +43,10 @@ export class AuthService {
     return findUserData;
   }
 
-  async login(
-    user: PasswordOmitUser,
-    response: Response,
-  ): Promise<{ success: boolean }> {
+  async login(user: PasswordOmitUser) {
     const payload: JwtPayload = { email: user.email, id: user.id };
-    const accessToken = await this.jwtService.sign(payload);
-    response.cookie('jwt', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
-    return { success: true };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }

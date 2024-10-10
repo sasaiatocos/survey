@@ -13,6 +13,7 @@ export const GraphQLConfig: ApolloDriverConfig = {
       'request.credentials': 'include',
     },
   },
+  context: ({ req, res }) => ({ req, res }),
   buildSchemaOptions: {
     directives: [
       new GraphQLDirective({
