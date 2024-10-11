@@ -28,4 +28,21 @@ export class SurveyService {
     survey.title = title;
     return this.surveyRepository.save(survey);
   }
+
+  async changeStatus(
+    @Args('status') status: boolean,
+    @Args('id') id: number,
+  ) {
+    const survey = await this.surveyRepository.findOne({ where: { id } });
+    survey.status = status;
+    return this.surveyRepository.save(survey);
+  }
+
+  async getOpenSurvey(): Promise<Survey[]> {
+    return this.surveyRepository.createQueryBuilder('survey').where('survey.status = true').getMany();
+  }
+
+  async getCloseSurvey(): Promise<Survey[]> {
+    return this.surveyRepository.createQueryBuilder('survey').where('survey.status = false').getMany();
+  }
 }

@@ -3,5 +3,6 @@ query currentUser {
     id,
     name,
     email,
+    isAdmin
   }
 }

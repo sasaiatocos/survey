@@ -11,15 +11,15 @@ type Props = {
   onChange: (state: State) => void;
 };
 type State = {
-  title: string;
+  question: string;
   surveyId: number;
 };
 
 export function QuestionMeta({ onChange }: Props) {
   const componentId = useId();
-  const titleId = `${componentId}-title`;
+  const questionId = `${componentId}-question`;
   const [state, setState] = useState<State>({
-    title: '',
+    question: '',
     surveyId: 0,
   });
     const { pending } = useFormStatus();
@@ -30,16 +30,16 @@ export function QuestionMeta({ onChange }: Props) {
   return (
     <div className={styles.meta}>
       <div className={styles.row}>
-        <Label size='xsmall' htmlFor={titleId}>
+        <Label size='xsmall' htmlFor={questionId}>
           タイトル
         </Label>
         <TextField
           className={styles.title}
-          id={titleId}
-          value={state.title}
+          id={questionId}
+          value={state.question}
           placeholder={'設問を入力...'}
           onChange={(event) => {
-            setState({ ...state, title: event.target.value });
+            setState({ ...state, question: event.target.value });
           }}
         />
       </div>

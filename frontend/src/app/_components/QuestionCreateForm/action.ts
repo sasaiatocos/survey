@@ -4,14 +4,14 @@ import { redirect } from 'next/navigation';
 import { postQuestion } from '@/app/services/postQuestion';
 
 type Payload = {
-  title: string;
+  question: string;
   surveyId: number;
 };
 
 export async function postQuestionAction(payload: Payload) {
   let questionId = 0;
   try {
-    const question = await postQuestion(payload.title, payload.surveyId);
+    const question = await postQuestion(payload.question, payload.surveyId);
     questionId = question.id;
   } catch (err) {
     return { message: 'Internal Server Error' };

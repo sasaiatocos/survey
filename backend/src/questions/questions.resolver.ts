@@ -23,10 +23,10 @@ export class QuestionResolver {
 
   @Mutation(() => Question)
   async createQuestion(
-    @Args('title') title: string,
+    @Args('question') question: string,
     @Args('surveyId') surveyId: number,
   ): Promise<Question> {
     console.log();
-    return await this.questionService.create(title, surveyId);
+    return await this.questionService.create(question, surveyId);
   }
 }

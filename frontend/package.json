@@ -20,6 +20,7 @@
     "@graphql-codegen/client-preset": "^4.3.3",
     "@graphql-codegen/typed-document-node": "^5.0.9",
     "@graphql-codegen/typescript-graphql-request": "^6.2.0",
+    "@hookform/resolvers": "^3.9.0",
     "@mui/material": "^6.1.1",
     "@mui/material-nextjs": "^6.1.1",
     "apollo-link-error": "^1.1.13",
@@ -31,7 +32,6 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "sanitize.css": "^13.0.0",
-    "swr": "^2.2.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

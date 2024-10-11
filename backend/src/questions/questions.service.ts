@@ -22,13 +22,13 @@ export class QuestionService {
   }
 
   async create(
-    @Args('title') title: string,
+    @Args('question') question: string,
     @Args('surveyId') surveyId: number,
   ): Promise<Question> {
-    const question = new Question();
+    const questions = new Question();
     const survey = await this.surveyService.getOne(surveyId);
-    question.survey = survey;
-    question.title = title;
-    return this.questionRepository.save(question);
+    questions.survey = survey;
+    questions.question = question;
+    return this.questionRepository.save(questions);
   }
 }

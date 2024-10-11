@@ -20,10 +20,10 @@ export class Question {
   @Field(() => ID)
   id: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 200 })
   @Field()
   @MaxLength(50)
-  title: string;
+  question: string;
 
   @CreateDateColumn()
   @Field()

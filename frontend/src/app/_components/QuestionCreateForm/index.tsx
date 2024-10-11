@@ -10,13 +10,13 @@ type Props = {
 };
 
 type State = {
-  title: string;
+  question: string;
   surveyId: number;
 };
 
 export function QuestionCreateForm({ close }: Props) {
-  const [{ title, surveyId }, setState] = useState<State>({
-    title: '',
+  const [{ question, surveyId }, setState] = useState<State>({
+    question: '',
     surveyId: 0,
   });
   const handleChangeMeta = (state: State) => {
@@ -24,7 +24,7 @@ export function QuestionCreateForm({ close }: Props) {
   };
   const handleSubmit = async () => {
     try {
-      await postQuestionAction({ title, surveyId });
+      await postQuestionAction({ question, surveyId });
     } catch (err) {
       window.alert('質問の作成に失敗しました');
     }

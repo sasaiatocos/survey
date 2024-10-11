@@ -24,9 +24,12 @@ export type Answer = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   question?: Maybe<Array<Question>>;
+  questionId: Scalars['Float']['output'];
   selection?: Maybe<Array<Selection>>;
+  selectionId: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user?: Maybe<Array<User>>;
+  userId: Scalars['Float']['output'];
 };
 
 export type AuthInput = {
@@ -37,10 +40,6 @@ export type AuthInput = {
 export type AuthResponse = {
   __typename?: 'AuthResponse';
   accessToken: Scalars['String']['output'];
-};
-
-export type CreateSelectionInput = {
-  option: Scalars['String']['input'];
 };
 
 export type CreateUserInput = {
@@ -68,13 +67,14 @@ export type MutationCreateAnswerArgs = {
 
 
 export type MutationCreateQuestionArgs = {
+  question: Scalars['String']['input'];
   surveyId: Scalars['Float']['input'];
-  title: Scalars['String']['input'];
 };
 
 
 export type MutationCreateSelectionArgs = {
-  createSelectionInput: CreateSelectionInput;
+  option: Scalars['String']['input'];
+  questionId: Scalars['Float']['input'];
 };
 
 
@@ -96,6 +96,8 @@ export type MutationLoginArgs = {
 export type Query = {
   __typename?: 'Query';
   answers: Array<Answer>;
+  findCloseSurvey: Array<Survey>;
+  findOpenSurvey: Array<Survey>;
   findQuestion: Question;
   findSurvey: Survey;
   questions: Array<Question>;
@@ -119,10 +121,10 @@ export type Question = {
   answers: Array<Answer>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  question: Scalars['String']['output'];
   selections: Array<Selection>;
   survey: Array<Survey>;
   surveyId: Scalars['Float']['output'];
-  title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -132,7 +134,8 @@ export type Selection = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   option: Array<Scalars['String']['output']>;
-  question?: Maybe<Array<Selection>>;
+  question?: Maybe<Array<Question>>;
+  questionId: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -142,6 +145,7 @@ export type Survey = {
   expiredAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   questions: Array<Question>;
+  status: Scalars['Boolean']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -152,16 +156,11 @@ export type User = {
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  isAdmin: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
-  role: UserRole;
   updatedAt: Scalars['DateTime']['output'];
 };
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  GENERAL = 'GENERAL'
-}
 
 export type LoginMutationVariables = Exact<{
   AuthInput: AuthInput;
@@ -173,7 +172,17 @@ export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Au
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string } };
+export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, isAdmin: boolean } };
+
+export type FindCloseSurveyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindCloseSurveyQuery = { __typename?: 'Query', findCloseSurvey: Array<{ __typename?: 'Survey', id: string, title: string, status: boolean }> };
+
+export type FindOpenSurveyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindOpenSurveyQuery = { __typename?: 'Query', findOpenSurvey: Array<{ __typename?: 'Survey', id: string, title: string, status: boolean }> };
 
 export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -181,12 +190,12 @@ export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetSurveysQuery = { __typename?: 'Query', surveys: Array<{ __typename?: 'Survey', id: string, title: string, expiredAt: string }> };
 
 export type CreateQuestionMutationVariables = Exact<{
-  title: Scalars['String']['input'];
+  question: Scalars['String']['input'];
   surveyId: Scalars['Float']['input'];
 }>;
 
 
-export type CreateQuestionMutation = { __typename?: 'Mutation', createQuestion: { __typename?: 'Question', id: string, title: string, surveyId: number } };
+export type CreateQuestionMutation = { __typename?: 'Mutation', createQuestion: { __typename?: 'Question', id: string, question: string, surveyId: number } };
 
 export type CreateSurveyMutationVariables = Exact<{
   title: Scalars['String']['input'];
@@ -217,6 +226,25 @@ export const CurrentUserDocument = gql`
     id
     name
     email
+    isAdmin
+  }
+}
+    `;
+export const FindCloseSurveyDocument = gql`
+    query findCloseSurvey {
+  findCloseSurvey {
+    id
+    title
+    status
+  }
+}
+    `;
+export const FindOpenSurveyDocument = gql`
+    query findOpenSurvey {
+  findOpenSurvey {
+    id
+    title
+    status
   }
 }
     `;
@@ -230,10 +258,10 @@ export const GetSurveysDocument = gql`
 }
     `;
 export const CreateQuestionDocument = gql`
-    mutation createQuestion($title: String!, $surveyId: Float!) {
-  createQuestion(title: $title, surveyId: $surveyId) {
+    mutation createQuestion($question: String!, $surveyId: Float!) {
+  createQuestion(question: $question, surveyId: $surveyId) {
     id
-    title
+    question
     surveyId
   }
 }
@@ -269,6 +297,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     currentUser(variables?: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CurrentUserQuery>(CurrentUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentUser', 'query', variables);
+    },
+    findCloseSurvey(variables?: FindCloseSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindCloseSurveyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FindCloseSurveyQuery>(FindCloseSurveyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findCloseSurvey', 'query', variables);
+    },
+    findOpenSurvey(variables?: FindOpenSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindOpenSurveyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FindOpenSurveyQuery>(FindOpenSurveyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findOpenSurvey', 'query', variables);
     },
     getSurveys(variables?: GetSurveysQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSurveysQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSurveysQuery>(GetSurveysDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSurveys', 'query', variables);

@@ -21,6 +21,16 @@ export class SurveyResolver {
     return survey;
   }
 
+  @Query(() => [Survey])
+  findOpenSurvey(): Promise<Survey[]> {
+    return this.surveyService.getOpenSurvey();
+  }
+
+  @Query(() => [Survey])
+  findCloseSurvey(): Promise<Survey[]> {
+    return this.surveyService.getCloseSurvey();
+  }
+
   @Mutation(() => Survey)
   async createSurvey(
     @Args('title') title: string,

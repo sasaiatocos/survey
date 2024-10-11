@@ -1,0 +1,7 @@
+query findOpenSurvey {
+  findOpenSurvey {
+    id,
+    title,
+    status
+  }
+}

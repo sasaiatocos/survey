@@ -1,7 +1,7 @@
-mutation createQuestion($title: String!, $surveyId: Float!) {
-  createQuestion(title: $title, surveyId: $surveyId) {
+mutation createQuestion($question: String!, $surveyId: Float!) {
+  createQuestion(question: $question, surveyId: $surveyId) {
     id,
-    title,
+    question,
     surveyId
   }
 }

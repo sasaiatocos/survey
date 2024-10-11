@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from '../../questions/entities/question.entity';
 
@@ -24,6 +24,10 @@ export class Survey {
   @Column({ type: 'date' })
   @Field()
   expiredAt: string;
+
+  @Column()
+  @Field()
+  status: boolean;
 
   @CreateDateColumn()
   @Field()

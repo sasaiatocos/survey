@@ -9,15 +9,10 @@ type User {
   name: String!
   email: String!
   password: String!
-  role: UserRole!
+  isAdmin: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   answers: [Answer!]
-}
-
-enum UserRole {
-  ADMIN
-  GENERAL
 }
 
 """
@@ -49,7 +44,7 @@ type Selection {
 
 type Question {
   id: ID!
-  title: String!
+  question: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   survey: [Survey!]!
@@ -62,6 +57,7 @@ type Survey {
   id: ID!
   title: String!
   expiredAt: String!
+  status: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   questions: [Question!]!
@@ -74,6 +70,8 @@ type AuthResponse {
 type Query {
   surveys: [Survey!]!
   findSurvey(id: Int!): Survey!
+  findOpenSurvey: [Survey!]!
+  findCloseSurvey: [Survey!]!
   questions: [Question!]!
   findQuestion(id: Int!): Question!
   user: User!
@@ -83,7 +81,7 @@ type Query {
 
 type Mutation {
   createSurvey(title: String!, expiredAt: String!): Survey!
-  createQuestion(title: String!, surveyId: Float!): Question!
+  createQuestion(question: String!, surveyId: Float!): Question!
   createUser(createUserInput: CreateUserInput!): User!
   createSelection(option: String!, questionId: Float!): Selection!
   createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
