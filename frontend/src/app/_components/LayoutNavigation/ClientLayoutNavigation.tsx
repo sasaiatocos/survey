@@ -9,12 +9,17 @@ import { renderLink } from '@/app/ui/Layout/Navigation';
 import { roboto } from '@/app/fonts';
 import { QuestionCreateModalContainer } from '../QuestionCreateModalContainer';
 import styles from './style.module.css';
+import { Button } from '@/app/ui/Button';
 import { useCookies } from 'react-cookie';
+
+interface cookie {
+  
+}
 
 export function ClientLayoutNavigation() {
   const currentPathname = usePathname();
   const linkClassName = roboto.className;
-  const cookie = useCookies(['jwt']);
+  const cookies = useCookies(['isAdmin']);
 
   return (
     <Layout.Navigation
@@ -30,13 +35,21 @@ export function ClientLayoutNavigation() {
         ))}
       </li>
       <li className={styles.list_item}>
-        {cookie ? (
-          <QuestionCreateModalContainer
-            toggleClassName={clsx(styles.listitemChild, linkClassName)}
-          >
-            <Icon type='write' />
-            create
-          </QuestionCreateModalContainer>
+        {cookies == false ? (
+          <>
+            <QuestionCreateModalContainer
+              toggleClassName={clsx(styles.listitemChild, linkClassName)}
+            >
+              <Icon type='write' />
+              create
+            </QuestionCreateModalContainer>
+            <form action="">
+              <Button type='submit' className={linkClassName}>
+              <Icon type='logout' />
+              logout
+            </Button>
+            </form>
+          </>
         ) : (
           <Link href='/login' className={linkClassName}>
             <Icon type='login' />

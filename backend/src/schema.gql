@@ -65,6 +65,7 @@ type Survey {
 
 type AuthResponse {
   accessToken: String!
+  user: User!
 }
 
 type Query {

@@ -27,6 +27,11 @@ export class AuthResolver {
       secure: true,
       sameSite: 'strict',
     });
+    context.res.cookie('isAdmin', result.user.isAdmin, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
     return this.authService.login(context.user);
   }
 }

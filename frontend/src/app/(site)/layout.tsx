@@ -1,12 +1,12 @@
 import * as Layout from '@/app/ui/Layout';
 import { ClientRootLayout } from '../_components/ClientRootLayout';
 import { LayoutHeader } from '../_components/LayoutHeader';
-import { LayoutNavigation } from '../_components/LayoutNavigation/index';
+import { LayoutNavigation } from '../_components/LayoutNavigation';
 import { SurveyIdsContextProvider } from '../_components/SurveyViewNavigator/provider';
 
 type Props = {
-    children: React.ReactNode;
-    modal: React.ReactNode;
+  children: React.ReactNode;
+  modal: React.ReactNode;
 };
 
 export default async function SiteLayout({ children, modal }: Props) {

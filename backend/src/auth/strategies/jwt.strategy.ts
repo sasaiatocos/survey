@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entities/user.entity';
 
 export interface JwtPayload {
   email: string;
@@ -11,7 +13,10 @@ export interface JwtPayload {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userService: UsersService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         JwtStrategy.extractJWTFromCookie,
@@ -28,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return null;
   }
 
-  async validate(payload: JwtPayload): Promise<JwtPayload> {
-    return { email: payload.email, id: payload.id };
+  async validate(payload: JwtPayload): Promise<User | null> {
+    return this.userService.getOne(payload.email);
   }
 }
