@@ -5,9 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import { MaxLength, IsEmail } from 'class-validator';
-import { Answer } from 'src/answers/entities/answer.entity';
 
 @Entity('users')
 @ObjectType()
@@ -30,9 +29,13 @@ export class User {
   @Field()
   password: string;
 
-  @Column()
+  @Column({default: 0})
   @Field()
   isAdmin: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  hashedRefreshToken: string | null;
 
   @Field()
   @CreateDateColumn()
@@ -41,8 +44,4 @@ export class User {
   @Field()
   @CreateDateColumn()
   updatedAt: Date;
-
-  @Field(() => [Answer])
-  @OneToMany(() => Answer, (answer) => answer.user)
-  readonly answers?: Answer[];
 }

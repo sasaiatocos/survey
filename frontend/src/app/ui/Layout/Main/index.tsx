@@ -6,8 +6,8 @@ import styles from './style.module.css';
 type Props = ComponentPropsWithoutRef<'main'>;
 
 export const Main = forwardRef<HTMLElement, Props>(function MainBase(
-    { className, ...props },
-    ref,
+  { className, ...props },
+  ref,
 ) {
-    return <main {...props} ref={ref} className={clsx(styles.main, className)} />;
+  return <main {...props} ref={ref} className={clsx(styles.main, className)} />;
 });

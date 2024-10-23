@@ -1,8 +1,8 @@
-query currentUser {
-  user {
-    id,
-    name,
-    email,
+query currentUser($email: String!) {
+  user(email: $email) {
+    id
+    name
+    email
     isAdmin
   }
 }

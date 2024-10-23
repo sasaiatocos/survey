@@ -12,7 +12,7 @@ export class UserResolver {
   @Query(() => User)
   @UseGuards(JwtAuthGuard)
   async user(@CurrentUser() user: User) {
-    return this.usersService.getOne(user.email);
+    return this.usersService.getOneByEmail(user.email);
   }
 
   @Mutation(() => User)

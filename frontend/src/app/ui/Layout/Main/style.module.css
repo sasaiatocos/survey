@@ -1,12 +1,12 @@
 .main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(217, 248, 253);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(217, 248, 253);
 }
 
 @media screen and (max-width: 768px) {
-    .main {
-        padding-top: 54px;
-    }
+  .main {
+    padding-top: 54px;
+  }
 }

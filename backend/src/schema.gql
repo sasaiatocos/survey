@@ -4,33 +4,20 @@
 
 directive @upper on FIELD_DEFINITION
 
-type User {
-  id: ID!
-  name: String!
-  email: String!
-  password: String!
-  isAdmin: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  answers: [Answer!]
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Answer {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   question: [Question!]
   selection: [Selection!]
-  user: [User!]
   questionId: Float!
   selectionId: Float!
-  userId: Float!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Selection {
   id: ID!
@@ -63,8 +50,20 @@ type Survey {
   questions: [Question!]!
 }
 
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  isAdmin: Boolean!
+  hashedRefreshToken: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type AuthResponse {
   accessToken: String!
+  refreshToken: String!
   user: User!
 }
 
@@ -85,8 +84,10 @@ type Mutation {
   createQuestion(question: String!, surveyId: Float!): Question!
   createUser(createUserInput: CreateUserInput!): User!
   createSelection(option: String!, questionId: Float!): Selection!
-  createAnswer(userId: Float!, selectionId: Float!, questionId: Float!): Answer!
+  createAnswer(selectionId: Float!, questionId: Float!): Answer!
   login(AuthInput: AuthInput!): AuthResponse!
+  refreshToken: AuthResponse!
+  logout: Boolean!
 }
 
 input CreateUserInput {

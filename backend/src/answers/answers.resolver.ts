@@ -13,10 +13,9 @@ export class AnswerResolver {
 
   @Mutation(() => Answer)
   async createAnswer(
-    @Args('userId') userId: number,
     @Args('selectionId') selectionId: number,
     @Args('questionId') questionId: number,
   ): Promise<Answer> {
-    return await this.answerService.create(userId, selectionId, questionId);
+    return await this.answerService.create(selectionId, questionId);
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import clsx from 'clsx';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@/app/ui/Icon';
@@ -9,22 +9,17 @@ import { renderLink } from '@/app/ui/Layout/Navigation';
 import { roboto } from '@/app/fonts';
 import { QuestionCreateModalContainer } from '../QuestionCreateModalContainer';
 import styles from './style.module.css';
-import { Button } from '@/app/ui/Button';
 import { useCookies } from 'react-cookie';
-
-interface cookie {
-  
-}
 
 export function ClientLayoutNavigation() {
   const currentPathname = usePathname();
   const linkClassName = roboto.className;
-  const cookies = useCookies(['isAdmin']);
-
+  const admin = useCookies(['jwt']);
   return (
     <Layout.Navigation
       linkClassName={linkClassName}
       currentPathname={currentPathname}
+      isAdmin={Boolean(admin)}
     >
       <li className={styles.list_item}>
         {renderLink(currentPathname === '/result', (attr) => (
@@ -33,29 +28,6 @@ export function ClientLayoutNavigation() {
             result
           </Link>
         ))}
-      </li>
-      <li className={styles.list_item}>
-        {cookies == false ? (
-          <>
-            <QuestionCreateModalContainer
-              toggleClassName={clsx(styles.listitemChild, linkClassName)}
-            >
-              <Icon type='write' />
-              create
-            </QuestionCreateModalContainer>
-            <form action="">
-              <Button type='submit' className={linkClassName}>
-              <Icon type='logout' />
-              logout
-            </Button>
-            </form>
-          </>
-        ) : (
-          <Link href='/login' className={linkClassName}>
-            <Icon type='login' />
-            login
-          </Link>
-        )}
       </li>
     </Layout.Navigation>
   );

@@ -32,16 +32,6 @@ export type Answer = {
   userId: Scalars['Float']['output'];
 };
 
-export type AuthInput = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-export type AuthResponse = {
-  __typename?: 'AuthResponse';
-  accessToken: Scalars['String']['output'];
-};
-
 export type CreateUserInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -55,7 +45,6 @@ export type Mutation = {
   createSelection: Selection;
   createSurvey: Survey;
   createUser: User;
-  login: AuthResponse;
 };
 
 
@@ -88,11 +77,6 @@ export type MutationCreateUserArgs = {
   createUserInput: CreateUserInput;
 };
 
-
-export type MutationLoginArgs = {
-  AuthInput: AuthInput;
-};
-
 export type Query = {
   __typename?: 'Query';
   answers: Array<Answer>;
@@ -114,6 +98,11 @@ export type QueryFindQuestionArgs = {
 
 export type QueryFindSurveyArgs = {
   id: Scalars['Int']['input'];
+};
+
+
+export type QueryUserArgs = {
+  email: Scalars['String']['input'];
 };
 
 export type Question = {
@@ -162,14 +151,9 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type LoginMutationVariables = Exact<{
-  AuthInput: AuthInput;
+export type CurrentUserQueryVariables = Exact<{
+  email: Scalars['String']['input'];
 }>;
-
-
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string } };
-
-export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, isAdmin: boolean } };
@@ -213,16 +197,9 @@ export type CreateUserMutationVariables = Exact<{
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', name: string, email: string, password: string } };
 
 
-export const LoginDocument = gql`
-    mutation login($AuthInput: AuthInput!) {
-  login(AuthInput: $AuthInput) {
-    accessToken
-  }
-}
-    `;
 export const CurrentUserDocument = gql`
-    query currentUser {
-  user {
+    query currentUser($email: String!) {
+  user(email: $email) {
     id
     name
     email
@@ -292,10 +269,7 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    login(variables: LoginMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LoginMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<LoginMutation>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login', 'mutation', variables);
-    },
-    currentUser(variables?: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
+    currentUser(variables: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CurrentUserQuery>(CurrentUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentUser', 'query', variables);
     },
     findCloseSurvey(variables?: FindCloseSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindCloseSurveyQuery> {

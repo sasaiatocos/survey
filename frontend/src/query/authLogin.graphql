@@ -1,5 +1,0 @@
-mutation login($AuthInput: AuthInput!) {
-  login(AuthInput: $AuthInput) {
-    accessToken
-  }
-}
