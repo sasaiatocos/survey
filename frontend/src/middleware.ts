@@ -1,13 +1,14 @@
 import type { NextRequest } from 'next/server';
+import { currentUser } from './app/services/currentUser';
 
-export function middleware(request: NextRequest) {
-  const isLogin = request.cookies.get('jwt')?.value;
+export async function middleware(request: NextRequest) {
+  const isLogin = await currentUser();
 
-  if (isLogin && !request.nextUrl.pathname.startsWith('/')) {
+  if (isLogin && isLogin.hashedRefreshToken !== null && !request.nextUrl.pathname.startsWith('/')) {
     return Response.redirect(new URL('/', request.url));
   }
 
-  if (!isLogin && !request.nextUrl.pathname.startsWith('/login')) {
+  if (isLogin && isLogin.hashedRefreshToken === null && !request.nextUrl.pathname.startsWith('/login')) {
     return Response.redirect(new URL('/login', request.url));
   }
 }

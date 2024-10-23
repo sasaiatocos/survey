@@ -22,12 +22,6 @@ export class AuthResolver {
   @Mutation(() => AuthResponse)
   @UseGuards(GqlAuthGuard)
   async login(@Args('AuthInput') authInput: AuthInput, @Context() context) {
-    const result = await this.authService.login(context.user);
-    context.res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
     return this.authService.login(context.user);
   }
 

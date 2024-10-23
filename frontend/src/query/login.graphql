@@ -1,0 +1,11 @@
+mutation login($authInput: AuthInput!) {
+  login(AuthInput: $authInput) {
+    user {
+      name,
+      isAdmin,
+      email,
+    },
+    accessToken,
+    refreshToken,
+  }
+}

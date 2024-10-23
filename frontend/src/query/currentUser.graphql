@@ -1,8 +1,9 @@
-query currentUser($email: String!) {
-  user(email: $email) {
+query currentUser {
+  user {
     id
     name
     email
     isAdmin
+    hashedRefreshToken
   }
 }

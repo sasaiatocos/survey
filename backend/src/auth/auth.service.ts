@@ -101,10 +101,9 @@ export class AuthService {
     const userId = await this.userRepository.findOne(
       { where: { id: user.id } }
     );
-    const data = userId!.hashedRefreshToken = null
     await this.userRepository.save({
       id: userId.id,
-      data
+      hashedRefreshToken: null,
     });
     return true;
   }

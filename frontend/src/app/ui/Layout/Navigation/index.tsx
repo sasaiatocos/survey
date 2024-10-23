@@ -10,7 +10,7 @@ type Props = {
   children?: React.ReactNode;
   linkClassName?: string;
   currentPathname: string;
-  isAdmin: boolean;
+  isLogin: boolean;
 };
 
 export function renderLink(
@@ -24,7 +24,7 @@ export function Navigation({
   children,
   linkClassName,
   currentPathname,
-  isAdmin = false,
+  isLogin = false,
 }: Props) {
   return (
     <nav className={styles.nav}>
@@ -38,7 +38,7 @@ export function Navigation({
           ))}
         </li>
         {children}
-        {isAdmin ? (
+        {isLogin ? (
           <li className={styles.list_item}>
             <QuestionCreateModalContainer
               toggleClassName={clsx(styles.listitemChild, linkClassName)}

@@ -7,19 +7,24 @@ import { Button } from '../../Button';
 import { LinkButton } from '../../LinkButton';
 import { Avatar } from '../../Avatar';
 import styles from './style.module.css';
+import { logout } from '@/app/services/logout';
 
 type Props = {
-  isAdmin?: boolean;
+  isLogin?: boolean;
   showDrawerMenu?: boolean;
   avatarImageUrl?: string | null;
 };
 
 export function Header({
-  isAdmin = false,
+  isLogin = false,
   showDrawerMenu = true,
   avatarImageUrl
 }: Props
 ) {
+  const handleClick = async () => {
+    await logout();
+  };
+
   return (
     <header className={styles.header}>
       {showDrawerMenu && (
@@ -34,10 +39,10 @@ export function Header({
         <div className={styles.avatar}>
           <Avatar avatarImageUrl={avatarImageUrl} />
           <div className={clsx(styles.action && styles.isLogin)}>
-            {isAdmin ? (
+            {isLogin ? (
               <>
-                <Button size='xsmall' color='white'>
-                  ログアウト
+                <Button size='xsmall' color='white' onClick={handleClick}>
+                    ログアウト
                 </Button>
                 <LinkButton size='xsmall' color='white' href='/profile'>
                   プロフィール

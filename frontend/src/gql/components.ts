@@ -28,8 +28,18 @@ export type Answer = {
   selection?: Maybe<Array<Selection>>;
   selectionId: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<Array<User>>;
-  userId: Scalars['Float']['output'];
+};
+
+export type AuthInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type AuthResponse = {
+  __typename?: 'AuthResponse';
+  accessToken: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
+  user: User;
 };
 
 export type CreateUserInput = {
@@ -45,13 +55,15 @@ export type Mutation = {
   createSelection: Selection;
   createSurvey: Survey;
   createUser: User;
+  login: AuthResponse;
+  logout: Scalars['Boolean']['output'];
+  refreshToken: AuthResponse;
 };
 
 
 export type MutationCreateAnswerArgs = {
   questionId: Scalars['Float']['input'];
   selectionId: Scalars['Float']['input'];
-  userId: Scalars['Float']['input'];
 };
 
 
@@ -77,6 +89,11 @@ export type MutationCreateUserArgs = {
   createUserInput: CreateUserInput;
 };
 
+
+export type MutationLoginArgs = {
+  AuthInput: AuthInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   answers: Array<Answer>;
@@ -98,11 +115,6 @@ export type QueryFindQuestionArgs = {
 
 export type QueryFindSurveyArgs = {
   id: Scalars['Int']['input'];
-};
-
-
-export type QueryUserArgs = {
-  email: Scalars['String']['input'];
 };
 
 export type Question = {
@@ -141,9 +153,9 @@ export type Survey = {
 
 export type User = {
   __typename?: 'User';
-  answers?: Maybe<Array<Answer>>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
+  hashedRefreshToken?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   isAdmin: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
@@ -151,12 +163,10 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type CurrentUserQueryVariables = Exact<{
-  email: Scalars['String']['input'];
-}>;
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, isAdmin: boolean } };
+export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, isAdmin: boolean, hashedRefreshToken?: string | null } };
 
 export type FindCloseSurveyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -172,6 +182,18 @@ export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSurveysQuery = { __typename?: 'Query', surveys: Array<{ __typename?: 'Survey', id: string, title: string, expiredAt: string }> };
+
+export type LoginMutationVariables = Exact<{
+  authInput: AuthInput;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, isAdmin: boolean, email: string } } };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type CreateQuestionMutationVariables = Exact<{
   question: Scalars['String']['input'];
@@ -198,12 +220,13 @@ export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __type
 
 
 export const CurrentUserDocument = gql`
-    query currentUser($email: String!) {
-  user(email: $email) {
+    query currentUser {
+  user {
     id
     name
     email
     isAdmin
+    hashedRefreshToken
   }
 }
     `;
@@ -232,6 +255,24 @@ export const GetSurveysDocument = gql`
     title
     expiredAt
   }
+}
+    `;
+export const LoginDocument = gql`
+    mutation login($authInput: AuthInput!) {
+  login(AuthInput: $authInput) {
+    user {
+      name
+      isAdmin
+      email
+    }
+    accessToken
+    refreshToken
+  }
+}
+    `;
+export const LogoutDocument = gql`
+    mutation logout {
+  logout
 }
     `;
 export const CreateQuestionDocument = gql`
@@ -269,7 +310,7 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    currentUser(variables: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
+    currentUser(variables?: CurrentUserQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CurrentUserQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<CurrentUserQuery>(CurrentUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'currentUser', 'query', variables);
     },
     findCloseSurvey(variables?: FindCloseSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindCloseSurveyQuery> {
@@ -280,6 +321,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getSurveys(variables?: GetSurveysQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSurveysQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSurveysQuery>(GetSurveysDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSurveys', 'query', variables);
+    },
+    login(variables: LoginMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LoginMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LoginMutation>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login', 'mutation', variables);
+    },
+    logout(variables?: LogoutMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<LogoutMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<LogoutMutation>(LogoutDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'logout', 'mutation', variables);
     },
     createQuestion(variables: CreateQuestionMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateQuestionMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateQuestionMutation>(CreateQuestionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createQuestion', 'mutation', variables);

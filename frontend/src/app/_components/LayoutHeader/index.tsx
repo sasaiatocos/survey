@@ -11,7 +11,7 @@ export function LayoutHeader({ showDrawerMenu }: Props) {
   const admin = useCookies(['jwt']);
   return (
     <Layout.Header
-      isAdmin={Boolean(admin)}
+      isLogin={Boolean(admin)}
       showDrawerMenu={showDrawerMenu}
     />
   );

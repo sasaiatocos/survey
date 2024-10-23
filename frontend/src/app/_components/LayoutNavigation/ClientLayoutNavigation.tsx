@@ -1,13 +1,11 @@
 'use client';
 
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@/app/ui/Icon';
 import * as Layout from '@/app/ui/Layout';
 import { renderLink } from '@/app/ui/Layout/Navigation';
 import { roboto } from '@/app/fonts';
-import { QuestionCreateModalContainer } from '../QuestionCreateModalContainer';
 import styles from './style.module.css';
 import { useCookies } from 'react-cookie';
 
@@ -19,7 +17,7 @@ export function ClientLayoutNavigation() {
     <Layout.Navigation
       linkClassName={linkClassName}
       currentPathname={currentPathname}
-      isAdmin={Boolean(admin)}
+      isLogin={Boolean(admin)}
     >
       <li className={styles.list_item}>
         {renderLink(currentPathname === '/result', (attr) => (
