@@ -2,17 +2,17 @@ import { Icon, type Props } from '.';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-    component: Icon,
-    args: {
-        type: 'account',
-    },
+  component: Icon,
+  args: {
+    type: 'account',
+  },
 } satisfies Meta<typeof Icon>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 function storyFactory(type: Props['type']): Story {
-    return { args: { type } };
+  return { args: { type } };
 }
 
 export const Account = storyFactory('account');

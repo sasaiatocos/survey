@@ -1,11 +1,11 @@
-import { Section } from "./";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Section } from '.';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-    component: Section,
-    args: {
-        children: <p>コンテンツ</p>,
-    },
+  component: Section,
+  args: {
+    children: <p>コンテンツ</p>,
+  },
 } satisfies Meta<typeof Section>;
 
 export default meta;

@@ -1,11 +1,11 @@
-import { LoadingModule } from "./";
-import type { Meta, StoryObj } from "@storybook/react";
+import { LoadingModule } from './';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-    component: LoadingModule,
-    parameters: {
-        backgrounds: { default: "light" },
-    },
+  component: LoadingModule,
+  parameters: {
+    backgrounds: { default: "light" },
+  },
 } satisfies Meta<typeof LoadingModule>;
 
 export default meta;

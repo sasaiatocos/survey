@@ -1,127 +1,127 @@
 .button {
-    display: inline-block;
-    border: 1px solid transparent;
-    border-radius: var(--border-radius);
-    text-align: center;
-    color: rgb(255, 255, 255);
-    cursor: pointer;
+  display: inline-block;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  text-align: center;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
 }
 
 .xsmall {
-    padding: 6px 12px;
-    font-size: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
 }
 
 .small {
-    padding: 10px 20px;
-    font-size: 14px;
+  padding: 10px 20px;
+  font-size: 14px;
 }
 
 .medium {
-    padding: 14px 28px;
-    font-size: 16px;
+  padding: 14px 28px;
+  font-size: 16px;
 }
 
 .large {
-    padding: 18px 36px;
-    font-size: 18px;
+  padding: 18px 36px;
+  font-size: 18px;
 }
 
 @media screen and (max-width: 768px) {
-    .xsmall {
-        padding: 5px 10px;
-        font-size: 10px;
-    }
+  .xsmall {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
 
-    .small {
-        padding: 7px 14px;
-        font-size: 12px;
-    }
+  .small {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
 
-    .medium {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
+  .medium {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
 
-    .large {
-        padding: 14px 28px;
-        font-size: 16px;
-    }
+  .large {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
 }
 
 .black {
-    background-color: rgba(0, 0, 0);
+  background-color: rgba(0, 0, 0);
 }
 
 .black:hover {
-    background-color: rgba(31, 41, 55);
+  background-color: rgba(31, 41, 55);
 }
 
 .black:focus-visible {
-    outline: 3px solid rgba(245, 158, 11);
+  outline: 3px solid rgba(245, 158, 11);
 }
 
 .black:active {
-    background-color: rgba(0, 0, 0);
-    outline: 3px solid rgba(209, 213, 219);
+  background-color: rgba(0, 0, 0);
+  outline: 3px solid rgba(209, 213, 219);
 }
 
 .orange {
-    background-color: rgba(146, 64, 14);
+  background-color: rgba(146, 64, 14);
 }
 
 .orange:hover {
-    background-color: rgba(180, 83, 9);
+  background-color: rgba(180, 83, 9);
 }
 
 .orange:focus-visible {
-    background-color: rgba(180, 83, 9);
-    outline: 3px solid rgba(245, 158, 11);
+  background-color: rgba(180, 83, 9);
+  outline: 3px solid rgba(245, 158, 11);
 }
 
 .orange:active {
-    background-color: rgba(31, 41, 55);
-    outline: 3px solid rgba(245, 158, 11);
+  background-color: rgba(31, 41, 55);
+  outline: 3px solid rgba(245, 158, 11);
 }
 
 .gray {
-    color: rgba(17, 24, 39);
-    border-color: rgb(213, 233, 218);
-    background-color: rgb(147, 237, 219);
+  color: rgba(17, 24, 39);
+  border-color: rgb(213, 233, 218);
+  background-color: rgb(147, 237, 219);
 }
 
 .gray:hover {
-    border-color: rgb(235, 243, 241);
-    background-color: rgb(159, 243, 233);
+  border-color: rgb(235, 243, 241);
+  background-color: rgb(159, 243, 233);
 }
 
 .gray:focus-visible {
-    background-color: rgb(229, 235, 231);
-    outline: 3px solid rgb(42, 245, 11);
+  background-color: rgb(229, 235, 231);
+  outline: 3px solid rgb(42, 245, 11);
 }
 
 .gray:active {
-    background-color: rgb(135, 244, 226);
-    outline: 3px solid rgb(149, 255, 221);
+  background-color: rgb(135, 244, 226);
+  outline: 3px solid rgb(149, 255, 221);
 }
 
 .white {
-    color: rgb(89, 66, 54);
-    background-color: rgb(229, 150, 38);
-    outline: 2px solid rgb(243, 244, 143);
+  color: rgb(89, 66, 54);
+  background-color: rgb(229, 150, 38);
+  outline: 2px solid rgb(243, 244, 143);
 }
 
 .white:hover {
-    background-color: rgb(244, 181, 55);
-    outline: 2px solid rgb(221, 221, 75);
+  background-color: rgb(244, 181, 55);
+  outline: 2px solid rgb(221, 221, 75);
 }
 
 .white:focus-visible {
-    background-color: rgb(235, 234, 229);
-    outline: 2px solid rgb(255, 163, 4);
+  background-color: rgb(235, 234, 229);
+  outline: 2px solid rgb(255, 163, 4);
 }
 
 .white:active {
-    background-color: rgb(255, 224, 24);
-    outline: 2px solid rgb(255, 208, 78);
+  background-color: rgb(255, 224, 24);
+  outline: 2px solid rgb(255, 208, 78);
 }

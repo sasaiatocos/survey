@@ -1,16 +1,11 @@
 import { unstable_cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 import { SITE_NAME } from '@/constants';
-import { getServerSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { getCategoryById } from "@/services/getCategoryById";
-import { getPhoto } from "@/services/getPhoto";
-import { getPhotoLike } from "@/services/getPhotoLike";
-import { PhotoComment } from "./_components/PhotoComment";
-import { PhotoHero } from "./_components/PhotoHero";
-import { PhotoMeta } from "./_components/PhotoMeta";
-import styles from "./style.module.css";
-import type { Metadata } from "next";
+import { getSurvey } from '@/services/getPhoto';
+import { SurveyHero } from './_components/SurveyHero';
+import { SurveyMeta } from './_components/SurveyMeta';
+import styles from './style.module.css';
+import type { Metadata } from 'next';
 
 type Props = {
   params: { photoId: string };

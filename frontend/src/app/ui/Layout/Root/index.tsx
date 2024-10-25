@@ -4,5 +4,7 @@ import styles from './style.module.css';
 
 export function Root({ children }: { children: ReactNode }
 ) {
-  return <div className={styles.root}>{children}</div>
+  return (
+    <div className={styles.root}>{children}</div>
+  );
 }

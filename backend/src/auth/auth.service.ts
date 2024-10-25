@@ -23,7 +23,7 @@ export class AuthService {
     private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly userService: UsersService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<User> {
     const findUserData = await this.userRepository.findOne({

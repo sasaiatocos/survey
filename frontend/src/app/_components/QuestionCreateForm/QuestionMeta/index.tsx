@@ -22,7 +22,7 @@ export function QuestionMeta({ onChange }: Props) {
     question: '',
     surveyId: 0,
   });
-    const { pending } = useFormStatus();
+  const { pending } = useFormStatus();
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);

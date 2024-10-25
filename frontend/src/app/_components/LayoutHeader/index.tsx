@@ -8,10 +8,8 @@ type Props = {
 };
 
 export function LayoutHeader({ showDrawerMenu }: Props) {
-  const admin = useCookies(['jwt']);
   return (
     <Layout.Header
-      isLogin={Boolean(admin)}
       showDrawerMenu={showDrawerMenu}
     />
   );
