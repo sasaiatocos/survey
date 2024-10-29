@@ -1,9 +1,9 @@
 .headGroup {
-    display: flex;
-    padding-bottom: 16px;
-    align-items: center;
+  display: flex;
+  padding-bottom: 16px;
+  align-items: center;
 }
 
 .headGroup>*:first-child {
-    flex-grow: 1;
+  flex-grow: 1;
 }

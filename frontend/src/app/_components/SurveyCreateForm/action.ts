@@ -1,18 +1,25 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { postSurvey } from '@/app/services/postSurvey';
+import { CreateSurveyDocument, CreateSurveyMutation } from '@/gql/components';
+import { useMutation } from '@apollo/client';
 
 type Payload = {
   title: string;
-  expired_at: string;
+  expiredAt: string;
 };
 
 export async function postSurveyAction(payload: Payload) {
-  let surveyId = 0;
+  const [newSurvey] = useMutation<CreateSurveyMutation>(CreateSurveyDocument);
+  let surveyId = '';
   try {
-    const survey = await postSurvey(payload.title, payload.expired_at);
-    surveyId = survey.id;
+    const result = await newSurvey({
+        variables: {
+          title: payload.title,
+          expiredAt: payload.expiredAt,
+        },
+      });
+    surveyId = result.data?.createSurvey.id!;
   } catch (err) {
     return { message: 'Internal Server Error' };
   }

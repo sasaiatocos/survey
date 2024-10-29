@@ -2,9 +2,9 @@ import React from 'react';
 import styles from './style.module.css';
 
 type Props = {
-    children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export function HeadGroup({ children }: Props) {
-    return <header className={styles.headGroup}>{children}</header>;
+  return <header className={styles.headGroup}>{children}</header>;
 }

@@ -11,22 +11,22 @@ type Props = {
 
 type State = {
   title: string;
-  expired_at: string;
+  expiredAt: string;
 };
 
 export function SurveyCreateForm({ close }: Props) {
-  const [{ title, expired_at }, setState] = useState<State>({
+  const [{ title, expiredAt }, setState] = useState<State>({
     title: '',
-    expired_at: '',
+    expiredAt: '',
   });
   const handleChangeMeta = (state: State) => {
     setState(state);
   };
   const handleSubmit = async () => {
     try {
-      await postSurveyAction({ title, expired_at });
+      await postSurveyAction({ title, expiredAt });
     } catch (err) {
-      window.alert('質問の作成に失敗しました');
+      window.alert('アンケートの作成に失敗しました');
     }
     close();
   };

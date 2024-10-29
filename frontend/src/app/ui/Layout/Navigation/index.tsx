@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Icon } from '../../Icon';
 import styles from './style.module.css';
-import { QuestionCreateModalContainer } from '@/app/_components/QuestionCreateModalContainer';
+import { SurveyCreateModalContainer } from '@/app/_components/SurveyCreateModalContainer';
 
 type Props = {
   children?: React.ReactNode;
@@ -40,12 +40,12 @@ export function Navigation({
         {children}
         {isLogin ? (
           <li className={styles.list_item}>
-            <QuestionCreateModalContainer
+            <SurveyCreateModalContainer
               toggleClassName={clsx(styles.listitemChild, linkClassName)}
             >
               <Icon type='write' />
               create
-            </QuestionCreateModalContainer>
+            </SurveyCreateModalContainer>
           </li>
         ) : (
           <li></li>
