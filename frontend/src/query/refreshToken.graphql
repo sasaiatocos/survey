@@ -1,5 +1,5 @@
-mutation refreshToken {
-  refreshToken {
+mutation refreshToken($refreshToken: String!) {
+  refreshToken(refreshToken: $refreshToken) {
     user {
       name
       email

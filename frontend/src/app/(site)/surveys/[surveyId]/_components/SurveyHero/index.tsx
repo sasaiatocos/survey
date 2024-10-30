@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
 import { Section } from '@/app/ui/Section';
-import type { GetSurveysQuery } from '@/gql/components';
+import { Survey } from '@/types';
+import { SurveyCard } from '@/app/ui/SurveyCard';
 
 type Props = {
   survey: Survey;
-  isOwner: boolean;
 };
 
-export function PhotoHero({ survey, isOwner }: Props) {
+export function SurveyHero({ survey }: Props) {
   return (
     <Section>
       <HeadGroup>
@@ -18,6 +18,14 @@ export function PhotoHero({ survey, isOwner }: Props) {
         </Heading>
       </HeadGroup>
       <Link href={`/surveys/${survey.id}/view`}>
+        <SurveyCard
+          {...survey}
+          showMeta={false}
+          actionIcon={{
+            iconProps: { type: 'zoom', color: 'gray'}
+          }}
+          priority
+        />
       </Link>
     </Section>
   );

@@ -30,11 +30,6 @@ export type Answer = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type AuthInput = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
 export type AuthResponse = {
   __typename?: 'AuthResponse';
   accessToken: Scalars['String']['output'];
@@ -91,7 +86,13 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationLoginArgs = {
-  AuthInput: AuthInput;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
+export type MutationRefreshTokenArgs = {
+  refreshToken: Scalars['String']['input'];
 };
 
 export type Query = {
@@ -157,7 +158,6 @@ export type User = {
   email: Scalars['String']['output'];
   hashedRefreshToken?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  isAdmin: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -166,7 +166,7 @@ export type User = {
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, isAdmin: boolean, hashedRefreshToken?: string | null } };
+export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, hashedRefreshToken?: string | null } };
 
 export type FindCloseSurveyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -178,17 +178,25 @@ export type FindOpenSurveyQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type FindOpenSurveyQuery = { __typename?: 'Query', findOpenSurvey: Array<{ __typename?: 'Survey', id: string, title: string, status: boolean }> };
 
+export type FindSurveyQueryVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type FindSurveyQuery = { __typename?: 'Query', findSurvey: { __typename?: 'Survey', id: string, title: string, expiredAt: string } };
+
 export type GetSurveysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSurveysQuery = { __typename?: 'Query', surveys: Array<{ __typename?: 'Survey', id: string, title: string, expiredAt: string }> };
 
 export type LoginMutationVariables = Exact<{
-  authInput: AuthInput;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, isAdmin: boolean, email: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, email: string } } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -218,7 +226,9 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', name: string, email: string, password: string } };
 
-export type RefreshTokenMutationVariables = Exact<{ [key: string]: never; }>;
+export type RefreshTokenMutationVariables = Exact<{
+  refreshToken: Scalars['String']['input'];
+}>;
 
 
 export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, email: string } } };
@@ -230,7 +240,6 @@ export const CurrentUserDocument = gql`
     id
     name
     email
-    isAdmin
     hashedRefreshToken
   }
 }
@@ -253,6 +262,15 @@ export const FindOpenSurveyDocument = gql`
   }
 }
     `;
+export const FindSurveyDocument = gql`
+    query findSurvey($id: Int!) {
+  findSurvey(id: $id) {
+    id
+    title
+    expiredAt
+  }
+}
+    `;
 export const GetSurveysDocument = gql`
     query getSurveys {
   surveys {
@@ -263,11 +281,10 @@ export const GetSurveysDocument = gql`
 }
     `;
 export const LoginDocument = gql`
-    mutation login($authInput: AuthInput!) {
-  login(AuthInput: $authInput) {
+    mutation login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
     user {
       name
-      isAdmin
       email
     }
     accessToken
@@ -308,8 +325,8 @@ export const CreateUserDocument = gql`
 }
     `;
 export const RefreshTokenDocument = gql`
-    mutation refreshToken {
-  refreshToken {
+    mutation refreshToken($refreshToken: String!) {
+  refreshToken(refreshToken: $refreshToken) {
     user {
       name
       email
@@ -336,6 +353,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     findOpenSurvey(variables?: FindOpenSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindOpenSurveyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FindOpenSurveyQuery>(FindOpenSurveyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findOpenSurvey', 'query', variables);
     },
+    findSurvey(variables: FindSurveyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FindSurveyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FindSurveyQuery>(FindSurveyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'findSurvey', 'query', variables);
+    },
     getSurveys(variables?: GetSurveysQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSurveysQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSurveysQuery>(GetSurveysDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getSurveys', 'query', variables);
     },
@@ -354,7 +374,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createUser(variables: CreateUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateUserMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser', 'mutation', variables);
     },
-    refreshToken(variables?: RefreshTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<RefreshTokenMutation> {
+    refreshToken(variables: RefreshTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<RefreshTokenMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<RefreshTokenMutation>(RefreshTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'refreshToken', 'mutation', variables);
     }
   };

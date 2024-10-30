@@ -29,10 +29,6 @@ export class User {
   @Field()
   password: string;
 
-  @Column({default: 0})
-  @Field()
-  isAdmin: boolean;
-
   @Column({ nullable: true })
   @Field({ nullable: true })
   hashedRefreshToken: string | null;

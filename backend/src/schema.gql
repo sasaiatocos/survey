@@ -55,7 +55,6 @@ type User {
   name: String!
   email: String!
   password: String!
-  isAdmin: Boolean!
   hashedRefreshToken: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -85,18 +84,13 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   createSelection(option: String!, questionId: Float!): Selection!
   createAnswer(selectionId: Float!, questionId: Float!): Answer!
-  login(AuthInput: AuthInput!): AuthResponse!
-  refreshToken: AuthResponse!
+  login(email: String!, password: String!): AuthResponse!
+  refreshToken(refreshToken: String!): AuthResponse!
   logout: Boolean!
 }
 
 input CreateUserInput {
   name: String!
-  email: String!
-  password: String!
-}
-
-input AuthInput {
   email: String!
   password: String!
 }

@@ -21,16 +21,22 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   @UseGuards(GqlAuthGuard)
-  async login(@Args('AuthInput') authInput: AuthInput, @Context() context) {
+  async login(@Args('email') email: string,
+    @Args('password') password: string,
+    @Context() context
+  ) {
     return this.authService.login(context.user);
   }
 
   @Mutation(() => AuthResponse)
   @UseGuards(JwtRefreshAuthGuard)
-  async refreshToken(@Context() context) {
+  async refreshToken(
+    @Context() context,
+    @Args('refreshToken') refreshToken: string
+  ) {
     return this.authService.refreshToken(
       context.req.user,
-      context.req.headers.authorization,
+      context.req.cookies.refreshToken,
     );
   }
 

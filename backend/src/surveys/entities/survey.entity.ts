@@ -25,7 +25,7 @@ export class Survey {
   @Field()
   expiredAt: string;
 
-  @Column()
+  @Column({ default: 0 })
   @Field()
   status: boolean;
 

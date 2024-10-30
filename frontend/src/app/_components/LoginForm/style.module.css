@@ -1,0 +1,15 @@
+.form {
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+  background-color: rgba(245, 245, 245);
+}
+
+@media screen and (max-width: 768px) {
+  .form {
+    flex-direction: column;
+    padding: 8px;
+  }
+}

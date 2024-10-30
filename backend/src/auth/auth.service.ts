@@ -72,9 +72,8 @@ export class AuthService {
 
   async refreshToken(
     user: User,
-    authorization: string,
+    refreshToken: string,
   ): Promise<AuthResponse> {
-    const refreshToken = authorization.replace('Bearer', '').trim();
     if (!bcrypt.compareSync(refreshToken, user.hashedRefreshToken)) {
       throw new UnauthorizedException();
     };

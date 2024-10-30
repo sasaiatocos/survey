@@ -1,8 +1,7 @@
-mutation login($authInput: AuthInput!) {
-  login(AuthInput: $authInput) {
+mutation login($email: String! $password: String!) {
+  login(email: $email password: $password) {
     user {
       name,
-      isAdmin,
       email,
     },
     accessToken,

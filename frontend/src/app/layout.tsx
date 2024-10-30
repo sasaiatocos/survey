@@ -1,11 +1,14 @@
 import { Inter } from 'next/font/google';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import './ui/globals.css';
 import 'sanitize.css';
 import React from 'react';
-import { WithApolloProvider } from './providers/WithApolloProvider';
+import { SITE_NAME } from '@/constants';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: SITE_NAME,
+};
 
 export default function RootLayout({
   children,
@@ -14,15 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <WithApolloProvider>
-        <AppRouterCacheProvider>
-          <html lang='ja'>
-            <body className={`${inter.className} antialiased`}>
-              {children}
-            </body>
-          </html>
-        </AppRouterCacheProvider>
-      </WithApolloProvider>
+      <html lang='ja'>
+        <body className={`${inter.className} antialiased`}>
+          {children}
+        </body>
+      </html>
     </>
   );
 }

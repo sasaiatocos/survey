@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 type Props = {
-  params: { surveyId: string };
+  params: { surveyId: number };
 };
 
 export default async function Page({ params }: Props) {

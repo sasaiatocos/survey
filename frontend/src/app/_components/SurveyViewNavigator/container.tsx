@@ -6,8 +6,8 @@ export function SurveyIdsContainer({
   surveyIds,
   children,
 }: {
-    surveyIds: readonly string[];
-    children: React.ReactNode;
+  surveyIds: readonly string[];
+  children: React.ReactNode;
 }) {
     const surveyIdsRef = useContext(SurveyIdsContext);
   useEffect(() => {
