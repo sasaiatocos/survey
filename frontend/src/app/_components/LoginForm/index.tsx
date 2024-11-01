@@ -27,7 +27,8 @@ export function LoginForm() {
     if (!getCookie('accessToken') && getCookie('refreshToken')) {
       const fetchNewToken = async () => {
         try {
-          const newToken = await refreshToken(getCookie('refreshToken') as string);
+          const oldToken = getCookie('refreshToken') as string;
+          const newToken = await refreshToken(oldToken);
 
           if (newToken?.refreshToken) {
             setCookie('accessToken', newToken.accessToken);
@@ -37,18 +38,22 @@ export function LoginForm() {
             console.log('newToken.data', newToken);
           }
         } catch (error) {
+          const oldToken = getCookie('refreshToken') as string;
+          console.log(oldToken);
           console.error('トークンの更新エラー:', error);
         }
       };
       fetchNewToken();
     }
-  }, [router, refreshToken]);
+  }, [router]);
+
   const handleSubmit = async () => {
     try {
       const result = await login(email, password);
       if (result?.user) {
-        setCookie('accessToken', result.accessToken);
-        setCookie('refreshToken', result.refreshToken);
+        setCookie('accessToken', result.accessToken, { maxAge: 30 * 60 });
+        setCookie('refreshToken', result.refreshToken
+        );
         router.push('/');
       }
     } catch (err) {

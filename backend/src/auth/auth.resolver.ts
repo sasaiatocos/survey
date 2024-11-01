@@ -4,8 +4,8 @@ import { AuthResponse } from './dto/auth.response';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { AuthInput } from './dto/auth.dto';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 export interface JwtPayload {
   email: string;
@@ -21,11 +21,12 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   @UseGuards(GqlAuthGuard)
-  async login(@Args('email') email: string,
+  async login(
+    @Args('email') email: string,
     @Args('password') password: string,
     @Context() context
   ) {
-    return this.authService.login(context.user);
+    return this.authService.login(context.req.user);
   }
 
   @Mutation(() => AuthResponse)
@@ -36,7 +37,7 @@ export class AuthResolver {
   ) {
     return this.authService.refreshToken(
       context.req.user,
-      context.req.cookies.refreshToken,
+      context.req.refreshToken,
     );
   }
 

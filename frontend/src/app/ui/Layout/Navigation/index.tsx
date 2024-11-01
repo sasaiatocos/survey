@@ -10,7 +10,6 @@ type Props = {
   children?: React.ReactNode;
   linkClassName?: string;
   currentPathname: string;
-  isLogin: boolean;
 };
 
 export function renderLink(
@@ -24,7 +23,6 @@ export function Navigation({
   children,
   linkClassName,
   currentPathname,
-  isLogin = false,
 }: Props) {
   return (
     <nav className={styles.nav}>
@@ -38,18 +36,14 @@ export function Navigation({
           ))}
         </li>
         {children}
-        {isLogin ? (
-          <li className={styles.list_item}>
-            <SurveyCreateModalContainer
-              toggleClassName={clsx(styles.listitemChild, linkClassName)}
-            >
-              <Icon type='write' />
-              create
-            </SurveyCreateModalContainer>
-          </li>
-        ) : (
-          <li></li>
-        )}
+        <li className={styles.list_item}>
+          <SurveyCreateModalContainer
+            toggleClassName={clsx(styles.listitemChild, linkClassName)}
+          >
+            <Icon type='write' />
+            create
+          </SurveyCreateModalContainer>
+        </li>
       </ul>
     </nav>
   );
