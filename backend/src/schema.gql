@@ -85,7 +85,7 @@ type Mutation {
   createSelection(option: String!, questionId: Float!): Selection!
   createAnswer(selectionId: Float!, questionId: Float!): Answer!
   login(email: String!, password: String!): AuthResponse!
-  refreshToken(refreshToken: String!): AuthResponse!
+  refreshToken: AuthResponse!
   logout: Boolean!
 }
 

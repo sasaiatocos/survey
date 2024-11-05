@@ -21,8 +21,7 @@ export function ClientLayoutNavigation() {
     if (!getCookie('accessToken') && getCookie('refreshToken')) {
       const fetchNewToken = async () => {
         try {
-          const oldToken = getCookie('refreshToken') as string;
-          const newToken = await refreshToken(oldToken);
+          const newToken = await refreshToken();
 
           if (newToken?.refreshToken) {
             setCookie('accessToken', newToken.accessToken);
@@ -32,8 +31,6 @@ export function ClientLayoutNavigation() {
             console.log('newToken.data', newToken);
           }
         } catch (error) {
-          const oldToken = getCookie('refreshToken') as string;
-          console.log(oldToken);
           console.error('トークンの更新エラー:', error);
         }
       };

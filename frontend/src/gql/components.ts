@@ -90,11 +90,6 @@ export type MutationLoginArgs = {
   password: Scalars['String']['input'];
 };
 
-
-export type MutationRefreshTokenArgs = {
-  refreshToken: Scalars['String']['input'];
-};
-
 export type Query = {
   __typename?: 'Query';
   answers: Array<Answer>;
@@ -226,9 +221,7 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', name: string, email: string, password: string } };
 
-export type RefreshTokenMutationVariables = Exact<{
-  refreshToken: Scalars['String']['input'];
-}>;
+export type RefreshTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, email: string } } };
@@ -325,8 +318,8 @@ export const CreateUserDocument = gql`
 }
     `;
 export const RefreshTokenDocument = gql`
-    mutation refreshToken($refreshToken: String!) {
-  refreshToken(refreshToken: $refreshToken) {
+    mutation refreshToken {
+  refreshToken {
     user {
       name
       email
@@ -374,7 +367,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createUser(variables: CreateUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateUserMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser', 'mutation', variables);
     },
-    refreshToken(variables: RefreshTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<RefreshTokenMutation> {
+    refreshToken(variables?: RefreshTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<RefreshTokenMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<RefreshTokenMutation>(RefreshTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'refreshToken', 'mutation', variables);
     }
   };

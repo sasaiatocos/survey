@@ -1,11 +1,11 @@
 import { Args, Context, Query, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthResponse } from './dto/auth.response';
-import { UseGuards } from '@nestjs/common';
+import { Req, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Request } from 'express';
 
 export interface JwtPayload {
   email: string;
@@ -33,11 +33,11 @@ export class AuthResolver {
   @UseGuards(JwtRefreshAuthGuard)
   async refreshToken(
     @Context() context,
-    @Args('refreshToken') refreshToken: string
+    @Req() request: Request
   ) {
     return this.authService.refreshToken(
       context.req.user,
-      context.req.refreshToken,
+      request.signedCookies['refreshToken']
     );
   }
 

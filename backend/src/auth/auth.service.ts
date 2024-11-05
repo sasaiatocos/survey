@@ -15,6 +15,7 @@ import { Tokens } from './types/tokens.type';
 import { JwtPayload } from './types/jwt-payload.type';
 import { AuthResponse } from './dto/auth.response';
 import { UsersService } from 'src/users/users.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -72,7 +73,7 @@ export class AuthService {
 
   async refreshToken(
     user: User,
-    refreshToken: string,
+    refreshToken: string
   ): Promise<AuthResponse> {
     if (!bcrypt.compareSync(refreshToken, user.hashedRefreshToken)) {
       throw new UnauthorizedException();

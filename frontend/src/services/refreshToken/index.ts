@@ -3,11 +3,10 @@
 import { getClient } from '@/apollo/client';
 import { RefreshTokenDocument, RefreshTokenMutation } from '@/gql/components';
 
-export const refreshToken = async (refreshToken: string) => {
+export const refreshToken = async()  => {
   const client = await getClient();
   const result = await client.mutate<RefreshTokenMutation>({
-    mutation: RefreshTokenDocument,
-    variables: {refreshToken}
+    mutation: RefreshTokenDocument
   });
   return result.data?.refreshToken;
 };
