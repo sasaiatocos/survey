@@ -1,11 +1,10 @@
 import { Args, Context, Query, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthResponse } from './dto/auth.response';
-import { Req, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { Request } from 'express';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 export interface JwtPayload {
   email: string;
@@ -26,26 +25,21 @@ export class AuthResolver {
     @Args('password') password: string,
     @Context() context
   ) {
-    return this.authService.login(context.req.user);
-  }
-
-  @Mutation(() => AuthResponse)
-  @UseGuards(JwtRefreshAuthGuard)
-  async refreshToken(
-    @Context() context,
-    @Req() request: Request
-  ) {
-    return this.authService.refreshToken(
+    const payload = { email: email, id: context.req.user['id'] };
+    context.res.cookie('accessToken', this.jwtService.sign(payload), {
+      maxAge: 3000000
+    })
+    return this.authService.login(
       context.req.user,
-      request.signedCookies['refreshToken']
     );
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(JwtRefreshAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async logout(@Context() context) {
-    return this.authService.logout(
-      context.req.user
-    );
+    context.res.cookie('accessToken', null, {
+      maxAge: 0
+    });
+    return true;
   }
 }

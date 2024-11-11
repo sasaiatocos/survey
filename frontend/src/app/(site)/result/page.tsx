@@ -25,18 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  // 【1】ログインしているか否か
-  // 【2】Dynamic Segment の photoId を参照して、一意の投稿写真を特定
   const [session, { photo }] = await Promise.all([
-    getServerSession(),
     getPhoto({ id: params.photoId }),
   ]);
   if (!photo) {
     notFound();
   }
-  // 【3】写真の投稿者を特定し、プロフィールを取得
-  // 【4】カテゴリー情報を取得
-  // 【5】いいね済みか否かを取得
   const [author, { category }, { liked }] = await Promise.all([
     // ★1: unstable_cache で fetch 関数のように Data キャッシュを使用する
     unstable_cache(

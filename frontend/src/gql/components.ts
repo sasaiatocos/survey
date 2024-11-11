@@ -33,7 +33,6 @@ export type Answer = {
 export type AuthResponse = {
   __typename?: 'AuthResponse';
   accessToken: Scalars['String']['output'];
-  refreshToken: Scalars['String']['output'];
   user: User;
 };
 
@@ -52,7 +51,6 @@ export type Mutation = {
   createUser: User;
   login: AuthResponse;
   logout: Scalars['Boolean']['output'];
-  refreshToken: AuthResponse;
 };
 
 
@@ -151,7 +149,6 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  hashedRefreshToken?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
@@ -161,7 +158,7 @@ export type User = {
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string, hashedRefreshToken?: string | null } };
+export type CurrentUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, email: string } };
 
 export type FindCloseSurveyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -191,7 +188,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, email: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthResponse', accessToken: string, user: { __typename?: 'User', name: string, email: string } } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -221,11 +218,6 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', name: string, email: string, password: string } };
 
-export type RefreshTokenMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken: { __typename?: 'AuthResponse', accessToken: string, refreshToken: string, user: { __typename?: 'User', name: string, email: string } } };
-
 
 export const CurrentUserDocument = gql`
     query currentUser {
@@ -233,7 +225,6 @@ export const CurrentUserDocument = gql`
     id
     name
     email
-    hashedRefreshToken
   }
 }
     `;
@@ -281,7 +272,6 @@ export const LoginDocument = gql`
       email
     }
     accessToken
-    refreshToken
   }
 }
     `;
@@ -314,18 +304,6 @@ export const CreateUserDocument = gql`
     name
     email
     password
-  }
-}
-    `;
-export const RefreshTokenDocument = gql`
-    mutation refreshToken {
-  refreshToken {
-    user {
-      name
-      email
-    }
-    accessToken
-    refreshToken
   }
 }
     `;
@@ -366,9 +344,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     createUser(variables: CreateUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateUserMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createUser', 'mutation', variables);
-    },
-    refreshToken(variables?: RefreshTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<RefreshTokenMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<RefreshTokenMutation>(RefreshTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'refreshToken', 'mutation', variables);
     }
   };
 }

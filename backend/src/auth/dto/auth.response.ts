@@ -8,10 +8,6 @@ export class AuthResponse {
   @Column()
   accessToken: string;
 
-  @Field()
-  @Column()
-  refreshToken: string;
-
   @Field(() => User)
   @Column()
   user: User;

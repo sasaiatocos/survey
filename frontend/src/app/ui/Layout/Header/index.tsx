@@ -33,9 +33,11 @@ export function Header({
           <Avatar avatarImageUrl={avatarImageUrl} />
           <div className={clsx(styles.action && styles.isLogin)}>
             <>
-              <Button size='xsmall' color='white'>
-                ログアウト
-              </Button>
+              <form action='/logout'>
+                <Button size='xsmall' color='white'>
+                  ログアウト
+                </Button>
+              </form>
             </>
             <LinkButton size='xsmall' color='white' href='/login'>
               ログイン

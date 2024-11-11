@@ -5,7 +5,6 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateUserInput } from './dto/user.dto';
 import { constant } from 'src/auth/common/constants';
 import { hashPassword } from 'src/auth/common/helper';
-import { Args } from '@nestjs/graphql';
 
 @Injectable()
 export class UsersService {
@@ -41,17 +40,5 @@ export class UsersService {
     const createUserQuery = this.userRepository.create(data);
     const saveUserData = await this.userRepository.save(createUserQuery);
     return saveUserData;
-  }
-
-  async update(
-    id: number,
-    @Args('hashedRefreshToken') hashedRefreshToken: string
-  ) {
-    const user = this.getOneById(id);
-    if (user) {
-      await this.userRepository.save({
-        id: (await user).id, hashedRefreshToken: hashedRefreshToken
-      });
-    }
   }
 }
