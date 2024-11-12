@@ -1,24 +1,13 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
-import { CreateUserInput } from './dto/user.dto';
-import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Resolver, Args, Query } from '@nestjs/graphql';
+import { UsersService } from './users.service';
+import { User } from './entities/user.entity';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UsersService) {}
 
   @Query(() => User)
-  @UseGuards(JwtAuthGuard)
-  async user(@CurrentUser() user: User) {
-    return this.usersService.getOneByEmail(user.email);
-  }
-
-  @Mutation(() => User)
-  async createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<User> {
-    return await this.usersService.createUser(createUserInput);
+  async getUser(@Args('id') id: number): Promise<User> {
+    return this.userService.findOne(id);
   }
 }

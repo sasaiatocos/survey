@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,6 +8,8 @@ import {
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { MaxLength, IsEmail } from 'class-validator';
+import { Answer } from 'src/answers/entities/answer.entity';
+import { Survey } from 'src/surveys/entities/survey.entity';
 
 @Entity('users')
 @ObjectType()
@@ -29,6 +32,10 @@ export class User {
   @Field()
   password: string;
 
+  @Column({ default: 'user' })
+  @Field()
+  role: string;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -36,4 +43,12 @@ export class User {
   @Field()
   @CreateDateColumn()
   updatedAt: Date;
+
+  @Field(() => [Answer])
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
+
+  @Field(() => [Survey])
+  @OneToMany(() => Survey, (survey) => survey.user)
+  surveys: Survey[];
 }

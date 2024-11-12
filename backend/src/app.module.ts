@@ -2,14 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SurveyModule } from './surveys/surveys.module';
-import { QuestionModule } from './questions/questions.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GraphQLConfig } from './config/graphql.config';
 import { UsersModule } from './users/users.module';
-import { AnswerModule } from './answers/answers.module';
-import { SelectionModule } from './selections/selections.module';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
+import { GraphQLConfig } from './config/graphql.config';
+import { AnswerModule } from './answers/answer.module';
 
 @Module({
   imports: [
@@ -28,8 +25,6 @@ import { JwtModule } from '@nestjs/jwt';
         synchronize: true,
         autoLoadEntities: true,
         migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-        seeds: [__dirname + '/seeds/**/*{.ts,.js}'],
-        factories: [__dirname + '/factories/**/*{.ts,.js}'],
         cli: {
           migrationsDir: __dirname + '/migrations/',
         },
@@ -37,12 +32,9 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
     }),
     SurveyModule,
-    QuestionModule,
-    UsersModule,
-    SelectionModule,
     AnswerModule,
     AuthModule,
-    JwtModule,
+    UsersModule
   ],
 })
 export class AppModule {}

@@ -1,7 +1,0 @@
-mutation createSurvey($title: String!, $expiredAt: String!) {
-  createSurvey(title: $title expiredAt: $expiredAt) {
-    id,
-    title,
-    expiredAt
-  }
-}

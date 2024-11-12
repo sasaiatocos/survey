@@ -1,7 +1,0 @@
-query findCloseSurvey {
-  findCloseSurvey {
-    id,
-    title,
-    status
-  }
-}

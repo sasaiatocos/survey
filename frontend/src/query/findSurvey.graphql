@@ -1,7 +1,0 @@
-query findSurvey($id: Int!) {
-  findSurvey(id: $id) {
-    id
-    title
-    expiredAt
-  }
-}

@@ -3,11 +3,11 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { Question } from 'src/questions/entities/question.entity';
-import { Selection } from 'src/selections/entities/selection.entity';
+import { Option } from 'src/surveys/entities/option.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('answers')
 @ObjectType()
@@ -16,29 +16,19 @@ export class Answer {
   @Field(() => ID)
   readonly id: number;
 
-  @CreateDateColumn()
+  @Field(() => [User])
+  @ManyToOne(() => User, (user) => user.answers)
+  user: User;
+
+  @Field(() => [Option])
+  @ManyToOne(() => Option, (option) => option.id)
+  option: Option;
+
   @Field()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
   @Field()
+  @UpdateDateColumn()
   updatedAt: Date;
-
-  @Field(() => [Question])
-  @ManyToOne(() => Question, (question) => question.answers, {
-    cascade: true,
-  })
-  question?: Question[];
-
-  @RelationId((answer: Answer) => answer.question)
-  questionId: number;
-
-  @Field(() => [Selection])
-  @ManyToOne(() => Selection, (selection) => selection.answers, {
-    cascade: true,
-  })
-  selection?: Selection[];
-
-  @RelationId((answer: Answer) => answer.selection)
-  selectionId: number;
 }

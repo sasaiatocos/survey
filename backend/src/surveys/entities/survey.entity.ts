@@ -2,12 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
-import { Question } from '../../questions/entities/question.entity';
+import { Question } from './question.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('surveys')
 @ObjectType()
@@ -21,13 +23,9 @@ export class Survey {
   @MaxLength(50)
   title: string;
 
-  @Column({ type: 'date' })
-  @Field()
-  expiredAt: string;
-
-  @Column({ default: 0 })
-  @Field()
-  status: boolean;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  description: string;
 
   @CreateDateColumn()
   @Field()
@@ -40,4 +38,9 @@ export class Survey {
   @Field(() => [Question])
   @OneToMany(() => Question, (question) => question.survey)
   questions: Question[];
+
+  @Field(() => [User])
+  @ManyToOne(() => User, (user) => user.surveys)
+  user: User;
+
 }
