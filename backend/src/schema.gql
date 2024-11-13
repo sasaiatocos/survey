@@ -70,14 +70,14 @@ type Query {
   getAllSurveys: [Survey!]!
   getSurvey(id: Float!): Survey!
   getSurveyResults(surveyId: Float!): [OptionCount!]!
-  getUser(id: Float!): User!
+  user: User!
 }
 
 type Mutation {
   createSurvey(input: CreateSurveyInput!): Survey!
   submitAnswer(userId: Float!, optionIds: [Float!]!): [Answer!]!
   registerUser(input: RegisterUserInput!): User!
-  login(input: LoginUserInput!): LoginResponse!
+  login(email: String!, password: String!): LoginResponse!
   logout: Boolean!
 }
 
@@ -98,11 +98,6 @@ input CreateOptionInput {
 
 input RegisterUserInput {
   name: String!
-  email: String!
-  password: String!
-}
-
-input LoginUserInput {
   email: String!
   password: String!
 }

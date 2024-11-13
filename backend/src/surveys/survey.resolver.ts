@@ -4,10 +4,9 @@ import { Survey } from './entities/survey.entity';
 import { CreateSurveyInput } from './dto/create-survey.input';
 import { OptionCount } from './dto/option-count.output';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { CurrentUser } from 'src/auth/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 
 @Resolver(() => Survey)

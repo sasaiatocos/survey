@@ -1,19 +1,29 @@
-import { AuthProvider } from './components/AuthContext';
-import Header from './components/Header';
+'use client'
+
+import { Inter } from 'next/font/google';
+import './ui/globals.css';
 import 'sanitize.css';
 import React from 'react';
+import { ApolloProvider } from '@apollo/client';
+import { apolloClient } from './utils/graphqlClient';
+import { AuthProvider } from './_components/AuthContext';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ['latin'] });
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <>
-      <html lang='ja'>
-        <body>
-          <AuthProvider>
-            <Header />
-            <main>{children}</main>
-          </AuthProvider>
-        </body>
-      </html>
-    </>
+    <AuthProvider>
+      <ApolloProvider client={apolloClient}>
+        <html lang='ja'>
+          <body className={`${inter.className} antialiased`}>
+            {children}
+          </body>
+        </html>
+      </ApolloProvider>
+    </AuthProvider>
   );
 }

@@ -1,12 +1,14 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadGatewayException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { LoginUserInput } from 'src/users/dto/login-user.input';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
 import { RegisterUserInput } from 'src/users/dto/register-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { constant } from './common/constants';
+import { comparePassword } from './common/helper';
+import { LoginResponse } from 'src/users/dto/login-response.output';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +17,7 @@ export class AuthService {
     private readonly userService: UsersService,
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async register(input: RegisterUserInput): Promise<User> {
     const salt = await bcrypt.genSalt();
@@ -29,25 +31,27 @@ export class AuthService {
     return this.userRepository.save(newUser);
   }
 
-  async login(input: LoginUserInput): Promise<{ accessToken: string }> {
-    const user = await this.userService.findByEmail(input.email);
-
-    if (!user || !(await bcrypt.compare(input.password, user.password))) {
-      throw new UnauthorizedException('Invalid email or password');
+  async validateUser(email: string, password: string): Promise<User> {
+    const findUserData = await this.userService.getOneByEmail(email);
+    if (!findUserData) {
+      throw new NotFoundException(constant.EMAIL_NOT_FOUND);
     }
-
-    const payload = { name: user.name, sub: user.id, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
-
-    return { accessToken };
+    const IsValidPassword = await comparePassword(
+      password,
+      findUserData.password,
+    );
+    if (!IsValidPassword) {
+      throw new BadGatewayException(constant.PROVIDED_WRONG_PASSWORD);
+    }
+    delete findUserData.password;
+    return findUserData;
   }
 
-  async validateUserByToken(token: string): Promise<User | null> {
-    try {
-      const decoded = this.jwtService.verify(token);
-      return await this.userService.findOne(decoded.sub);
-    } catch (error) {
-      return null;
-    }
+  async login(email: string, password: string): Promise<LoginResponse> {
+    const user = await this.userService.getOneByEmail(email);
+    const payload = { email: user.email, id: user.id };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }

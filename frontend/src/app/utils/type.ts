@@ -16,7 +16,7 @@ export interface Option {
 }
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: string;

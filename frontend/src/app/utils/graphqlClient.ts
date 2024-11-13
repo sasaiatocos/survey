@@ -1,17 +1,11 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
-  cache: new InMemoryCache(),
-});
+const createApolloClient = () => {
+  return new ApolloClient({
+    uri: 'http://localhost:3000/graphql',
+    cache: new InMemoryCache(),
+    credentials: 'include'
+  });
+}
 
-export const CREATE_SURVEY = gql`
-  mutation CreateSurvey($title: String!) {
-    createSurvey(title: $title) {
-      id
-      title
-    }
-  }
-`;
-
-export default client;
+export const apolloClient = createApolloClient();

@@ -1,13 +1,16 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UsersService) {}
 
   @Query(() => User)
-  async getUser(@Args('id') id: number): Promise<User> {
-    return this.userService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  async user(@CurrentUser() user: User) {
+    return this.userService.getOneByEmail(user.email);
   }
 }
