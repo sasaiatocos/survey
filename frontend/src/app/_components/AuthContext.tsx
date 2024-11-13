@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const { data } = await useQuery(USER_QUERY);
-      setCurrentUser(data.currentUser.user || null);
+      setCurrentUser(data.user || null);
     } catch (error) {
       console.error("Failed to fetch current user:", error);
       setCurrentUser(null);

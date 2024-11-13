@@ -32,7 +32,7 @@ export const Header: React.FC = ({
         <div className={styles.avatar}>
           <>
             {isAuthenticated ? (
-              <p>Welcome, {currentUser?.name}!</p>
+              <p>Welcome, {currentUser?.email}!</p>
             ) : (
               <LinkButton size='xsmall' color='white' href='/login'>
                 ログイン
