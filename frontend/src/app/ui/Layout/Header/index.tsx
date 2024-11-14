@@ -8,23 +8,13 @@ import { Button } from '@/app/ui/Button';
 import { LinkButton } from '@/app/ui/LinkButton';
 import styles from './style.module.css'
 
-type Props = {
-  showDrawerMenu?: boolean;
-};
 
-export const Header: React.FC = ({
-  showDrawerMenu = true,
-}: Props) => {
+export const Header: React.FC = () => {
   const { isAuthenticated, currentUser, loading } = useAuth();
   if (loading) return <div>Loading...</div>;
 
   return (
     <header className={styles.header}>
-      {showDrawerMenu && (
-        <span className={styles.drawerMenu}>
-          <input type='checkbox' id='drawerMenu' aria-label='メニュー' />
-        </span>
-      )}
       <div className={styles.link}>
         <Link href='/'>
           <p className={styles.siteName}>Survey</p>

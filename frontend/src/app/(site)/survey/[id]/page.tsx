@@ -1,7 +1,8 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { useRouter } from 'next/router';
-import { getAuthCookie } from '../../utils/auth';
+import { useParams, useRouter } from 'next/navigation';
 import { Survey, Question, Option, Answer } from '@/app/utils/type';
 
 const GET_SURVEY = gql`
@@ -32,7 +33,7 @@ const SUBMIT_ANSWER = gql`
 
 const SurveyPage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = useParams();
   const [answers, setAnswers] = useState<Answer[]>([]);
 
   const { loading, error, data } = useQuery(GET_SURVEY, {
