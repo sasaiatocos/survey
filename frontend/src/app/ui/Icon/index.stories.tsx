@@ -27,5 +27,5 @@ export const Register = storyFactory('register');
 export const Search = storyFactory('search');
 export const Trash = storyFactory('trash');
 export const Write = storyFactory('write');
-export const Zoom = storyFactory('zoom');
+export const Admin = storyFactory('admin');
 export const Result = storyFactory('result');

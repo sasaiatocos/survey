@@ -31,7 +31,7 @@ type Answer {
 
 type Option {
   id: ID!
-  optionText: [String!]!
+  text: [String!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   question: [Question!]!
@@ -40,7 +40,7 @@ type Option {
 
 type Question {
   id: ID!
-  questionText: String!
+  text: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   survey: [Survey!]!
@@ -51,6 +51,7 @@ type Survey {
   id: ID!
   title: String!
   description: String
+  isPublic: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   questions: [Question!]!
@@ -74,26 +75,20 @@ type Query {
 }
 
 type Mutation {
-  createSurvey(input: CreateSurveyInput!): Survey!
+  createSurvey(title: String!, description: String, questions: [CreateQuestionInput!]!): Survey!
   submitAnswer(userId: Float!, optionIds: [Float!]!): [Answer!]!
   registerUser(input: RegisterUserInput!): User!
   login(email: String!, password: String!): LoginResponse!
   logout: Boolean!
 }
 
-input CreateSurveyInput {
-  title: String!
-  description: String
-  questions: [CreateQuestionInput!]!
-}
-
 input CreateQuestionInput {
-  questionText: String!
+  text: String!
   options: [CreateOptionInput!]!
 }
 
 input CreateOptionInput {
-  optionText: String!
+  text: String!
 }
 
 input RegisterUserInput {

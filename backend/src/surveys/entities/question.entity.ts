@@ -5,13 +5,11 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Survey } from './survey.entity';
 import { Option } from 'src/surveys/entities/option.entity';
-import { Answer } from '../../answers/entities/answer.entity';
 
 @Entity('questions')
 @ObjectType()
@@ -23,7 +21,7 @@ export class Question {
   @Column({ type: 'varchar', length: 200 })
   @Field()
   @MaxLength(50)
-  questionText: string;
+  text: string;
 
   @CreateDateColumn()
   @Field()

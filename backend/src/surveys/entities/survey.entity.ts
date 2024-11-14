@@ -27,6 +27,10 @@ export class Survey {
   @Field({ nullable: true })
   description: string;
 
+  @Column({ default: true })
+  @Field()
+  isPublic: boolean;
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;

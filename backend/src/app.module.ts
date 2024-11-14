@@ -24,6 +24,7 @@ import { AnswerModule } from './answers/answer.module';
         entities: ['dist/**/*.entity{.ts,.js}'],
         synchronize: true,
         autoLoadEntities: true,
+        dropSchema: true,
         migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
         cli: {
           migrationsDir: __dirname + '/migrations/',

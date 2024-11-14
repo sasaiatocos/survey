@@ -1,14 +1,15 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { gql, useQuery } from '@apollo/client';
-import { User } from '../utils/type';
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client';
+import { User } from '../libs/type';
 
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   loading: boolean;
+  logout: () => void;
   refetchUser: () => Promise<void>;
 }
 
@@ -23,35 +24,60 @@ const USER_QUERY = gql`
   }
 `;
 
+const LOGOUT_MUTATION = gql`
+  mutation logout {
+    logout
+  }
+`;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const client = useApolloClient();
+  const { data, loading, refetch } = useQuery(USER_QUERY);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [logoutMutation] = useMutation(LOGOUT_MUTATION);
 
-  const fetchCurrentUser = async () => {
-    setLoading(true);
+  useEffect(() => {
+    if (!loading && data?.user) {
+      setCurrentUser(data.user);
+    } else {
+      setCurrentUser(null);
+    }
+  }, [data, loading]);
+
+  const refetchUser = async () => {
     try {
-      const { data } = await useQuery(USER_QUERY);
-      setCurrentUser(data.user || null);
+      const { data } = await refetch();
+      setCurrentUser(data.user);
     } catch (error) {
       console.error("Failed to fetch current user:", error);
       setCurrentUser(null);
-    } finally {
-      setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchCurrentUser();
-  }, []);
+
+  const logout = async () => {
+    try {
+      await logoutMutation();
+      setCurrentUser(null);
+      client.clearStore();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const isAuthenticated = !!currentUser;
+  const isAdmin = currentUser?.role === "admin";
 
   return (
     <AuthContext.Provider value={{
-        currentUser,
-        isAuthenticated: !!currentUser,
-        loading,
-        refetchUser: fetchCurrentUser,
-      }}>
+      currentUser,
+      isAuthenticated,
+      loading,
+      isAdmin,
+      refetchUser,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );

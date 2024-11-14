@@ -35,37 +35,36 @@ export class SurveyService {
     });
   }
 
-  async create(input: CreateSurveyInput, user: User): Promise<Survey> {
+  async createSurvey(createSurveyInput: CreateSurveyInput, user: User): Promise<Survey> {
+    const { title, description, questions } = createSurveyInput;
     if (user.role !== 'admin') {
       throw new ForbiddenException('You do not have permission to create a survey.');
-    }
+    };
 
-    const survey = this.surveyRepository.create({
-      title: input.title,
-      description: input.description,
-      user,
-    });
+    const survey = new Survey();
+    survey.title = title;
+    if (description) {
+      survey.description = description;
+    };
+    survey.questions = [];
 
-    const savedSurvey = await this.surveyRepository.save(survey);
-
-    for (const questionInput of input.questions) {
-      const question = this.questionRepository.create({
-        questionText: questionInput.questionText,
-        survey: savedSurvey,
-      });
-
-      const savedQuestion = await this.questionRepository.save(question);
+    for (const questionInput of questions) {
+      const question = new Question();
+      question.text = questionInput.text;
+      question.survey = survey;
+      question.options = [];
 
       for (const optionInput of questionInput.options) {
-        const option = this.optionRepository.create({
-          optionText: optionInput.optionText,
-          question: savedQuestion,
-        });
+        const option = new Option();
+        option.text = optionInput.text;
+        option.question = question;
         await this.optionRepository.save(option);
+        question.options.push(option);
       }
+      await this.questionRepository.save(question);
+      survey.questions.push(question);
     }
-
-    return savedSurvey;
+    return this.surveyRepository.save(survey);
   }
 
   async getResults(surveyId: number): Promise<OptionCount[]> {
@@ -75,7 +74,7 @@ export class SurveyService {
     });
 
     return options.map((option) => ({
-      optionText: option.optionText,
+      optionText: option.text,
       count: option.answers.length,
     }));
   }

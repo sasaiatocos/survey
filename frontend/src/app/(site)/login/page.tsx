@@ -11,7 +11,6 @@ import { Heading } from '@/app/ui/Heading';
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label';
 import { TextField } from '@/app/ui/TextField';
-import { useFormStatus } from 'react-dom';
 
 const LOGIN_MUTATION = gql`
   mutation Login($email: String!, $password: String!) {
@@ -52,7 +51,7 @@ const LoginPage: React.FC = () => {
       await refetchUser();
       router.push('/');
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('ログインに失敗しました', error);
     }
   };
 
@@ -65,45 +64,43 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
-      <form className={styles.form} onSubmit={handleLogin}>
-        <Section>
-          <HeadGroup>
-            <Heading level={1} size='medium'>
-              Login
-            </Heading>
-          </HeadGroup>
-          {error && <p>Error: {error.message}</p>}
-          <div className={styles.cardContainer}>
-            <div className={styles.meta}>
-              <div className={styles.row}>
-                <Label size='xsmall'>Email:</Label>
-                <TextField
-                  className={styles.email}
-                  type='email'
-                  name='email'
-                  placeholder={'Email'}
-                  onChange={(event) => {
-                    setState({ ...state, email: event.target.value });
-                  }} />
-              </div>
-              <div className={styles.row}>
-                <Label size='xsmall'>Password:</Label>
-                <TextField
-                  className={styles.password}
-                  type="password"
-                  name="password"
-                  placeholder={'Password'}
-                  onChange={(event) => {
-                    setState({ ...state, password: event.target.value });
-                  }} />
-              </div>
-              <Button type="submit" disabled={loginLoading}>
-                {loginLoading ? 'Logging in...' : 'Login'}
-              </Button>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='medium'>
+            Login
+          </Heading>
+        </HeadGroup>
+        {error && <p>Error: {error.message}</p>}
+        <form className={styles.form} onSubmit={handleLogin}>
+          <div className={styles.meta}>
+            <div className={styles.row}>
+              <Label size='xsmall'>Email:</Label>
+              <TextField
+                className={styles.email}
+                type='email'
+                name='email'
+                placeholder={'Email'}
+                onChange={(event) => {
+                  setState({ ...state, email: event.target.value });
+                }} />
             </div>
+            <div className={styles.row}>
+              <Label size='xsmall'>Password:</Label>
+              <TextField
+                className={styles.password}
+                type='password'
+                name='password'
+                placeholder={'Password'}
+                onChange={(event) => {
+                  setState({ ...state, password: event.target.value });
+                }} />
+            </div>
+            <Button type='submit' disabled={loginLoading}>
+              {loginLoading ? 'Logging in...' : 'Login'}
+            </Button>
           </div>
-        </Section>
-      </form>
+        </form>
+      </Section>
     </>
   );
 };

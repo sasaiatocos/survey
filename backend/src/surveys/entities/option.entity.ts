@@ -21,7 +21,7 @@ export class Option {
   @Column({ type: 'varchar', length: 50 })
   @Field(() => [String])
   @MaxLength(50)
-  optionText: string;
+  text: string;
 
   @CreateDateColumn()
   @Field()

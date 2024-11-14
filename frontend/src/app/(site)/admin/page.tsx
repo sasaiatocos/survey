@@ -1,122 +1,53 @@
-import { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-import { useRouter } from 'next/navigation';
+'use client'
 
-const CREATE_SURVEY = gql`
-  mutation CreateSurvey($title: String!, $questions: [QuestionInput!]!) {
-    createSurvey(title: $title, questions: $questions) {
-      id
-      title
-    }
+import React from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/app/_components/AuthContext';
+import { Section } from '@/app/ui/Section';
+import { HeadGroup } from '@/app/ui/HeadGroup';
+import { Heading } from '@/app/ui/Heading';
+import { CardContainer } from '@/app/ui/CardContainer';
+import { Typography } from '@/app/ui/Typography';
+
+const AdminTop: React.FC = () => {
+  const { isAuthenticated, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
-`;
 
-const AdminPage = () => {
-  const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [questions, setQuestions] = useState([{ text: '', options: ['', ''] }]);
-
-  const [createSurvey, { loading, error }] = useMutation(CREATE_SURVEY);
-
-  const handleAddQuestion = () => {
-    setQuestions((prev) => [...prev, { text: '', options: ['', ''] }]);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const token = getAuthCookie();
-    if (!token) {
-      alert('ログインしていません');
-      return;
-    }
-
-    const surveyData = {
-      title,
-      questions: questions.map((q) => ({
-        text: q.text,
-        options: q.options.filter((opt) => opt.trim() !== ''),
-      })),
-    };
-
-    try {
-      await createSurvey({
-        variables: surveyData,
-      });
-      alert('アンケートを作成しました');
-      router.push('/');
-    } catch (err) {
-      alert('アンケート作成に失敗しました');
-    }
-  };
-
-  const handleQuestionChange = (index: number, value: string) => {
-    setQuestions((prev) => {
-      const newQuestions = [...prev];
-      newQuestions[index].text = value;
-      return newQuestions;
-    });
-  };
-
-  const handleOptionChange = (questionIndex: number, optionIndex: number, value: string) => {
-    setQuestions((prev) => {
-      const newQuestions = [...prev];
-      newQuestions[questionIndex].options[optionIndex] = value;
-      return newQuestions;
-    });
+  if (!isAuthenticated || !isAdmin) {
+    return <div>アクセス権限がありません。</div>;
   };
 
   return (
-    <div>
-      <h1>アンケート作成</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>アンケートタイトル</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-
-        {questions.map((question, questionIndex) => (
-          <div key={questionIndex}>
-            <label>質問 {questionIndex + 1}</label>
-            <input
-              type="text"
-              value={question.text}
-              onChange={(e) => handleQuestionChange(questionIndex, e.target.value)}
-              required
-            />
-            {question.options.map((option, optionIndex) => (
-              <div key={optionIndex}>
-                <label>選択肢 {optionIndex + 1}</label>
-                <input
-                  type="text"
-                  value={option}
-                  onChange={(e) => handleOptionChange(questionIndex, optionIndex, e.target.value)}
-                  required
-                />
-              </div>
-            ))}
-            <button type="button" onClick={() => handleQuestionChange(questionIndex, '')}>
-              質問を削除
-            </button>
-          </div>
-        ))}
-
-        <button type="button" onClick={handleAddQuestion}>
-          質問を追加
-        </button>
-
-        <button type="submit" disabled={loading}>
-          {loading ? '作成中...' : 'アンケートを作成'}
-        </button>
-        {error && <p>{error.message}</p>}
-      </form>
-    </div>
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='medium'>
+            管理者用トップ
+          </Heading>
+        </HeadGroup>
+        <CardContainer>
+          <Typography>
+            <Link href='/admin/survey/create'>
+              アンケートの作成
+            </Link>
+          </Typography>
+          <Typography>
+            <Link href='/admin/survey/status'>
+              アンケートの公開・非公開管理
+            </Link>
+          </Typography>
+          <Typography>
+            <Link href='/admin/survey/edit'>
+              非公開アンケートの編集・削除
+            </Link>
+          </Typography>
+        </CardContainer>
+      </Section>
+    </>
   );
 };
 
-export default AdminPage;
+export default AdminTop;

@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { SurveyService } from './surveys.service';
 import { Survey } from './entities/survey.entity';
 import { CreateSurveyInput } from './dto/create-survey.input';
+import { CreateQuestionInput } from './dto/create-survey.input';
 import { OptionCount } from './dto/option-count.output';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -27,10 +28,13 @@ export class SurveyResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async createSurvey(
-    @Args('input') input: CreateSurveyInput,
+    @Args('title') title: string,
+    @Args('description', { type: () => String, nullable: true }) description: string,
+    @Args('questions', { type: () => [CreateQuestionInput] }) questions: CreateQuestionInput[],
     @CurrentUser() user: User,
-  ) {
-    return this.surveyService.create(input, user);
+  ): Promise<Survey> {
+    const surveyData = { title, description: description ?? null, questions };
+    return this.surveyService.createSurvey(surveyData, user);
   }
 
   @Query(() => [OptionCount], { name: 'getSurveyResults' })

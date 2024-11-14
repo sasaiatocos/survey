@@ -5,7 +5,7 @@ import './ui/globals.css';
 import 'sanitize.css';
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from './utils/graphqlClient';
+import { apolloClient } from './libs/graphqlClient';
 import { AuthProvider } from './_components/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -16,14 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthProvider>
-      <ApolloProvider client={apolloClient}>
+    <ApolloProvider client={apolloClient}>
+      <AuthProvider>
         <html lang='ja'>
           <body className={`${inter.className} antialiased`}>
             {children}
           </body>
         </html>
-      </ApolloProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }

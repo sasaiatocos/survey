@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { useParams, useRouter } from 'next/navigation';
-import { Survey, Question, Option, Answer } from '@/app/utils/type';
+import { Survey, Question, Option, Answer } from '@/app/libs/type';
 
 const GET_SURVEY = gql`
   query GetSurvey($id: ID!) {

@@ -1,8 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
+import { Section } from '../ui/Section';
+import { HeadGroup } from '../ui/HeadGroup';
+import { Heading } from '../ui/Heading';
+import { CardContainer } from '../ui/CardContainer';
+import { Typography } from '../ui/Typography';
+import { LinkTag } from '../ui/LinkTag';
+import { Tag } from '../ui/Tag';
 
 const GET_SURVEYS = gql`
   query GetAllSurveys {
@@ -21,19 +28,25 @@ const HomePage: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
-      <h1>回答可能なアンケート</h1>
-      <ul>
-        {data.getAllSurveys.map((survey: { id: string; title: string; description: string }) => (
-          <li key={survey.id}>
-            <Link href={`/survey/${survey.id}`}>
-              <h2>{survey.title}</h2>
-              <p>{survey.description}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='medium'>
+            回答可能なアンケート
+          </Heading>
+        </HeadGroup>
+        <CardContainer>
+          {data.getAllSurveys.map((survey: { id: string; title: string; description: string }) => (
+            <div key={survey.id}>
+              <Link href={`/survey/${survey.id}`}>
+                <Tag>{survey.title}</Tag>
+                <Typography>{survey.description}</Typography>
+              </Link>
+            </div>
+          ))}
+        </CardContainer>
+      </Section>
+    </>
   );
 };
 

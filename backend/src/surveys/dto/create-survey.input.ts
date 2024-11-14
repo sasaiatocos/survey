@@ -3,13 +3,13 @@ import { InputType, Field } from '@nestjs/graphql';
 @InputType()
 export class CreateOptionInput {
   @Field()
-  optionText: string;
+  text: string;
 }
 
 @InputType()
 export class CreateQuestionInput {
   @Field()
-  questionText: string;
+  text: string;
 
   @Field(() => [CreateOptionInput])
   options: CreateOptionInput[];
