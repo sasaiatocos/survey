@@ -19,7 +19,7 @@ export class Option {
   id: number;
 
   @Column({ type: 'varchar', length: 50 })
-  @Field(() => [String])
+  @Field()
   @MaxLength(50)
   text: string;
 

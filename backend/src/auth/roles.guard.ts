@@ -1,6 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { GqlExecutionContext } from "@nestjs/graphql";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -8,11 +8,20 @@ export class RolesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    console.log('Roles required for this route:', roles);
+
     if (!roles) {
-      return true;
+      return true; // ロールが設定されていなければ全ユーザーにアクセス許可
     }
+
     const ctx = GqlExecutionContext.create(context);
     const user = ctx.getContext().req.user;
-    return roles.includes(user.role);
+    console.log('User in RolesGuard:', user);
+
+    if (!user) {
+      throw new Error('User not found in context. Authentication might have failed.');
+    }
+
+    return roles.includes(user.role); // ユーザーのロールが含まれていればアクセス許可
   }
 }

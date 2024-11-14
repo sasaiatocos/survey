@@ -27,7 +27,7 @@ export class Survey {
   @Field({ nullable: true })
   description: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   @Field()
   isPublic: boolean;
 

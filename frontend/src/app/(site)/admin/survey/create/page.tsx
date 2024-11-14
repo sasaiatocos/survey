@@ -33,6 +33,7 @@ const CREATE_SURVEY_MUTATION = gql`
 const SurveyCreatePage = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [questions, setQuestions] = useState([{ text: '', options: ['', ''] }]);
   const [createSurvey, { data, loading, error }] = useMutation(CREATE_SURVEY_MUTATION);
 
@@ -75,10 +76,12 @@ const SurveyCreatePage = () => {
   const handleSubmit = async () => {
     const formattedQuestions = questions.map((q) => ({
       text: q.text,
-      options: q.options.filter((option) => option),
+      options: q.options.filter((option) => option)
+      .map((optionText) => ({text: optionText})),
     }));
+    console.log('formattedQuestions:', formattedQuestions); // デバッグ用
     try {
-      await createSurvey({ variables: { title, questions: formattedQuestions } });
+      await createSurvey({ variables: { title, description, questions: formattedQuestions } });
       alert('アンケートが作成されました');
       router.push('/');
     } catch (e) {
@@ -104,6 +107,16 @@ const SurveyCreatePage = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder='タイトル'
+              />
+            </div>
+            <div className={styles.row}>
+              <Label size='xsmall'>アンケート説明 (任意)</Label>
+              <TextField
+                className={styles.description}
+                type='text'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder='説明'
               />
             </div>
             <div className={styles.row}>

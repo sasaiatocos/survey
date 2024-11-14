@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Survey } from './entities/survey.entity';
 import { Question } from './entities/question.entity';
@@ -48,24 +48,31 @@ export class SurveyService {
     };
     survey.questions = [];
 
-    for (const questionInput of questions) {
-      const question = new Question();
-      question.text = questionInput.text;
-      question.survey = survey;
-      question.options = [];
+    const manager = this.surveyRepository.manager;
+    return await manager.transaction(async (transactionalEntityManager: EntityManager) => {
+      const savedSurvey = await transactionalEntityManager.save(Survey, survey);
 
-      for (const optionInput of questionInput.options) {
-        const option = new Option();
-        option.text = optionInput.text;
-        option.question = question;
-        await this.optionRepository.save(option);
-        question.options.push(option);
+      for (const questionInput of questions) {
+        const question = new Question();
+        question.text = questionInput.text;
+        question.survey = savedSurvey;
+        question.options = [];
+
+        const savedQuestion = await transactionalEntityManager.save(Question, question); // 質問を保存
+        savedSurvey.questions.push(savedQuestion);
+
+        for (const optionInput of questionInput.options) {
+          const option = new Option();
+          option.text = optionInput.text;
+          option.question = savedQuestion;
+
+          await transactionalEntityManager.save(Option, option); // オプションを保存
+          savedQuestion.options.push(option);
+        }
       }
-      await this.questionRepository.save(question);
-      survey.questions.push(question);
-    }
-    return this.surveyRepository.save(survey);
-  }
+      return savedSurvey;
+    });
+  };
 
   async getResults(surveyId: number): Promise<OptionCount[]> {
     const options = await this.optionRepository.find({

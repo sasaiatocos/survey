@@ -31,7 +31,7 @@ type Answer {
 
 type Option {
   id: ID!
-  text: [String!]!
+  text: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   question: [Question!]!
