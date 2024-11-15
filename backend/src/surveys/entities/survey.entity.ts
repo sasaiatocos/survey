@@ -6,17 +6,18 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from './question.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Answer } from 'src/answers/entities/answer.entity';
 
 @Entity('surveys')
 @ObjectType()
 export class Survey {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
-  readonly id: number;
+  id: number;
 
   @Column({ type: 'varchar', length: 50 })
   @Field()
@@ -25,7 +26,7 @@ export class Survey {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ default: false })
   @Field()
@@ -40,11 +41,15 @@ export class Survey {
   updatedAt: Date;
 
   @Field(() => [Question])
-  @OneToMany(() => Question, (question) => question.survey)
+  @OneToMany(() => Question, (question) => question.survey, { cascade: true })
   questions: Question[];
 
   @Field(() => [User])
-  @ManyToOne(() => User, (user) => user.surveys)
+  @ManyToOne(() => User, (user) => user.surveys, { nullable: false })
   user: User;
+
+  @Field(() => [Answer])
+  @OneToMany(() => Answer, (answer) => answer.survey)
+  answers: Answer[];
 
 }

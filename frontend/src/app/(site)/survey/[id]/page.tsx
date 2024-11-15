@@ -1,15 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { useParams, useRouter } from 'next/navigation';
-import { Survey, Question, Option, Answer } from '@/app/libs/type';
+import React, { useState } from 'react';
+import { gql, useQuery, useMutation } from '@apollo/client';
+import { useRouter, useParams } from 'next/navigation';
+import { useAuth } from '@/app/_components/AuthContext';
 
 const GET_SURVEY = gql`
   query GetSurvey($id: ID!) {
-    survey(id: $id) {
+    getSurvey(id: $id) {
       id
       title
+      description
       questions {
         id
         text
@@ -23,105 +24,77 @@ const GET_SURVEY = gql`
 `;
 
 const SUBMIT_ANSWER = gql`
-  mutation SubmitAnswer($optionId: ID!, $answers: [AnswerInput!]!) {
-    submitAnswer(surveyId: $surveyId, answers: $answers) {
-      success
-      message
+  mutation SubmitAnswers($answers: [AnswerInput!]!) {
+    submitAnswers(answers: $answers) {
+      id
+      selectedOptionId
     }
   }
 `;
 
-const SurveyPage = () => {
-  const router = useRouter();
+const SurveyAnswerPage = () => {
   const { id } = useParams();
-  const [answers, setAnswers] = useState<Answer[]>([]);
-
-  const { loading, error, data } = useQuery(GET_SURVEY, {
-    variables: { id },
-    skip: !id,
-  });
-
+  const userId = useAuth().currentUser?.id;
+  const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
+  const [selectedOption, setSelectedOption] = useState<{ [key: number]: number }>({});
+  const router = useRouter();
 
-  useEffect(() => {
-    if (data) {
-      const initialAnswers = data.survey.questions.map((question: Question) => ({
-        questionId: question.id,
-        optionId: '',
-      }));
-      setAnswers(initialAnswers);
-    }
-  }, [data]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  const handleOptionChange = (questionId: string, optionId: string) => {
-    setAnswers((prevAnswers) =>
-      prevAnswers.map((answer) =>
-        answer.questionId === questionId
-          ? { ...answer, optionId }
-          : answer
-      )
-    );
+  const handleOptionChange = (questionId: number, optionId: number) => {
+    setSelectedOption((prev) => ({
+      ...prev,
+      [questionId]: optionId,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = getAuthCookie();
-
-    if (!token) {
-      alert('ログインしていません');
-      return;
-    }
+  const handleAnswerSubmit = async () => {
+    const answers = Object.keys(selectedOption).map((questionId) => ({
+      surveyId: id,
+      userId: userId,
+      questionId: parseInt(questionId),
+      selectedOptionId: selectedOption[parseInt(questionId)],
+    }));
+    if (answers.length === 0) return;
 
     try {
-      const response = await submitAnswer({
-        variables: {
-          surveyId: id,
-          answers,
-        },
+      await submitAnswer({
+        variables: { answers }
       });
 
-      if (response.data.submitAnswer.success) {
-        alert('回答が送信されました');
-        router.push(`/survey/${id}/results`);
-      } else {
-        alert('回答送信に失敗しました');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('回答送信にエラーが発生しました');
+      // 回答後に遷移
+      router.push('/');
+    } catch (error) {
+      console.error(error);
     }
   };
-
-  if (loading) return <p>読み込み中...</p>;
-  if (error) return <p>エラーが発生しました: {error.message}</p>;
 
   return (
     <div>
-      <h1>{data.survey.title}</h1>
-      <form onSubmit={handleSubmit}>
-        {data.survey.questions.map((question: Question) => (
-          <div key={question.id}>
-            <p>{question.questionText}</p>
-            {question.options.map((option: Option) => (
-              <div key={option.id}>
-                <label>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value={option.id}
-                    checked={answers.find((answer) => answer.questionId === question.id)?.optionId === option.id}
-                    onChange={() => handleOptionChange(question.id, option.id)}
-                  />
-                  {option.text}
-                </label>
-              </div>
-            ))}
-          </div>
-        ))}
-        <button type="submit">回答を送信</button>
-      </form>
+      <h1>{data?.getSurvey.title}</h1>
+      <p>{data?.getSurvey.description}</p>
+      {data?.getSurvey.questions.map((question: any) => (
+        <div key={question.id}>
+          <p>{question.text}</p>
+          {question.options.map((option: any) => (
+            <div key={option.id}>
+              <input
+                type="radio"
+                name={`question-${question.id}`}
+                value={option.id}
+                onChange={() => handleOptionChange(question.id, option.id)} // 選択肢変更時に状態を更新
+                checked={selectedOption[question.id] === option.id} // 現在選択されているオプションを表示
+              />
+              {option.text}
+            </div>
+          ))}
+        </div>
+      ))}
+      <button onClick={handleAnswerSubmit}>回答を送信</button>
     </div>
   );
 };
 
-export default SurveyPage;
+export default SurveyAnswerPage;

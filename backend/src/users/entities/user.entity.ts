@@ -31,7 +31,7 @@ export class User {
   @Field()
   password: string;
 
-  @Column({ default: 'user' })
+  @Column({ default: 'admin' })
   @Field()
   role: string;
 

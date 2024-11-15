@@ -14,10 +14,10 @@ export class SurveyService {
   constructor(
     @InjectRepository(Survey)
     private surveyRepository: Repository<Survey>,
-    @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
     @InjectRepository(Option)
     private optionRepository: Repository<Option>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>
   ) {}
@@ -35,6 +35,19 @@ export class SurveyService {
     });
   }
 
+  async findPublicSurveys(): Promise<Survey[]> {
+    return this.surveyRepository.find({ where: { isPublic: true } });
+  }
+
+  async toggleVisibility(id: number, isPublic: boolean): Promise<Survey> {
+    await this.surveyRepository.update(id, { isPublic });
+    const survey = await this.surveyRepository.findOneBy({ id });
+    if (!survey) {
+    throw new Error(`Survey with id ${id} not found`);
+  }
+  return survey;
+  }
+
   async createSurvey(createSurveyInput: CreateSurveyInput, user: User): Promise<Survey> {
     const { title, description, questions } = createSurveyInput;
     if (user.role !== 'admin') {
@@ -43,10 +56,8 @@ export class SurveyService {
 
     const survey = new Survey();
     survey.title = title;
-    if (description) {
-      survey.description = description;
-    };
-    survey.questions = [];
+    survey.description = description ?? null;
+    survey.user = user
 
     const manager = this.surveyRepository.manager;
     return await manager.transaction(async (transactionalEntityManager: EntityManager) => {
@@ -56,44 +67,20 @@ export class SurveyService {
         const question = new Question();
         question.text = questionInput.text;
         question.survey = savedSurvey;
-        question.options = [];
 
-        const savedQuestion = await transactionalEntityManager.save(Question, question); // 質問を保存
-        savedSurvey.questions.push(savedQuestion);
+        const savedQuestion = await transactionalEntityManager.save(Question, question);
+        savedSurvey.questions = savedSurvey.questions ? [...savedSurvey.questions, savedQuestion] : [savedQuestion];
 
         for (const optionInput of questionInput.options) {
           const option = new Option();
           option.text = optionInput.text;
           option.question = savedQuestion;
 
-          await transactionalEntityManager.save(Option, option); // オプションを保存
-          savedQuestion.options.push(option);
+          await transactionalEntityManager.save(Option, option);
+          savedQuestion.options = savedQuestion.options ? [...savedQuestion.options, option] : [option];
         }
       }
       return savedSurvey;
     });
   };
-
-  async getResults(surveyId: number): Promise<OptionCount[]> {
-    const options = await this.optionRepository.find({
-      relations: ['question', 'answers'],
-      where: { question: { survey: { id: surveyId } } },
-    });
-
-    return options.map((option) => ({
-      optionText: option.text,
-      count: option.answers.length,
-    }));
-  }
-
-  async getSurveyResults(surveyId: number) {
-    const answers = await this.answerRepository.find({
-      where: { id: surveyId }
-    });
-    const result = answers.reduce((acc, answer) => {
-      acc[answer.option.id] = (acc[answer.option.id] || 0) + 1;
-      return acc;
-    }, {});
-    return result;
-  }
 }

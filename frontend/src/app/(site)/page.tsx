@@ -11,9 +11,9 @@ import { Typography } from '../ui/Typography';
 import { LinkTag } from '../ui/LinkTag';
 import { Tag } from '../ui/Tag';
 
-const GET_SURVEYS = gql`
-  query GetAllSurveys {
-    getAllSurveys {
+const GET_PUBLIC_SURVEYS = gql`
+  query GetPublicSurveys {
+    getPublicSurveys {
       id
       title
       description
@@ -22,7 +22,7 @@ const GET_SURVEYS = gql`
 `;
 
 const HomePage: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_SURVEYS);
+  const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
           </Heading>
         </HeadGroup>
         <CardContainer>
-          {data.getAllSurveys.map((survey: { id: string; title: string; description: string }) => (
+          {data.getPublicSurveys.map((survey: { id: number; title: string; description: string }) => (
             <div key={survey.id}>
               <Link href={`/survey/${survey.id}`}>
                 <Tag>{survey.title}</Tag>

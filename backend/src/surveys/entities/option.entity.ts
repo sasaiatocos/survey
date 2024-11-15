@@ -9,7 +9,6 @@ import {
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from 'src/surveys/entities/question.entity';
-import { Answer } from '../../answers/entities/answer.entity';
 
 @Entity('options')
 @ObjectType()
@@ -34,8 +33,4 @@ export class Option {
   @Field(() => [Question])
   @ManyToOne(() => Question, (question) => question.options)
   question: Question;
-
-  @Field(() => [Answer])
-  @OneToMany(() => Answer, (answer) => answer.option)
-  answers: Answer[];
 }

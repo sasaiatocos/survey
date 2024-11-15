@@ -1,16 +1,18 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AnswerService } from './answer.service';
 import { Answer } from './entities/answer.entity';
+import { AnswerInput } from './answer.input';
 
 @Resolver('Answer')
 export class AnswerResolver {
   constructor(private readonly answerService: AnswerService) {}
 
   @Mutation(() => [Answer])
-  async submitAnswer(
-    @Args('userId') userId: number,
-    @Args('optionIds', { type: () => [Number] }) optionIds: number[]
-  ) {
-    return this.answerService.submitAnswer(userId, optionIds);
+  async submitAnswers(
+    @Args({ name: 'answers', type: () => [AnswerInput] }) answers: AnswerInput[]
+  ): Promise<Answer[]>{
+    return this.answerService.submitAnswer(
+      answers
+    );
   }
 }

@@ -4,6 +4,19 @@
 
 directive @upper on FIELD_DEFINITION
 
+type Option {
+  id: ID!
+  text: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  question: [Question!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type User {
   id: ID!
   name: String!
@@ -16,26 +29,14 @@ type User {
   surveys: [Survey!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Answer {
   id: ID!
-  user: [User!]!
-  option: [Option!]!
+  user: User!
+  survey: Survey!
+  question: Question!
+  selectedOptionId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type Option {
-  id: ID!
-  text: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  question: [Question!]!
-  answers: [Answer!]!
 }
 
 type Question {
@@ -45,6 +46,7 @@ type Question {
   updatedAt: DateTime!
   survey: [Survey!]!
   options: [Option!]!
+  answers: [Answer!]!
 }
 
 type Survey {
@@ -56,11 +58,7 @@ type Survey {
   updatedAt: DateTime!
   questions: [Question!]!
   user: [User!]!
-}
-
-type OptionCount {
-  optionText: String!
-  count: Int!
+  answers: [Answer!]!
 }
 
 type LoginResponse {
@@ -69,14 +67,15 @@ type LoginResponse {
 
 type Query {
   getAllSurveys: [Survey!]!
-  getSurvey(id: Float!): Survey!
-  getSurveyResults(surveyId: Float!): [OptionCount!]!
+  getSurvey(id: ID!): Survey!
+  getPublicSurveys: [Survey!]!
   user: User!
 }
 
 type Mutation {
+  toggleSurveyVisibility(id: ID!, isPublic: Boolean!): Survey!
   createSurvey(title: String!, description: String, questions: [CreateQuestionInput!]!): Survey!
-  submitAnswer(userId: Float!, optionIds: [Float!]!): [Answer!]!
+  submitAnswers(answers: [AnswerInput!]!): [Answer!]!
   registerUser(input: RegisterUserInput!): User!
   login(email: String!, password: String!): LoginResponse!
   logout: Boolean!
@@ -89,6 +88,13 @@ input CreateQuestionInput {
 
 input CreateOptionInput {
   text: String!
+}
+
+input AnswerInput {
+  surveyId: ID!
+  questionId: ID!
+  selectedOptionId: ID!
+  userId: ID!
 }
 
 input RegisterUserInput {
