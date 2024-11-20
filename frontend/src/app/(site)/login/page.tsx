@@ -3,22 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/_components/AuthContext';
-import { gql, useMutation } from '@apollo/client';
-import styles from './style.module.css';
+import { useMutation } from '@apollo/client';
+import { LOGIN_MUTATION } from './graphql';
+import { loginSchema } from './schema';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label';
 import { TextField } from '@/app/ui/TextField';
-
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      accessToken
-    }
-  }
-`;
+import { AlertLabel } from '@/app/ui/AlertLabel';
+import styles from './style.module.css';
 
 type State = {
   email: string;
@@ -29,6 +24,7 @@ const LoginPage: React.FC = () => {
   const { currentUser, isAuthenticated, loading, refetchUser } = useAuth();
   const router = useRouter();
   const [login, { loading: loginLoading, error }] = useMutation(LOGIN_MUTATION);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [state, setState] = useState<State>({
     email: '',
     password: ''
@@ -42,12 +38,14 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const email = form.email.value;
-    const password = form.password.value;
+    const result = loginSchema.safeParse(state);
+    if (!result.success) {
+      setValidationErrors(result.error.errors.map((e) => e.message));
+      return;
+    }
 
     try {
-      await login({ variables: { email, password } });
+      await login({ variables: state });
       await refetchUser();
       router.push('/');
     } catch (error) {
@@ -58,6 +56,7 @@ const LoginPage: React.FC = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setState((prevState) => ({ ...prevState, [name]: value }));
+    setValidationErrors([]);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -70,7 +69,15 @@ const LoginPage: React.FC = () => {
             Login
           </Heading>
         </HeadGroup>
-        {error && <p>Error: {error.message}</p>}
+        {validationErrors.length > 0 && (
+          <ul className={styles.errorList}>
+            {validationErrors.map((error, index) => (
+              <AlertLabel key={index}>
+                {error}
+              </AlertLabel>
+            ))}
+          </ul>
+        )}
         <form className={styles.form} onSubmit={handleLogin}>
           <div className={styles.meta}>
             <div className={styles.row}>
@@ -80,9 +87,9 @@ const LoginPage: React.FC = () => {
                 type='email'
                 name='email'
                 placeholder={'Email'}
-                onChange={(event) => {
-                  setState({ ...state, email: event.target.value });
-                }} />
+                aria-label="Email"
+                value={state.email}
+                onChange={handleInputChange} />
             </div>
             <div className={styles.row}>
               <Label size='xsmall'>Password:</Label>
@@ -91,9 +98,9 @@ const LoginPage: React.FC = () => {
                 type='password'
                 name='password'
                 placeholder={'Password'}
-                onChange={(event) => {
-                  setState({ ...state, password: event.target.value });
-                }} />
+                aria-label="Password"
+                value={state.password}
+                onChange={handleInputChange} />
             </div>
             <Button type='submit' disabled={loginLoading}>
               {loginLoading ? 'Logging in...' : 'Login'}

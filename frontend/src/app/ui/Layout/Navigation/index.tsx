@@ -35,8 +35,8 @@ export function Navigation({
           ))}
         </li>
         <li className={styles.list_item}>
-          {renderLink(currentPathname === '/result', (attr) => (
-          <Link href='/result' className={linkClassName} {...attr}>
+          {renderLink(currentPathname === '/survey/results', (attr) => (
+          <Link href='/survey/results' className={linkClassName} {...attr}>
             <Icon type='result' color={Boolean(attr) ? 'orange' : 'black'} />
             result
           </Link>

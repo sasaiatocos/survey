@@ -10,6 +10,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { Question } from 'src/surveys/entities/question.entity';
+import { Option } from 'src/surveys/entities/option.entity';
 
 @Entity('answers')
 @ObjectType()
@@ -30,9 +31,9 @@ export class Answer {
   @ManyToOne(() => Question, (question) => question.answers, { onDelete: 'CASCADE' })
   question: Question;
 
-  @Field(() => ID)
-  @Column()
-  selectedOptionId: number;
+  @Field(() => Option)
+  @ManyToOne(() => Option, (option) => option.answers, { onDelete: 'CASCADE' })
+  selectedOption: Option;
 
   @Field()
   @CreateDateColumn()

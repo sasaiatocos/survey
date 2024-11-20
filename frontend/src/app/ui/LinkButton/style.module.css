@@ -67,11 +67,11 @@
 }
 
 .orange {
-  background-color: rgba(146, 64, 14);
+  background-color: rgb(232, 147, 93);
 }
 
 .orange:hover {
-  background-color: rgba(180, 83, 9);
+  background-color: rgb(202, 139, 91);
 }
 
 .orange:focus-visible {

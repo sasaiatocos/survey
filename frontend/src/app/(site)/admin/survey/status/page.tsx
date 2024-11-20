@@ -1,31 +1,13 @@
 'use client'
 
 import React from 'react';
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_SURVEYS, TOGGLE_SURVEY_VISIBILITY } from './graphql';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading/index';
 import { Label } from '@/app/ui/Label';
-
-const GET_SURVEYS = gql`
-  query GetAllSurveys {
-    getAllSurveys {
-      id
-      title
-      description
-      isPublic
-    }
-  }
-`;
-
-const TOGGLE_SURVEY_VISIBILITY = gql`
-  mutation ToggleSurveyVisibility($id: ID!, $isPublic: Boolean!) {
-    toggleSurveyVisibility(id: $id, isPublic: $isPublic) {
-      id
-      isPublic
-    }
-  }
-`;
+import { Button } from '@/app/ui/Button';
 
 const SurveyStatusPage = () => {
   const { data, loading, refetch } = useQuery(GET_SURVEYS);
@@ -49,12 +31,12 @@ const SurveyStatusPage = () => {
           </Heading>
         </HeadGroup>
         <ul>
-        {data?.getAllSurveys.map((survey: any) => (
+          {data?.getAllSurveys.map((survey: { id: number; title: string; description: string; isPublic: boolean }) => (
           <li key={survey.id}>
             <Label>{survey.title}</Label>
-            <button onClick={() => handleVisibilityToggle(survey.id, survey.isPublic)}>
+            <Button onClick={() => handleVisibilityToggle(survey.id, survey.isPublic)}>
               {survey.isPublic ? '非公開にする' : '公開にする'}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>

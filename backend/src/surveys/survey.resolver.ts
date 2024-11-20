@@ -2,12 +2,12 @@ import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { SurveyService } from './surveys.service';
 import { Survey } from './entities/survey.entity';
 import { CreateQuestionInput } from './dto/create-survey.input';
-import { OptionCount } from './dto/option-count.output';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { User } from 'src/users/entities/user.entity';
+import { SurveyStats } from './dto/result-surveys';
 
 @Resolver(() => Survey)
 export class SurveyResolver {
@@ -26,6 +26,11 @@ export class SurveyResolver {
   @Query(() => [Survey])
   async getPublicSurveys(): Promise<Survey[]> {
     return this.surveyService.findPublicSurveys();
+  }
+
+  @Query(() => [Survey])
+  async getPrivateSurveys(): Promise<Survey[]> {
+    return this.surveyService.findPrivateSurveys();
   }
 
   @Mutation(() => Survey)
@@ -47,5 +52,10 @@ export class SurveyResolver {
   ): Promise<Survey> {
     const surveyData = { title, description: description ?? null, questions };
     return this.surveyService.createSurvey(surveyData, user);
+  }
+
+  @Query(() => SurveyStats)
+  async getSurveyStats(@Args('surveyId', { type: () => ID }) surveyId: number) {
+    return this.surveyService.getSurveyStats(surveyId);
   }
 }

@@ -18,8 +18,8 @@ export function ClientLayoutNavigation() {
       currentPathname={currentPathname}
     >
       <li className={styles.list_item}>
-        {renderLink(currentPathname === '/result', (attr) => (
-          <Link href='/result' className={linkClassName} {...attr}>
+        {renderLink(currentPathname === '/results', (attr) => (
+          <Link href='/results' className={linkClassName} {...attr}>
             <Icon type='result' color={Boolean(attr) ? 'orange' : 'black'} />
             result
           </Link>

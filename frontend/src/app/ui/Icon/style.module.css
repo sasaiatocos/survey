@@ -89,3 +89,8 @@
   mask-image: url('./assets/admin.svg');
   -webkit-mask-image: url('./assets/admin.svg');
 }
+
+.alert::before {
+  mask-image: url('./assets/alert.svg');
+  -webkit-mask-image: url('./assets/alert.svg');
+}

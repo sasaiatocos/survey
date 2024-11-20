@@ -7,7 +7,7 @@ import { Answer } from '../answers/entities/answer.entity';
 import { Option } from './entities/option.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CreateSurveyInput } from './dto/create-survey.input';
-import { OptionCount } from './dto/option-count.output';
+import { SurveyStats } from './dto/result-surveys';
 
 @Injectable()
 export class SurveyService {
@@ -37,6 +37,10 @@ export class SurveyService {
 
   async findPublicSurveys(): Promise<Survey[]> {
     return this.surveyRepository.find({ where: { isPublic: true } });
+  }
+
+  async findPrivateSurveys(): Promise<Survey[]> {
+    return this.surveyRepository.find({ where: { isPublic: false } });
   }
 
   async toggleVisibility(id: number, isPublic: boolean): Promise<Survey> {
@@ -83,4 +87,31 @@ export class SurveyService {
       return savedSurvey;
     });
   };
+
+  async getSurveyStats(surveyId: number): Promise<SurveyStats> {
+    const totalResponses = await this.answerRepository.count({ where: { survey: { id: surveyId } } });
+
+    const questions = await this.surveyRepository
+      .createQueryBuilder('survey')
+      .leftJoinAndSelect('survey.questions', 'question')
+      .leftJoinAndSelect('question.options', 'option')
+      .leftJoinAndSelect('option.answers', 'answer', 'answer.surveyId = :surveyId', { surveyId })
+      .where('survey.id = :surveyId', { surveyId })
+      .getMany();
+
+    const questionStats = questions[0]?.questions.map((question) => ({
+      id: question.id,
+      text: question.text,
+      options: question.options.map((option) => ({
+        id: option.id,
+        text: option.text,
+        responseCount: option.answers.length,
+      })),
+    }));
+
+    return {
+      totalResponses,
+      questions: questionStats,
+    };
+  }
 }

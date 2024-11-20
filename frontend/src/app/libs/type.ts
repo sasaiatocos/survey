@@ -1,18 +1,19 @@
 export interface Survey {
-  id: string;
+  id: number;
   title: string;
+  description: string;
   questions: Question[];
 }
 
 export interface Question {
-  id: string;
-  questionText: string;
+  id: number;
+  text: string;
   options: Option[];
 }
 
 export interface Option {
-  id: string;
-  option: string;
+  id: number;
+  text: string;
 }
 
 export interface User {
@@ -23,7 +24,7 @@ export interface User {
 }
 
 export interface Answer {
-  id: string;
+  id: number;
   user: User[];
   options: Option[];
 }

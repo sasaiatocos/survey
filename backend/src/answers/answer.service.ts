@@ -66,7 +66,7 @@ export class AnswerService {
       answer.survey = survey;
       answer.question = question;
       answer.user = user;
-      answer.selectedOptionId = selectedOptionId;
+      answer.selectedOption = selectedOption;
 
       const savedAnswer = await this.answerRepository.save(answer);
       savedAnswers.push(savedAnswer);

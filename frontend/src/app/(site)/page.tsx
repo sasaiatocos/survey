@@ -1,31 +1,48 @@
 'use client'
 
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { GET_PUBLIC_SURVEYS } from './graphql';
 import Link from 'next/link';
 import { Section } from '../ui/Section';
 import { HeadGroup } from '../ui/HeadGroup';
 import { Heading } from '../ui/Heading';
 import { CardContainer } from '../ui/CardContainer';
 import { Typography } from '../ui/Typography';
-import { LinkTag } from '../ui/LinkTag';
-import { Tag } from '../ui/Tag';
-
-const GET_PUBLIC_SURVEYS = gql`
-  query GetPublicSurveys {
-    getPublicSurveys {
-      id
-      title
-      description
-    }
-  }
-`;
+import { AlertText } from '../ui/AlertText';
+import { Survey } from '../libs/type';
+import { Label } from '../ui/Label';
 
 const HomePage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              Loading...
+            </Heading>
+          </HeadGroup>
+        </Section></>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              <AlertText>
+                Error: {error.message}
+              </AlertText>
+            </Heading>
+          </HeadGroup>
+        </Section></>
+    );
+  }
 
   return (
     <>
@@ -35,16 +52,17 @@ const HomePage: React.FC = () => {
             回答可能なアンケート
           </Heading>
         </HeadGroup>
-        <CardContainer>
-          {data.getPublicSurveys.map((survey: { id: number; title: string; description: string }) => (
-            <div key={survey.id}>
-              <Link href={`/survey/${survey.id}`}>
-                <Tag>{survey.title}</Tag>
+        {data.getPublicSurveys.length > 0 && (
+          <CardContainer>
+            {data.getPublicSurveys.map((survey: Survey) => (
+              <Link href={`/survey/${survey.id}`} key={survey.id}>
+                <Label>{survey.title}</Label>
                 <Typography>{survey.description}</Typography>
               </Link>
-            </div>
-          ))}
-        </CardContainer>
+            ))}
+          </CardContainer>
+        )
+        }
       </Section>
     </>
   );

@@ -1,41 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { gql, useMutation } from '@apollo/client';
-import { useAuth } from '@/app/_components/AuthContext';
+import { useMutation } from '@apollo/client';
+import { CREATE_SURVEY_MUTATION } from './graphql';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
 import { TextField } from '@/app/ui/TextField';
-import styles from './style.module.css'
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label/index';
-
-const CREATE_SURVEY_MUTATION = gql`
-  mutation CreateSurvey($title: String!, $description: String, $questions: [CreateQuestionInput!]!) {
-  createSurvey(title: $title, description: $description, questions: $questions) {
-    id
-    title
-    description
-    questions {
-      id
-      text
-      options {
-        id
-        text
-      }
-    }
-  }
-}
-`;
+import { surveySchema } from './schema';
+import { AlertLabel } from '@/app/ui/AlertLabel';
+import styles from './style.module.css';
 
 const SurveyCreatePage = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [questions, setQuestions] = useState([{ text: '', options: ['', ''] }]);
-  const [createSurvey, { data, loading, error }] = useMutation(CREATE_SURVEY_MUTATION);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [createSurvey] = useMutation(CREATE_SURVEY_MUTATION);
 
   const handleAddQuestion = () => {
     setQuestions([...questions, { text: '', options: ['', ''] }]);
@@ -74,14 +59,22 @@ const SurveyCreatePage = () => {
   };
 
   const handleSubmit = async () => {
-    const formattedQuestions = questions.map((q) => ({
-      text: q.text,
-      options: q.options.filter((option) => option)
-      .map((optionText) => ({text: optionText})),
-    }));
-    console.log('formattedQuestions:', formattedQuestions); // デバッグ用
+    const surveyData = {
+      title,
+      description,
+      questions: questions.map((q) => ({
+        text: q.text,
+        options: q.options.filter((option) => option),
+      })),
+    };
+
+    const validationResult = surveySchema.safeParse(surveyData);
+    if (!validationResult.success) {
+      setErrors(validationResult.error.errors.map((e) => e.message));
+      return;
+    }
     try {
-      await createSurvey({ variables: { title, description, questions: formattedQuestions } });
+      await createSurvey({ variables: { surveyData } });
       alert('アンケートが作成されました');
       router.push('/');
     } catch (e) {
@@ -97,6 +90,13 @@ const SurveyCreatePage = () => {
             アンケート作成
           </Heading>
         </HeadGroup>
+        {errors.length > 0 && (
+          <ul style={{ color: 'red' }}>
+            {errors.map((error, index) => (
+              <AlertLabel key={index}>{error}</AlertLabel>
+            ))}
+          </ul>
+        )}
         <div className={styles.cardContainer}>
           <div className={styles.meta}>
             <div className={styles.row}>
@@ -159,7 +159,6 @@ const SurveyCreatePage = () => {
               質問を追加
             </Button>
             <Button onClick={handleSubmit}>アンケートを作成</Button>
-            {error && <p style={{ color: 'red' }}>エラー: {error.message}</p>}
           </div>
         </div>
       </Section>

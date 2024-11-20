@@ -5,7 +5,7 @@ import styles from './style.module.css';
 export type Props = {
   type:
   | 'account'
-  | 'alarm'
+  | 'alert'
   | 'attention'
   | 'gear'
   | 'home'

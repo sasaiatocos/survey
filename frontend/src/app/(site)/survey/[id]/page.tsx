@@ -1,36 +1,17 @@
 'use client'
 
 import React, { useState } from 'react';
-import { gql, useQuery, useMutation } from '@apollo/client';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/app/_components/AuthContext';
-
-const GET_SURVEY = gql`
-  query GetSurvey($id: ID!) {
-    getSurvey(id: $id) {
-      id
-      title
-      description
-      questions {
-        id
-        text
-        options {
-          id
-          text
-        }
-      }
-    }
-  }
-`;
-
-const SUBMIT_ANSWER = gql`
-  mutation SubmitAnswers($answers: [AnswerInput!]!) {
-    submitAnswers(answers: $answers) {
-      id
-      selectedOptionId
-    }
-  }
-`;
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_SURVEY, SUBMIT_ANSWER } from './graphql';
+import { Section } from '@/app/ui/Section';
+import { HeadGroup } from '@/app/ui/HeadGroup';
+import { Heading } from '@/app/ui/Heading';
+import { Typography } from '@/app/ui/Typography';
+import { CardContainer } from '@/app/ui/CardContainer';
+import { Button } from '@/app/ui/Button';
+import { Option, Question } from '@/app/libs/type';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -63,8 +44,6 @@ const SurveyAnswerPage = () => {
       await submitAnswer({
         variables: { answers }
       });
-
-      // 回答後に遷移
       router.push('/');
     } catch (error) {
       console.error(error);
@@ -72,28 +51,40 @@ const SurveyAnswerPage = () => {
   };
 
   return (
-    <div>
-      <h1>{data?.getSurvey.title}</h1>
-      <p>{data?.getSurvey.description}</p>
-      {data?.getSurvey.questions.map((question: any) => (
-        <div key={question.id}>
-          <p>{question.text}</p>
-          {question.options.map((option: any) => (
-            <div key={option.id}>
-              <input
-                type="radio"
-                name={`question-${question.id}`}
-                value={option.id}
-                onChange={() => handleOptionChange(question.id, option.id)} // 選択肢変更時に状態を更新
-                checked={selectedOption[question.id] === option.id} // 現在選択されているオプションを表示
-              />
-              {option.text}
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='medium'>
+            {data?.getSurvey.title}
+          </Heading>
+        </HeadGroup>
+        <CardContainer>
+          <Typography>
+            {data?.getSurvey.description}
+          </Typography>
+          {data?.getSurvey.questions.map((question: Question) => (
+            <div key={question.id}>
+              <p>{question.text}</p>
+              {question.options.map((option: Option) => (
+                <div key={option.id}>
+                  <input
+                    type="radio"
+                    name={`question-${question.id}`}
+                    value={option.id}
+                    onChange={() => handleOptionChange(question.id, option.id)}
+                    checked={selectedOption[question.id] === option.id}
+                  />
+                  {option.text}
+                </div>
+              ))}
             </div>
           ))}
-        </div>
-      ))}
-      <button onClick={handleAnswerSubmit}>回答を送信</button>
-    </div>
+        </CardContainer>
+        <Button onClick={handleAnswerSubmit}>
+          回答を送信
+        </Button>
+      </Section>
+    </>
   );
 };
 
