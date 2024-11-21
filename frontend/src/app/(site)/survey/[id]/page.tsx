@@ -18,26 +18,35 @@ const SurveyAnswerPage = () => {
   const userId = useAuth().currentUser?.id;
   const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
-  const [selectedOption, setSelectedOption] = useState<{ [key: number]: number }>({});
+  const [selectedOption, setSelectedOption] = useState<{ [key: number]: number[] }>({});
   const router = useRouter();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   const handleOptionChange = (questionId: number, optionId: number) => {
-    setSelectedOption((prev) => ({
-      ...prev,
-      [questionId]: optionId,
-    }));
+    setSelectedOption((prev) => {
+      const currentOptions = prev[questionId] || [];
+      const isAlreadySelected = currentOptions.includes(optionId);
+      const updatedOptions = isAlreadySelected
+        ? currentOptions.filter((id) => id !== optionId)
+        : [...currentOptions, optionId];
+      return {
+        ...prev,
+        [questionId]: updatedOptions,
+      };
+    });
   };
 
   const handleAnswerSubmit = async () => {
-    const answers = Object.keys(selectedOption).map((questionId) => ({
-      surveyId: id,
-      userId: userId,
-      questionId: parseInt(questionId),
-      selectedOptionId: selectedOption[parseInt(questionId)],
-    }));
+    const answers = Object.entries(selectedOption).flatMap(([questionId, optionIds]) =>
+      optionIds.map((selectedOptionIds) => ({
+        surveyId: id,
+        userId: userId,
+        questionId: parseInt(questionId),
+        selectedOptionIds,
+      }))
+    );
     if (answers.length === 0) return;
 
     try {
@@ -68,11 +77,11 @@ const SurveyAnswerPage = () => {
               {question.options.map((option: Option) => (
                 <div key={option.id}>
                   <input
-                    type="radio"
+                    type='checkbox'
                     name={`question-${question.id}`}
                     value={option.id}
                     onChange={() => handleOptionChange(question.id, option.id)}
-                    checked={selectedOption[question.id] === option.id}
+                    checked={selectedOption[question.id]?.includes(option.id) || false}
                   />
                   {option.text}
                 </div>

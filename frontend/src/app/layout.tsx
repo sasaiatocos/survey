@@ -1,12 +1,12 @@
 'use client'
 
-import { Inter } from 'next/font/google';
-import './ui/globals.css';
-import 'sanitize.css';
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from './libs/graphqlClient';
 import { AuthProvider } from './_components/AuthContext';
+import { Inter } from 'next/font/google';
+import './ui/globals.css';
+import 'sanitize.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

@@ -13,7 +13,7 @@ export class AnswerInput {
 
   @Field(() => ID)
   @IsInt()
-  selectedOptionId: number;
+  selectedOptionIds: number[];
 
   @Field(() => ID)
   @IsInt()

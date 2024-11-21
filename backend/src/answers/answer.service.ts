@@ -28,8 +28,10 @@ export class AnswerService {
   ): Promise<Answer[]> {
     const savedAnswers: Answer[] = [];
 
+    const answeredSurveys = new Set<number>();
+
     for (const answerInput of answers) {
-      const { surveyId, questionId, selectedOptionId, userId } = answerInput;
+      const { surveyId, questionId, selectedOptionIds, userId } = answerInput;
       const survey = await this.surveyRepository.findOne({
         where: { id: surveyId },
         relations: ['questions']
@@ -38,11 +40,14 @@ export class AnswerService {
         throw new Error('Survey not found');
       }
 
-      const existingAnswer = await this.answerRepository.findOne({
-        where: { survey: { id: surveyId }, user: { id: userId } }
-      });
-      if (existingAnswer) {
-        throw new ForbiddenException('You have already answered this survey');
+      if (!answeredSurveys.has(surveyId)) {
+        const existingAnswer = await this.answerRepository.findOne({
+          where: { survey: { id: surveyId }, user: { id: userId } },
+        });
+        if (existingAnswer) {
+          throw new ForbiddenException('You have already answered this survey');
+        }
+        answeredSurveys.add(surveyId);
       }
 
       const question = await this.questionRepository.findOne({ where: { id: questionId, survey: { id: surveyId } } });
@@ -50,26 +55,28 @@ export class AnswerService {
         throw new Error('Question not found');
       }
 
-      const selectedOption = await this.optionRepository.findOne({
-        where: { id: selectedOptionId, question: { id: questionId } },
-      });
-      if (!selectedOption) {
-        throw new NotFoundException('Option not found');
+      for (const selectedOptionId of selectedOptionIds) {
+        const selectedOption = await this.optionRepository.findOne({
+          where: { id: selectedOptionId, question: { id: questionId } },
+        });
+        if (!selectedOption) {
+          throw new NotFoundException('Option not found');
+        }
+
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+
+        const answer = new Answer();
+        answer.survey = survey;
+        answer.question = question;
+        answer.user = user;
+        answer.selectedOption = selectedOption;
+
+        const savedAnswer = await this.answerRepository.save(answer);
+        savedAnswers.push(savedAnswer);
       }
-
-      const user = await this.userRepository.findOne({ where: { id: userId } });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      const answer = new Answer();
-      answer.survey = survey;
-      answer.question = question;
-      answer.user = user;
-      answer.selectedOption = selectedOption;
-
-      const savedAnswer = await this.answerRepository.save(answer);
-      savedAnswers.push(savedAnswer);
     }
     return savedAnswers;
   }

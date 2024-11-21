@@ -113,7 +113,7 @@ input CreateOptionInput {
 input AnswerInput {
   surveyId: ID!
   questionId: ID!
-  selectedOptionId: ID!
+  selectedOptionIds: ID!
   userId: ID!
 }
 
