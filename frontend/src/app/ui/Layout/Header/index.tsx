@@ -6,15 +6,26 @@ import { useAuth } from '@/app/_components/AuthContext';
 import { Button } from '@/app/ui/Button';
 import { LinkButton } from '@/app/ui/LinkButton';
 import styles from './style.module.css'
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
+type Props = {
+  showDrawerMenu?: boolean;
+};
 
-export const Header: React.FC = () => {
+export function Header({
+  showDrawerMenu = true,
+}: Props) {
   const { isAuthenticated, loading, logout } = useAuth();
   const router = useRouter();
+  const currentPathname = usePathname();
   if (loading) {
     return (
       <header className={styles.header}>
+        {showDrawerMenu && (currentPathname as string) !== '/login' && (
+        <span className={styles.drawerMenu}>
+          <input type='checkbox' id='drawerMenu' aria-label='メニュー' />
+        </span>
+      )}
         <div className={styles.link}>
           <Link href='/'>
             <p className={styles.siteName}>Survey</p>
@@ -32,6 +43,11 @@ export const Header: React.FC = () => {
 
   return (
     <header className={styles.header}>
+      {showDrawerMenu && (currentPathname as string) !== '/login' && (
+        <span className={styles.drawerMenu}>
+          <input type='checkbox' id='drawerMenu' aria-label='メニュー' />
+        </span>
+      )}
       <div className={styles.link}>
         <Link href='/'>
           <p className={styles.siteName}>Survey</p>

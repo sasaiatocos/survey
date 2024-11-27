@@ -20,6 +20,7 @@ export function renderLink(
 }
 
 export function Navigation({
+  children,
   linkClassName,
   currentPathname,
 }: Props) {
@@ -50,6 +51,7 @@ export function Navigation({
           </Link>
         ))}
         </li>
+        {children}
       </ul>
     </nav>
   );

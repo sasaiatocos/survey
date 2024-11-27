@@ -20,6 +20,7 @@ import { Heading } from '@/app/ui/Heading';
 import { CardContainer } from '@/app/ui/CardContainer';
 import { Label } from '@/app/ui/Label/index';
 import { Typography } from '@/app/ui/Typography';
+import { Option, Question } from '@/app/libs/type';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -45,9 +46,9 @@ const SurveyResultPage = () => {
             総回答数: {surveyStats.totalResponses}
           </Label>
           <Typography>
-            {surveyStats.questions.map((question: any) => {
-              const labels = question.options.map((option: any) => option.text);
-              const responseCounts = question.options.map((option: any) => option.responseCount);
+            {surveyStats.questions.map((question: Question) => {
+              const labels = question.options.map((option: Option) => option.text);
+              const responseCounts = question.options.map((option: Option) => option.responseCount);
               const totalResponsesForQuestion = responseCounts.reduce((sum: number, count: number) => sum + count, 0);
               const percentages = responseCounts.map((count: number) =>
                 totalResponsesForQuestion > 0 ? ((count / totalResponsesForQuestion) * 100).toFixed(2) : "0.00"

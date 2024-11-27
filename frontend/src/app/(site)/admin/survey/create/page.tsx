@@ -91,11 +91,11 @@ const SurveyCreatePage = () => {
           </Heading>
         </HeadGroup>
         {errors.length > 0 && (
-          <ul style={{ color: 'red' }}>
+          <div>
             {errors.map((error, index) => (
               <AlertLabel key={index}>{error}</AlertLabel>
             ))}
-          </ul>
+          </div>
         )}
         <div className={styles.cardContainer}>
           <div className={styles.meta}>
@@ -133,6 +133,7 @@ const SurveyCreatePage = () => {
                   {question.options.map((option, oIndex) => (
                     <div key={oIndex} className={styles.optionContainer}>
                       <TextField
+                        className={styles.option_text}
                         key={oIndex}
                         type='text'
                         value={option}
