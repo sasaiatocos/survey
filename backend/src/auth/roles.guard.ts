@@ -11,7 +11,7 @@ export class RolesGuard implements CanActivate {
     console.log('Roles required for this route:', roles);
 
     if (!roles) {
-      return true; // ロールが設定されていなければ全ユーザーにアクセス許可
+      return true;
     }
 
     const ctx = GqlExecutionContext.create(context);
@@ -22,6 +22,6 @@ export class RolesGuard implements CanActivate {
       throw new Error('User not found in context. Authentication might have failed.');
     }
 
-    return roles.includes(user.role); // ユーザーのロールが含まれていればアクセス許可
+    return roles.includes(user.role);
   }
 }

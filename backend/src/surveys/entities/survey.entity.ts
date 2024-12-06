@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
@@ -36,7 +37,7 @@ export class Survey {
   @Field()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   @Field()
   updatedAt: Date;
 

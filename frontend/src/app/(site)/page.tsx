@@ -12,6 +12,7 @@ import { Typography } from '../ui/Typography';
 import { AlertText } from '../ui/AlertText';
 import { Survey } from '../libs/type';
 import { Label } from '../ui/Label';
+import { Tag } from '../ui/Tag';
 
 const HomePage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
@@ -25,7 +26,8 @@ const HomePage: React.FC = () => {
               Loading...
             </Heading>
           </HeadGroup>
-        </Section></>
+        </Section>
+      </>
     );
   }
 
@@ -56,7 +58,7 @@ const HomePage: React.FC = () => {
           <CardContainer>
             {data.getPublicSurveys.map((survey: Survey) => (
               <Link href={`/survey/${survey.id}`} key={survey.id}>
-                <Label>{survey.title}</Label>
+                <Tag color='gray'>{survey.title}</Tag>
                 <Typography>{survey.description}</Typography>
               </Link>
             ))}

@@ -13,6 +13,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
@@ -21,6 +22,7 @@ import { CardContainer } from '@/app/ui/CardContainer';
 import { Label } from '@/app/ui/Label/index';
 import { Typography } from '@/app/ui/Typography';
 import { Option, Question } from '@/app/libs/type';
+import { Tag } from '@/app/ui/Tag';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -28,7 +30,17 @@ const SurveyResultPage = () => {
   const { id } = useParams();
   const { data, loading, error } = useQuery(GET_SURVEY_STATS, { variables: { surveyId: id } });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              Loading...
+            </Heading>
+          </HeadGroup>
+        </Section>
+      </>
+  );
   if (error) return <p>Error: {error.message}</p>;
 
   const surveyStats = data.getSurveyStats;
@@ -42,9 +54,9 @@ const SurveyResultPage = () => {
           </Heading>
         </HeadGroup>
         <CardContainer>
-          <Label>
+          <Tag>
             総回答数: {surveyStats.totalResponses}
-          </Label>
+          </Tag>
           <Typography>
             {surveyStats.questions.map((question: Question) => {
               const labels = question.options.map((option: Option) => option.text);
@@ -76,8 +88,11 @@ const SurveyResultPage = () => {
                   },
                   tooltip: {
                     callbacks: {
-                      label: (context: any) =>
-                        `${context.raw} 回答 (${percentages[context.dataIndex]}%)`,
+                      label: (context: TooltipItem<'bar'>) => {
+                        const value = context.raw as number;
+                        const percentage = percentages[context.dataIndex];
+                        return `${value} 回答 (${percentage}%)`;
+                      }
                     },
                   },
                 },
@@ -88,6 +103,9 @@ const SurveyResultPage = () => {
                       display: true,
                       text: '回答数',
                     },
+                    ticks: {
+                      stepSize: 1,
+                    }
                   },
                 },
               };

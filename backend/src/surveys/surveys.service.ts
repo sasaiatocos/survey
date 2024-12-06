@@ -14,10 +14,6 @@ export class SurveyService {
   constructor(
     @InjectRepository(Survey)
     private surveyRepository: Repository<Survey>,
-    @InjectRepository(Option)
-    private optionRepository: Repository<Option>,
-    @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>
   ) {}
@@ -93,21 +89,33 @@ export class SurveyService {
 
     const questions = await this.surveyRepository
       .createQueryBuilder('survey')
-      .leftJoinAndSelect('survey.questions', 'question')
-      .leftJoinAndSelect('question.options', 'option')
-      .leftJoinAndSelect('option.answers', 'answer', 'answer.surveyId = :surveyId', { surveyId })
+      .leftJoin('survey.questions', 'question')
+      .leftJoin('question.options', 'option')
+      .leftJoin('option.answers', 'answer')
+      .select([
+        'question.id AS questionId',
+        'question.text AS questionText',
+        'option.id AS optionId',
+        'option.text AS optionText',
+        'COUNT(answer.id) AS responseCount',
+      ])
       .where('survey.id = :surveyId', { surveyId })
-      .getMany();
+      .groupBy('question.id, option.id')
+      .getRawMany();
 
-    const questionStats = questions[0]?.questions.map((question) => ({
-      id: question.id,
-      text: question.text,
-      options: question.options.map((option) => ({
-        id: option.id,
-        text: option.text,
-        responseCount: option.answers.length,
-      })),
-    }));
+    const questionStats = questions.reduce((acc, curr) => {
+      let question = acc.find((q) => q.id === curr.questionId);
+      if (!question) {
+        question = { id: curr.questionId, text: curr.questionText, options: [] };
+        acc.push(question);
+      }
+      question.options.push({
+        id: curr.optionId,
+        text: curr.optionText,
+        responseCount: parseInt(curr.responseCount, 10),
+      });
+      return acc;
+    }, []);
 
     return {
       totalResponses,

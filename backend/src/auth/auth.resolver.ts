@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { User } from 'src/users/entities/user.entity';
 import { LoginResponse } from 'src/users/dto/login-response.output';
@@ -16,7 +16,6 @@ export interface JwtPayload {
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
   ) {}
 
   @Mutation(() => User)

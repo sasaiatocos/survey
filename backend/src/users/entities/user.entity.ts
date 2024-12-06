@@ -4,6 +4,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { MaxLength, IsEmail } from 'class-validator';
@@ -40,7 +41,7 @@ export class User {
   createdAt: Date;
 
   @Field()
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Field(() => [Answer])

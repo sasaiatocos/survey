@@ -37,7 +37,7 @@ export class AnswerService {
         relations: ['questions']
       });
       if (!survey) {
-        throw new Error('Survey not found');
+        throw new Error('アンケートが見つかりませんでした');
       }
 
       if (!answeredSurveys.has(surveyId)) {
@@ -45,14 +45,14 @@ export class AnswerService {
           where: { survey: { id: surveyId }, user: { id: userId } },
         });
         if (existingAnswer) {
-          throw new ForbiddenException('You have already answered this survey');
+          throw new ForbiddenException('このアンケートはすでに回答済みです');
         }
         answeredSurveys.add(surveyId);
       }
 
       const question = await this.questionRepository.findOne({ where: { id: questionId, survey: { id: surveyId } } });
       if (!question) {
-        throw new Error('Question not found');
+        throw new Error('質問が見つかりませんでした');
       }
 
       for (const selectedOptionId of selectedOptionIds) {
@@ -60,12 +60,12 @@ export class AnswerService {
           where: { id: selectedOptionId, question: { id: questionId } },
         });
         if (!selectedOption) {
-          throw new NotFoundException('Option not found');
+          throw new NotFoundException('選択肢が見つかりませんでした');
         }
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
         if (!user) {
-          throw new NotFoundException('User not found');
+          throw new NotFoundException('このユーザーは存在しません');
         }
 
         const answer = new Answer();

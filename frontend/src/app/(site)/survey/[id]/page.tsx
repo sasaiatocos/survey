@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/app/_components/AuthContext';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, ApolloError } from '@apollo/client';
 import { GET_SURVEY, SUBMIT_ANSWER } from './graphql';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
@@ -12,6 +12,7 @@ import { Typography } from '@/app/ui/Typography';
 import { CardContainer } from '@/app/ui/CardContainer';
 import { Button } from '@/app/ui/Button';
 import { Option, Question } from '@/app/libs/type';
+import { AlertLabel } from '@/app/ui/AlertLabel';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const SurveyAnswerPage = () => {
   const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
   const [selectedOption, setSelectedOption] = useState<{ [key: number]: number[] }>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   if (loading) return <p>Loading...</p>;
@@ -47,15 +49,22 @@ const SurveyAnswerPage = () => {
         selectedOptionIds,
       }))
     );
-    if (answers.length === 0) return;
+    if (answers.length === 0) {
+      setErrorMessage('少なくとも1つの選択肢を選んでください');
+      return;
+    };
 
     try {
       await submitAnswer({
         variables: { answers }
       });
       router.push('/');
-    } catch (error) {
-      console.error(error);
+    } catch (submitError) {
+      if (submitError instanceof ApolloError) {
+        setErrorMessage(`エラーが発生しました：${submitError.message}`);
+      } else {
+        setErrorMessage('予期しないエラーが発生しました');
+      }
     }
   };
 
@@ -67,10 +76,7 @@ const SurveyAnswerPage = () => {
             {data?.getSurvey.title}
           </Heading>
         </HeadGroup>
-        <CardContainer>
-          <Typography>
-            {data?.getSurvey.description}
-          </Typography>
+        <Typography>
           {data?.getSurvey.questions.map((question: Question) => (
             <div key={question.id}>
               <p>{question.text}</p>
@@ -88,7 +94,10 @@ const SurveyAnswerPage = () => {
               ))}
             </div>
           ))}
-        </CardContainer>
+        </Typography>
+        {errorMessage && (
+          <AlertLabel>{errorMessage}</AlertLabel>
+        )}
         <Button onClick={handleAnswerSubmit}>
           回答を送信
         </Button>

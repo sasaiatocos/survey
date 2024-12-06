@@ -14,6 +14,7 @@ export interface Question {
 export interface Option {
   id: number;
   text: string;
+  responseCount: number;
 }
 
 export interface User {
