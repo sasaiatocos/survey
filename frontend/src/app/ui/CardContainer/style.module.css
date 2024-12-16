@@ -3,8 +3,25 @@
   gap: 16px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
-  background-color: aliceblue;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.cardContainer > a { /* Link コンポーネントに適用 */
+  display: block; /* ブロック要素に */
+  width: 100%; /* 親要素の幅に合わせる */
+  background: white; /* 背景色を設定 */
+  padding: 16px; /* 内側の余白 */
+  border-radius: 10px; /* 角丸を追加 */
+  background-color: rgb(186, 221, 251);
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1); /* 軽い影を付ける */
+  text-decoration: none; /* 下線を削除 */
+  color: inherit; /* テキストの色を継承 */
+  transition: background-color 0.3s ease;
+}
+
+.cardContainer > a:hover {
+  background-color: #f0f0f0; /* ホバー時に背景色を変更 */
 }
 
 @media screen and (min-width:480px) {
@@ -13,14 +30,8 @@
   }
 }
 
-@media screen and (min-width:640px) and (max-width:1100px) {
+@media screen and (min-width:780px) {
   .cardContainer {
     grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media screen and (min-width:1100px) {
-  .cardContainer {
-    grid-template-columns: 1fr 1fr 1fr;
   }
 }

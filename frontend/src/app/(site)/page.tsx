@@ -11,8 +11,8 @@ import { CardContainer } from '../ui/CardContainer';
 import { Typography } from '../ui/Typography';
 import { AlertText } from '../ui/AlertText';
 import { Survey } from '../libs/type';
-import { Label } from '../ui/Label';
 import { Tag } from '../ui/Tag';
+import styles from './style.module.css';
 
 const HomePage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
@@ -42,7 +42,8 @@ const HomePage: React.FC = () => {
               </AlertText>
             </Heading>
           </HeadGroup>
-        </Section></>
+        </Section>
+      </>
     );
   }
 
@@ -57,11 +58,14 @@ const HomePage: React.FC = () => {
         {data.getPublicSurveys.length > 0 && (
           <CardContainer>
             {data.getPublicSurveys.map((survey: Survey) => (
-              <Link href={`/survey/${survey.id}`} key={survey.id}>
-                <Tag color='gray'>{survey.title}</Tag>
-                <Typography>{survey.description}</Typography>
-              </Link>
-            ))}
+                <Link href={`/survey/${survey.id}`} key={survey.id}>
+                  <div>
+                    <Tag color='gray'>{survey.title}</Tag>
+                    <Typography>{survey.description}</Typography>
+                  </div>
+                </Link>
+              ))
+            }
           </CardContainer>
         )
         }

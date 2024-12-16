@@ -20,7 +20,8 @@ const AdminTop: React.FC = () => {
               Loading...
             </Heading>
           </HeadGroup>
-        </Section></>
+        </Section>
+      </>
     );
   }
 
@@ -33,7 +34,8 @@ const AdminTop: React.FC = () => {
               アクセス権限がありません
             </Heading>
           </HeadGroup>
-        </Section></>
+        </Section>
+      </>
     );
   };
 

@@ -9,10 +9,10 @@ import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
 import { Typography } from '@/app/ui/Typography';
-import { CardContainer } from '@/app/ui/CardContainer';
 import { Button } from '@/app/ui/Button';
 import { Option, Question } from '@/app/libs/type';
 import { AlertLabel } from '@/app/ui/AlertLabel';
+import styles from './style.module.css';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -22,6 +22,12 @@ const SurveyAnswerPage = () => {
   const [selectedOption, setSelectedOption] = useState<{ [key: number]: number[] }>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const { currentUser } = useAuth();
+
+  if (!currentUser) {
+    router.push('/login');
+    return null;
+  }
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -78,18 +84,22 @@ const SurveyAnswerPage = () => {
         </HeadGroup>
         <Typography>
           {data?.getSurvey.questions.map((question: Question) => (
-            <div key={question.id}>
+            <div key={question.id} className={styles.questionContainer}>
               <p>{question.text}</p>
               {question.options.map((option: Option) => (
-                <div key={option.id}>
-                  <input
-                    type='checkbox'
-                    name={`question-${question.id}`}
-                    value={option.id}
-                    onChange={() => handleOptionChange(question.id, option.id)}
-                    checked={selectedOption[question.id]?.includes(option.id) || false}
-                  />
-                  {option.text}
+                <div key={option.id} className={styles.optionContainer}>
+                  <label htmlFor={`question-${question.id}-option-${option.id}`} className={styles.customCheckbox}>
+                    <input
+                      type='checkbox'
+                      name={`question-${question.id}`}
+                      value={option.id}
+                      id={`question-${question.id}-option-${option.id}`}
+                      onChange={() => handleOptionChange(question.id, option.id)}
+                      checked={selectedOption[question.id]?.includes(option.id) || false}
+                    />
+                    <span className={styles.checkbox}></span>
+                    {option.text}
+                  </label>
                 </div>
               ))}
             </div>
@@ -98,7 +108,7 @@ const SurveyAnswerPage = () => {
         {errorMessage && (
           <AlertLabel>{errorMessage}</AlertLabel>
         )}
-        <Button onClick={handleAnswerSubmit}>
+        <Button onClick={handleAnswerSubmit} className={styles.submitButton}>
           回答を送信
         </Button>
       </Section>

@@ -1,0 +1,16 @@
+.surveyLink {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.3s;
+}
+
+.surveyLink:hover {
+  background-color: #f5f5f5;
+}
+

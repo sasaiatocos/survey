@@ -1,0 +1,80 @@
+.questionContainer {
+  display: grid;
+  gap: 16px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.questionContainer > p {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.optionContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.optionContainer label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.optionContainer input {
+  margin: 0;
+  transform: scale(1.2);
+}
+
+.customCheckbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.customCheckbox input[type='checkbox'] {
+  display: none;
+}
+
+.customCheckbox .checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #4899f0;
+  border-radius: 4px;
+  background-color: white;
+  position: relative;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.customCheckbox input[type="checkbox"]:checked + .checkbox {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.customCheckbox input[type="checkbox"]:checked + .checkbox::after {
+  content: '';
+  position: absolute;
+  top: 1.3px;
+  left: 5px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.customCheckbox:hover .checkbox {
+  border-color: #0056b3;
+}
+
+.submitButton {
+  margin-top: 20px;
+}
