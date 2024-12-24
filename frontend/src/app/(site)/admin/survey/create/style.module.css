@@ -1,10 +1,10 @@
 .cardContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  color: black;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
 }
 
 .meta {
@@ -13,28 +13,83 @@
   gap: 16px;
 }
 
-.row label {
-  margin-bottom: 4px;
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.title, .description {
-  width: 380px;
+.optionContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.select {
-  width: 240px;
+.option_text {
+  flex: 1;
 }
 
-@media screen and (max-width: 768px) {
+.question_text, .title, .description {
+  width: 100%;
+}
+
+.button {
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
   .meta {
-    gap: 8px;
+    gap: 24px;
   }
+}
 
-  .title, .description {
-    width: 100%;
-  }
+.questionContainer {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
 
-  .select {
-    width: 240px;
-  }
+.removeQuestion {
+  margin-top: 8px;
+  background: #f44336;
+  color: #fff;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.removeOptionButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.removeOptionButton:hover {
+  color: #d32f2f;
+}
+
+.addOptionButton {
+  background: #e0f7fa;
+  border: none;
+  color: #00796b;
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.addOptionButton:hover {
+  background: #b2ebf2;
 }

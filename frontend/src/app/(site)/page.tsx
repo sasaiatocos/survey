@@ -12,7 +12,6 @@ import { Typography } from '../ui/Typography';
 import { AlertText } from '../ui/AlertText';
 import { Survey } from '../libs/type';
 import { Tag } from '../ui/Tag';
-import styles from './style.module.css';
 
 const HomePage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);

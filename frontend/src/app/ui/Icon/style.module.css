@@ -94,3 +94,13 @@
   mask-image: url('./assets/alert.svg');
   -webkit-mask-image: url('./assets/alert.svg');
 }
+
+.close::before {
+  mask-image: url('./assets/close.svg');
+  -webkit-mask-image: url('./assets/close.svg');
+}
+
+.plus::before {
+  mask-image: url('./assets/plus.svg');
+  -webkit-mask-image: url('./assets/plus.svg');
+}

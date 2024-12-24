@@ -17,6 +17,8 @@ export type Props = {
   | 'trash'
   | 'write'
   | 'admin'
+  | 'close'
+  | 'plus'
   | 'result';
   size?: 'xsmall' | 'small' | 'medium' | 'large';
   color?: 'black' | 'gray' | 'orange' | 'white';

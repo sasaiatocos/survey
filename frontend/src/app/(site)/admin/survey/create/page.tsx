@@ -10,6 +10,7 @@ import { Heading } from '@/app/ui/Heading';
 import { TextField } from '@/app/ui/TextField';
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label/index';
+import { Icon } from '@/app/ui/Icon';
 import { surveySchema } from './schema';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
@@ -86,7 +87,7 @@ const SurveyCreatePage = () => {
     <>
       <Section>
         <HeadGroup>
-          <Heading level={1} size='medium'>
+          <Heading level={1} size="medium">
             アンケート作成
           </Heading>
         </HeadGroup>
@@ -100,54 +101,69 @@ const SurveyCreatePage = () => {
         <div className={styles.cardContainer}>
           <div className={styles.meta}>
             <div className={styles.row}>
-              <Label size='xsmall'>アンケートタイトル</Label>
+              <Label size="xsmall">アンケートタイトル</Label>
               <TextField
                 className={styles.title}
-                type='text'
+                type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder='タイトル'
+                placeholder="タイトル"
               />
             </div>
             <div className={styles.row}>
-              <Label size='xsmall'>アンケート説明 (任意)</Label>
+              <Label size="xsmall">アンケート説明 (任意)</Label>
               <TextField
                 className={styles.description}
-                type='text'
+                type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder='説明'
+                placeholder="説明"
               />
             </div>
             <div className={styles.row}>
               {questions.map((question, qIndex) => (
                 <div key={qIndex}>
-                  <Label size='xsmall'>質問文</Label>
+                  <Label size="xsmall">質問文</Label>
                   <TextField
                     className={styles.question_text}
-                    type='text'
+                    type="text"
                     value={question.text}
-                    onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                    onChange={(e) =>
+                      handleQuestionChange(qIndex, e.target.value)
+                    }
                     placeholder={`質問 ${qIndex + 1}`}
                   />
                   {question.options.map((option, oIndex) => (
                     <div key={oIndex} className={styles.optionContainer}>
-                      <TextField
-                        className={styles.option_text}
-                        key={oIndex}
-                        type='text'
-                        value={option}
-                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-                        placeholder={`選択肢 ${oIndex + 1}`}
-                      />
+                      <div className={styles.options}>
+                        <Label size="xsmall">選択肢</Label>
+                        <TextField
+                          className={styles.option_text}
+                          key={oIndex}
+                          type="text"
+                          value={option}
+                          onChange={(e) =>
+                            handleOptionChange(qIndex, oIndex, e.target.value)
+                          }
+                          placeholder={`選択肢 ${oIndex + 1}`}
+                        />
+                      </div>
                       {question.options.length > 1 && (
-                        <Button onClick={() => handleRemoveOption(qIndex, oIndex)}>
-                          選択肢を削除
+                        <Button
+                          className={styles.removeOptionButton}
+                          onClick={() => handleRemoveOption(qIndex, oIndex)}
+                        >
+                          <Icon type="close" />
                         </Button>
                       )}
                     </div>
                   ))}
-                  <Button onClick={() => handleAddOption(qIndex)}>選択肢を追加</Button>
+                  <Button
+                    className={styles.addOptionButton}
+                    onClick={() => handleAddOption(qIndex)}
+                  >
+                    <Icon type="plus" />
+                  </Button>
                   {questions.length > 1 && (
                     <Button onClick={() => handleRemoveQuestion(qIndex)}>
                       質問を削除
@@ -156,9 +172,7 @@ const SurveyCreatePage = () => {
                 </div>
               ))}
             </div>
-            <Button onClick={handleAddQuestion}>
-              質問を追加
-            </Button>
+            <Button onClick={handleAddQuestion}>質問を追加</Button>
             <Button onClick={handleSubmit}>アンケートを作成</Button>
           </div>
         </div>
