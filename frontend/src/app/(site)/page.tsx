@@ -12,6 +12,7 @@ import { Typography } from '../ui/Typography';
 import { AlertText } from '../ui/AlertText';
 import { Survey } from '../libs/type';
 import { Tag } from '../ui/Tag';
+import styles from './style.module.css';
 
 const HomePage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
@@ -54,17 +55,19 @@ const HomePage: React.FC = () => {
             回答可能なアンケート
           </Heading>
         </HeadGroup>
-        {data.getPublicSurveys.length > 0 && (
+        {data.getPublicSurveys.length > 0 ? (
           <CardContainer>
             {data.getPublicSurveys.map((survey: Survey) => (
-                <Link href={`/survey/${survey.id}`} key={survey.id}>
-                  <div>
-                    <Tag color='gray'>{survey.title}</Tag>
-                    <Typography>{survey.description}</Typography>
-                  </div>
-                </Link>
-              ))
+              <Link href={`/survey/${survey.id}`} key={survey.id}>
+                <Tag className={styles.title} color='gray'>{survey.title}</Tag>
+                <Typography className={styles.description}>{survey.description}</Typography>
+              </Link>
+            ))
             }
+          </CardContainer>
+        ) : (
+          <CardContainer>
+            <Typography>回答可能なアンケートはありません</Typography>
           </CardContainer>
         )
         }

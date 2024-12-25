@@ -18,11 +18,10 @@ import {
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
-import { CardContainer } from '@/app/ui/CardContainer';
-import { Label } from '@/app/ui/Label/index';
 import { Typography } from '@/app/ui/Typography';
 import { Option, Question } from '@/app/libs/type';
 import { Tag } from '@/app/ui/Tag';
+import { AlertText } from '@/app/ui/AlertText';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -41,7 +40,22 @@ const SurveyResultPage = () => {
         </Section>
       </>
   );
-  if (error) return <p>Error: {error.message}</p>;
+
+  if (error) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              <AlertText>
+                Error: {error.message}
+              </AlertText>
+            </Heading>
+          </HeadGroup>
+        </Section>
+      </>
+    );
+  }
 
   const surveyStats = data.getSurveyStats;
 
@@ -53,7 +67,7 @@ const SurveyResultPage = () => {
             アンケート集計結果
           </Heading>
         </HeadGroup>
-        <CardContainer>
+        <div>
           <Tag>
             総回答数: {surveyStats.totalResponses}
           </Tag>
@@ -63,7 +77,7 @@ const SurveyResultPage = () => {
               const responseCounts = question.options.map((option: Option) => option.responseCount);
               const totalResponsesForQuestion = responseCounts.reduce((sum: number, count: number) => sum + count, 0);
               const percentages = responseCounts.map((count: number) =>
-                totalResponsesForQuestion > 0 ? ((count / totalResponsesForQuestion) * 100).toFixed(2) : "0.00"
+                totalResponsesForQuestion > 0 ? ((count / totalResponsesForQuestion) * 100).toFixed(2) : '0.00'
               );
 
               const data = {
@@ -111,14 +125,14 @@ const SurveyResultPage = () => {
               };
 
               return (
-                <div key={question.id} style={{ marginBottom: '40px' }}>
+                <div key={question.id}>
                   <h2>{question.text}</h2>
                   <Bar data={data} options={options} />
                 </div>
               );
             })}
           </Typography>
-        </CardContainer>
+        </div>
       </Section>
     </>
   );

@@ -4,24 +4,25 @@
   overflow: hidden;
   position: relative;
   border-radius: 15px;
-  padding: 10px;
+  padding: 0 10px 10px 10px;
 }
 
-.cardContainer > a { /* Link コンポーネントに適用 */
-  display: block; /* ブロック要素に */
-  width: 100%; /* 親要素の幅に合わせる */
-  background: white; /* 背景色を設定 */
-  padding: 16px; /* 内側の余白 */
-  border-radius: 10px; /* 角丸を追加 */
-  background-color: rgb(186, 221, 251);
-  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1); /* 軽い影を付ける */
-  text-decoration: none; /* 下線を削除 */
-  color: inherit; /* テキストの色を継承 */
+.cardContainer > a {
+  display: block;
+  width: 100%;
+  background: rgb(255, 255, 255);
+  padding: 16px;
+  border-radius: 10px;
+  background-color: rgb(158, 205, 246);
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
   transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .cardContainer > a:hover {
-  background-color: #f0f0f0; /* ホバー時に背景色を変更 */
+  background-color: rgb(89, 182, 182);
 }
 
 @media screen and (min-width:480px) {

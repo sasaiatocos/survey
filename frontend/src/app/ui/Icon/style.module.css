@@ -65,26 +65,6 @@
   background-color: rgb(255, 255, 255);
 }
 
-.home::before {
-  mask-image: url('./assets/home.svg');
-  -webkit-mask-image: url('./assets/home.svg');
-}
-
-.result::before {
-  mask-image: url('./assets/result.svg');
-  -webkit-mask-image: url('./assets/result.svg');
-}
-
-.write::before {
-  mask-image: url('./assets/write.svg');
-  -webkit-mask-image: url('./assets/write.svg');
-}
-
-.answer::before {
-  mask-image: url('./assets/answer.svg');
-  -webkit-mask-image: url('./assets/answer.svg');
-}
-
 .admin::before {
   mask-image: url('./assets/admin.svg');
   -webkit-mask-image: url('./assets/admin.svg');
@@ -100,7 +80,22 @@
   -webkit-mask-image: url('./assets/close.svg');
 }
 
+.home::before {
+  mask-image: url('./assets/home.svg');
+  -webkit-mask-image: url('./assets/home.svg');
+}
+
 .plus::before {
   mask-image: url('./assets/plus.svg');
   -webkit-mask-image: url('./assets/plus.svg');
+}
+
+.result::before {
+  mask-image: url('./assets/result.svg');
+  -webkit-mask-image: url('./assets/result.svg');
+}
+
+.write::before {
+  mask-image: url('./assets/write.svg');
+  -webkit-mask-image: url('./assets/write.svg');
 }

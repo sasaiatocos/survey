@@ -96,7 +96,7 @@ type Mutation {
   toggleSurveyVisibility(id: ID!, isPublic: Boolean!): Survey!
   createSurvey(title: String!, description: String, questions: [CreateQuestionInput!]!): Survey!
   submitAnswers(answers: [AnswerInput!]!): [Answer!]!
-  registerUser(input: RegisterUserInput!): User!
+  registerUser(name: String!, email: String!, password: String!): User!
   login(email: String!, password: String!): LoginResponse!
   logout: Boolean!
 }
@@ -115,10 +115,4 @@ input AnswerInput {
   questionId: ID!
   selectedOptionIds: ID!
   userId: ID!
-}
-
-input RegisterUserInput {
-  name: String!
-  email: String!
-  password: String!
 }

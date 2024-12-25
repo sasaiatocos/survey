@@ -1,7 +1,7 @@
-import { Heading } from "../Heading";
-import { LinkButton } from "../LinkButton";
-import { Typography } from "../Typography";
-import styles from "./style.module.css";
+import { Heading } from '../Heading';
+import { LinkButton } from '../LinkButton';
+import { Typography } from '../Typography';
+import styles from './style.module.css';
 
 export function NotFound() {
   return (
@@ -11,7 +11,7 @@ export function NotFound() {
         <Typography>お探しのページは見つかりませんでした</Typography>
       </div>
       <p>
-        <LinkButton href="/" color="gray">
+        <LinkButton href='/' color='gray'>
           TOP へ戻る
         </LinkButton>
       </p>

@@ -13,6 +13,7 @@ import { Button } from '@/app/ui/Button';
 import { Option, Question } from '@/app/libs/type';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
+import { Label } from '@/app/ui/Label';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -51,8 +52,8 @@ const SurveyAnswerPage = () => {
       optionIds.map((selectedOptionIds) => ({
         surveyId: id,
         userId: userId,
-        questionId: parseInt(questionId),
-        selectedOptionIds,
+        questionId: questionId,
+        selectedOptionIds
       }))
     );
     if (answers.length === 0) {
@@ -85,10 +86,10 @@ const SurveyAnswerPage = () => {
         <Typography>
           {data?.getSurvey.questions.map((question: Question) => (
             <div key={question.id} className={styles.questionContainer}>
-              <p>{question.text}</p>
+              <Typography>{question.text}</Typography>
               {question.options.map((option: Option) => (
                 <div key={option.id} className={styles.optionContainer}>
-                  <label htmlFor={`question-${question.id}-option-${option.id}`} className={styles.customCheckbox}>
+                  <Label htmlFor={`question-${question.id}-option-${option.id}`} className={styles.customCheckbox}>
                     <input
                       type='checkbox'
                       name={`question-${question.id}`}
@@ -99,7 +100,7 @@ const SurveyAnswerPage = () => {
                     />
                     <span className={styles.checkbox}></span>
                     {option.text}
-                  </label>
+                  </Label>
                 </div>
               ))}
             </div>

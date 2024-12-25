@@ -3,7 +3,6 @@ import { BadGatewayException, Injectable, NotFoundException } from '@nestjs/comm
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/users/entities/user.entity';
-import { RegisterUserInput } from 'src/users/dto/register-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { constant } from './common/constants';
@@ -19,12 +18,13 @@ export class AuthService {
     private userRepository: Repository<User>
   ) { }
 
-  async register(input: RegisterUserInput): Promise<User> {
+  async register(name: string, email: string, password: string): Promise<User> {
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(input.password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = this.userRepository.create({
-      ...input,
+      name,
+      email,
       password: hashedPassword,
     });
 

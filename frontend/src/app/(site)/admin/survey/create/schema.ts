@@ -6,7 +6,7 @@ export const optionSchema = z.object({
 
 export const questionSchema = z.object({
   text: z.string().min(1, '質問文は必須項目です'),
-  options: z.array(optionSchema).min(2, '質問には少なくとも一つの選択肢が必要です'),
+  options: z.array(optionSchema).min(1, '質問には少なくとも一つの選択肢が必要です'),
 });
 
 export const surveySchema = z.object({

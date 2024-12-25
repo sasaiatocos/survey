@@ -15,19 +15,12 @@ function storyFactory(type: Props['type']): Story {
   return { args: { type } };
 }
 
-export const Account = storyFactory('account');
-export const Alarm = storyFactory('alert');
-export const Attention = storyFactory('attention');
-export const Gear = storyFactory('gear');
-export const Home = storyFactory('home');
-export const Login = storyFactory('login');
-export const Logout = storyFactory('logout');
-export const PaperPlane = storyFactory('paper_plane');
-export const Register = storyFactory('register');
-export const Search = storyFactory('search');
-export const Trash = storyFactory('trash');
-export const Write = storyFactory('write');
 export const Admin = storyFactory('admin');
+export const Alarm = storyFactory('alert');
 export const Close = storyFactory('close');
+export const Home = storyFactory('home');
 export const Plus = storyFactory('plus');
 export const Result = storyFactory('result');
+export const Write = storyFactory('write');
+export const Register = storyFactory('register');
+export const Search = storyFactory('search');

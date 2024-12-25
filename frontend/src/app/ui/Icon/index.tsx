@@ -4,22 +4,16 @@ import styles from './style.module.css';
 
 export type Props = {
   type:
-  | 'account'
+  | 'admin'
   | 'alert'
-  | 'attention'
-  | 'gear'
+  | 'close'
   | 'home'
-  | 'login'
-  | 'logout'
-  | 'paper_plane'
+  | 'plus'
+  | 'result'
   | 'register'
   | 'search'
   | 'trash'
-  | 'write'
-  | 'admin'
-  | 'close'
-  | 'plus'
-  | 'result';
+  | 'write';
   size?: 'xsmall' | 'small' | 'medium' | 'large';
   color?: 'black' | 'gray' | 'orange' | 'white';
   className?: string;

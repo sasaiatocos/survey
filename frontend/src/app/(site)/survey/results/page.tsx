@@ -9,13 +9,43 @@ import { Heading } from '@/app/ui/Heading';
 import { CardContainer } from '@/app/ui/CardContainer';
 import { Typography } from '@/app/ui/Typography';
 import { Tag } from '@/app/ui/Tag';
+import { AlertText } from '@/app/ui/AlertText';
 import { GET_All_SURVEYS } from './graphql';
+import { Survey } from '@/app/libs/type';
+import styles from '../../style.module.css';
 
 const ResultTopPage: React.FC = () => {
   const { loading, error, data } = useQuery(GET_All_SURVEYS);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              Loading...
+            </Heading>
+          </HeadGroup>
+        </Section>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              <AlertText>
+                Error: {error.message}
+              </AlertText>
+            </Heading>
+          </HeadGroup>
+        </Section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -26,13 +56,11 @@ const ResultTopPage: React.FC = () => {
           </Heading>
         </HeadGroup>
         <CardContainer>
-          {data.getAllSurveys.map((survey: { id: number; title: string; description: string }) => (
-            <div key={survey.id}>
-              <Link href={`/survey/results/${survey.id}`}>
-                <Tag>{survey.title}</Tag>
-                <Typography>{survey.description}</Typography>
-              </Link>
-            </div>
+          {data.getAllSurveys.map((survey: Survey) => (
+            <Link href={`/survey/results/${survey.id}`} key={survey.id}>
+              <Tag className={styles.title} color='gray'>{survey.title}</Tag>
+              <Typography className={styles.description}>{survey.description}</Typography>
+            </Link>
           ))}
         </CardContainer>
       </Section>

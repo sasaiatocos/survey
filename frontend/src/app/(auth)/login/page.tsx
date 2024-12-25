@@ -14,6 +14,7 @@ import { Label } from '@/app/ui/Label';
 import { TextField } from '@/app/ui/TextField';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
+import Link from 'next/link';
 
 type State = {
   email: string;
@@ -111,6 +112,11 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
         </form>
+        <div className={styles.register}>
+          <Link href='/register' className={styles.register_link}>
+            新規会員登録はこちらから
+          </Link>
+        </div>
       </Section>
     </>
   );
