@@ -2,6 +2,10 @@
 
 【概要】選択式アンケートを作成し、URLを配布し回答させることができるシステム
 
+## API仕様
+
+https://docs.google.com/spreadsheets/d/1-6SkFoKaI8Za2IMdbxt0SI2edrAVgoDiMOzyQhncPjg/edit?usp=sharing
+
 
 ## 機能一覧
 
