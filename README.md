@@ -27,7 +27,7 @@
 
 ## ER図
 
-<img width="650" alt="er survey" src="survey/er.png">
+<img width="650" alt="er survey" src="er.png">
 
 
 
