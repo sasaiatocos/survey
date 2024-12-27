@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/_components/AuthContext';
-import { useMutation } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
 import { LOGIN_MUTATION } from './graphql';
 import { loginSchema } from './schema';
 import { Section } from '@/app/ui/Section';
@@ -51,6 +51,12 @@ const LoginPage: React.FC = () => {
       router.push('/');
     } catch (error) {
       console.error('ログインに失敗しました', error);
+      if (error instanceof ApolloError) {
+        const serverError = error.graphQLErrors[0]?.message || 'ログインに失敗しました。再度お試しください。';
+        setValidationErrors([serverError]);
+      } else {
+        setValidationErrors(['予期しないエラーが発生しました']);
+      }
     }
   };
 
@@ -60,7 +66,17 @@ const LoginPage: React.FC = () => {
     setValidationErrors([]);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+      <>
+          <Section>
+            <HeadGroup>
+              <Heading level={1} size='small'>
+                Loading...
+              </Heading>
+            </HeadGroup>
+          </Section>
+        </>
+    );
 
   return (
     <>

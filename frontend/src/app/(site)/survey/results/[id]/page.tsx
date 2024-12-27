@@ -125,10 +125,14 @@ const SurveyResultPage = () => {
               };
 
               return (
-                <div key={question.id}>
-                  <h2>{question.text}</h2>
-                  <Bar data={data} options={options} />
-                </div>
+                <Section key={question.id}>
+                  <HeadGroup>
+                    <Heading level={2} size="small">{question.text}</Heading>
+                  </HeadGroup>
+                  <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                    <Bar data={data} options={options} />
+                  </div>
+                </Section>
               );
             })}
           </Typography>

@@ -14,6 +14,7 @@ import { Option, Question } from '@/app/libs/type';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
 import { Label } from '@/app/ui/Label';
+import { AlertText } from '@/app/ui/AlertText';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -30,8 +31,33 @@ const SurveyAnswerPage = () => {
     return null;
   }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return (
+      <>
+          <Section>
+            <HeadGroup>
+              <Heading level={1} size='small'>
+                Loading...
+              </Heading>
+            </HeadGroup>
+          </Section>
+        </>
+  );
+
+  if (error) {
+    return (
+      <>
+        <Section>
+          <HeadGroup>
+            <Heading level={1} size='small'>
+              <AlertText>
+                Error: {error.message}
+              </AlertText>
+            </Heading>
+          </HeadGroup>
+        </Section>
+      </>
+    );
+  }
 
   const handleOptionChange = (questionId: number, optionId: number) => {
     setSelectedOption((prev) => {

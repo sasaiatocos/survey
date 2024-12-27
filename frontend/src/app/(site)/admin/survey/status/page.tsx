@@ -8,6 +8,7 @@ import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading/index';
 import { Label } from '@/app/ui/Label';
 import { Button } from '@/app/ui/Button';
+import { CardContainer } from '@/app/ui/CardContainer';
 
 const SurveyStatusPage = () => {
   const { data, loading, refetch } = useQuery(GET_SURVEYS);
@@ -20,7 +21,17 @@ const SurveyStatusPage = () => {
     window.location.reload();
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='small'>
+            Loading...
+          </Heading>
+        </HeadGroup>
+      </Section>
+    </>
+  );
 
   return (
     <>
@@ -32,12 +43,12 @@ const SurveyStatusPage = () => {
         </HeadGroup>
         <ul>
           {data?.getAllSurveys.map((survey: { id: number; title: string; description: string; isPublic: boolean }) => (
-          <li key={survey.id}>
+          <CardContainer key={survey.id}>
             <Label>{survey.title}</Label>
             <Button onClick={() => handleVisibilityToggle(survey.id, survey.isPublic)}>
               {survey.isPublic ? '非公開にする' : '公開にする'}
             </Button>
-          </li>
+          </CardContainer>
         ))}
       </ul>
       </Section>

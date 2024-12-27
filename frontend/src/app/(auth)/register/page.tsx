@@ -62,7 +62,17 @@ const RegisterPage: React.FC = () => {
     setValidationErrors([]);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <>
+      <Section>
+        <HeadGroup>
+          <Heading level={1} size='small'>
+            Loading...
+          </Heading>
+        </HeadGroup>
+      </Section>
+    </>
+  );
 
   return (
     <>
