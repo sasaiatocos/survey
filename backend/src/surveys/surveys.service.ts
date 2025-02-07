@@ -31,6 +31,15 @@ export class SurveyService {
     });
   }
 
+  async getMySurveys(user: User): Promise<Survey[]> {
+    return await this.surveyRepository
+      .createQueryBuilder('survey')
+      .leftJoinAndSelect('survey.questions', 'question')
+      .leftJoinAndSelect('question.options', 'option')
+      .where('survey.userId = :userId', { userId: user.id })
+      .getMany();
+  }
+
   async findPublicSurveys(): Promise<Survey[]> {
     return this.surveyRepository.find({ where: { isPublic: true } });
   }

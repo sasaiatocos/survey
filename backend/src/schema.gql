@@ -86,6 +86,7 @@ type LoginResponse {
 type Query {
   getAllSurveys: [Survey!]!
   getSurvey(id: ID!): Survey!
+  getMySurveys: [Survey!]!
   getPublicSurveys: [Survey!]!
   getPrivateSurveys: [Survey!]!
   getSurveyStats(surveyId: ID!): SurveyStats!
