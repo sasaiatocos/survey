@@ -29,6 +29,9 @@ export class SurveyStats {
   @Field()
   totalResponses: number;
 
+  @Field()
+  uniqueRespondents: number;
+
   @Field(() => [QuestionStats])
   questions: QuestionStats[];
 }

@@ -71,6 +71,9 @@ const SurveyResultPage = () => {
           <Tag>
             総回答数: {surveyStats.totalResponses}
           </Tag>
+          <Tag>
+            回答者数: {surveyStats.uniqueRespondents}
+          </Tag>
           <Typography>
             {surveyStats.questions.map((question: Question) => {
               const labels = question.options.map((option: Option) => option.text);

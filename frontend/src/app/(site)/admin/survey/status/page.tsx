@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_SURVEYS, TOGGLE_SURVEY_VISIBILITY } from './graphql';
+import { GET_MY_SURVEYS, TOGGLE_SURVEY_VISIBILITY } from './graphql';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading/index';
@@ -11,7 +11,7 @@ import { Button } from '@/app/ui/Button';
 import { CardContainer } from '@/app/ui/CardContainer';
 
 const SurveyStatusPage = () => {
-  const { data, loading, refetch } = useQuery(GET_SURVEYS);
+  const { data, loading, refetch } = useQuery(GET_MY_SURVEYS);
   const [toggleSurveyVisibility] = useMutation(TOGGLE_SURVEY_VISIBILITY);
   const handleVisibilityToggle = async (id: number, currentStatus: boolean) => {
     await toggleSurveyVisibility({
@@ -42,7 +42,7 @@ const SurveyStatusPage = () => {
           </Heading>
         </HeadGroup>
         <ul>
-          {data?.getAllSurveys.map((survey: { id: number; title: string; description: string; isPublic: boolean }) => (
+          {data?.getMySurveys.map((survey: { id: number; title: string; description: string; isPublic: boolean }) => (
           <CardContainer key={survey.id}>
             <Label>{survey.title}</Label>
             <Button onClick={() => handleVisibilityToggle(survey.id, survey.isPublic)}>

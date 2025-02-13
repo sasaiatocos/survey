@@ -10,12 +10,12 @@ import { CardContainer } from '@/app/ui/CardContainer';
 import { Typography } from '@/app/ui/Typography';
 import { Tag } from '@/app/ui/Tag';
 import { AlertText } from '@/app/ui/AlertText';
-import { GET_All_SURVEYS } from './graphql';
+import { GET_MY_SURVEYS } from './graphql';
 import { Survey } from '@/app/libs/type';
 import styles from '../../style.module.css';
 
 const ResultTopPage: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_All_SURVEYS);
+  const { loading, error, data } = useQuery(GET_MY_SURVEYS);
 
   if (loading) {
     return (
@@ -56,8 +56,8 @@ const ResultTopPage: React.FC = () => {
           </Heading>
         </HeadGroup>
         <CardContainer>
-          {data.getAllSurveys.map((survey: Survey) => (
-            <Link href={`/survey/results/${survey.id}`} key={survey.id}>
+          {data.getMySurveys.map((survey: Survey) => (
+            <Link href={`/admin/survey/results/${survey.id}`} key={survey.id}>
               <Tag className={styles.title} color='gray'>{survey.title}</Tag>
               <Typography className={styles.description}>{survey.description}</Typography>
             </Link>

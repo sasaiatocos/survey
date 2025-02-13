@@ -96,6 +96,15 @@ export class SurveyService {
   async getSurveyStats(surveyId: number): Promise<SurveyStats> {
     const totalResponses = await this.answerRepository.count({ where: { survey: { id: surveyId } } });
 
+    const uniqueRespondentsResult = await this.answerRepository
+      .createQueryBuilder('answer')
+      .leftJoin('answer.user', 'user')
+      .select('COUNT(DISTINCT user.id)', 'count')
+      .where('answer.surveyId = :surveyId', { surveyId })
+      .getRawOne();
+
+    const uniqueRespondents = uniqueRespondentsResult ? parseInt(uniqueRespondentsResult.count, 10) : 0;
+
     const questions = await this.surveyRepository
       .createQueryBuilder('survey')
       .leftJoin('survey.questions', 'question')
@@ -128,6 +137,7 @@ export class SurveyService {
 
     return {
       totalResponses,
+      uniqueRespondents,
       questions: questionStats,
     };
   }

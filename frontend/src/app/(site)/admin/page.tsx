@@ -78,6 +78,9 @@ const AdminTop: React.FC = () => {
           <LinkButton color='orange' href='/admin/survey/status'>
             アンケートの公開・非公開管理
           </LinkButton>
+          <LinkButton color='orange' href='/admin/survey/results'>
+            アンケートの結果・集計
+          </LinkButton>
         </CardContainer>
       </Section>
     </>

@@ -76,6 +76,7 @@ type QuestionStats {
 
 type SurveyStats {
   totalResponses: Float!
+  uniqueRespondents: Float!
   questions: [QuestionStats!]!
 }
 
