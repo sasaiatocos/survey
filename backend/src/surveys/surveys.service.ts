@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Survey } from './entities/survey.entity';
-import { Question } from './entities/question.entity';
+import { Question, QuestionType } from './entities/question.entity';
 import { Answer } from '../answers/entities/answer.entity';
 import { Option } from './entities/option.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -75,12 +75,22 @@ export class SurveyService {
       for (const questionInput of questions) {
         const question = new Question();
         question.text = questionInput.text;
+        question.type = questionInput.type;
         question.survey = savedSurvey;
 
         const savedQuestion = await transactionalEntityManager.save(Question, question);
         savedSurvey.questions = savedSurvey.questions ? [...savedSurvey.questions, savedQuestion] : [savedQuestion];
 
-        for (const optionInput of questionInput.options) {
+        if (questionInput.type === QuestionType.OPEN_ENDED) {
+          continue;
+        }
+
+        const optionsToSave =
+          questionInput.type === QuestionType.SINGLE_CHOICE
+            ? [{ text: 'はい' }, { text: 'いいえ' }]
+            : questionInput.options || [];
+
+        for (const optionInput of optionsToSave) {
           const option = new Option();
           option.text = optionInput.text;
           option.question = savedQuestion;

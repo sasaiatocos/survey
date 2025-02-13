@@ -27,6 +27,7 @@ type Answer {
   survey: Survey!
   question: Question!
   selectedOption: Option!
+  textResponse: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -43,11 +44,18 @@ type Option {
 type Question {
   id: ID!
   text: String!
+  type: QuestionType!
   createdAt: DateTime!
   updatedAt: DateTime!
   survey: [Survey!]!
   options: [Option!]!
   answers: [Answer!]!
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SINGLE_CHOICE
+  OPEN_ENDED
 }
 
 type Survey {
@@ -105,7 +113,8 @@ type Mutation {
 
 input CreateQuestionInput {
   text: String!
-  options: [CreateOptionInput!]!
+  type: QuestionType!
+  options: [CreateOptionInput!]
 }
 
 input CreateOptionInput {
@@ -116,5 +125,6 @@ input AnswerInput {
   surveyId: ID!
   questionId: ID!
   selectedOptionIds: ID!
+  textResponse: String
   userId: ID!
 }

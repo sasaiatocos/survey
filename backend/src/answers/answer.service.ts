@@ -1,9 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Answer } from './entities/answer.entity';
 import { User } from '../users/entities/user.entity';
-import { Question } from 'src/surveys/entities/question.entity';
+import { Question, QuestionType } from 'src/surveys/entities/question.entity';
 import { Option } from 'src/surveys/entities/option.entity';
 import { Survey } from 'src/surveys/entities/survey.entity';
 import { AnswerInput } from './answer.input';
@@ -21,7 +21,7 @@ export class AnswerService {
     private userRepository: Repository<User>,
     @InjectRepository(Option)
     private optionRepository: Repository<Option>,
-  ) {}
+  ) { }
 
   async submitAnswer(
     answers: AnswerInput[]
@@ -31,7 +31,7 @@ export class AnswerService {
     const answeredSurveys = new Set<number>();
 
     for (const answerInput of answers) {
-      const { surveyId, questionId, selectedOptionIds, userId } = answerInput;
+      const { surveyId, questionId, selectedOptionIds, textResponse, userId } = answerInput;
       const survey = await this.surveyRepository.findOne({
         where: { id: surveyId },
         relations: ['questions']
@@ -55,27 +55,50 @@ export class AnswerService {
         throw new Error('質問が見つかりませんでした');
       }
 
-      for (const selectedOptionId of selectedOptionIds) {
-        const selectedOption = await this.optionRepository.findOne({
-          where: { id: selectedOptionId, question: { id: questionId } },
-        });
-        if (!selectedOption) {
-          throw new NotFoundException('選択肢が見つかりませんでした');
-        }
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException('このユーザーは存在しません');
+      }
 
-        const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-          throw new NotFoundException('このユーザーは存在しません');
+      if (question.type === QuestionType.OPEN_ENDED) {
+        if (!textResponse || textResponse.trim() === '') {
+          throw new BadRequestException('自由記述の回答が必要です')
         }
 
         const answer = new Answer();
         answer.survey = survey;
         answer.question = question;
         answer.user = user;
-        answer.selectedOption = selectedOption;
+        answer.textResponse = textResponse;
 
         const savedAnswer = await this.answerRepository.save(answer);
         savedAnswers.push(savedAnswer);
+      } else {
+        if (!selectedOptionIds || selectedOptionIds.length === 0) {
+          throw new BadRequestException('少なくとも1つの選択肢を選択してください');
+        }
+
+        if (question.type === QuestionType.SINGLE_CHOICE && selectedOptionIds.length > 1) {
+          throw new BadRequestException('YES/NOの質問には1つの選択肢のみ選択してください');
+        }
+
+        for (const selectedOptionId of selectedOptionIds) {
+          const selectedOption = await this.optionRepository.findOne({
+            where: { id: selectedOptionId, question: { id: questionId } },
+          });
+          if (!selectedOption) {
+            throw new NotFoundException('選択肢が見つかりませんでした');
+          }
+
+          const answer = new Answer();
+          answer.survey = survey;
+          answer.question = question;
+          answer.user = user;
+          answer.selectedOption = selectedOption;
+
+          const savedAnswer = await this.answerRepository.save(answer);
+          savedAnswers.push(savedAnswer);
+        }
       }
     }
     return savedAnswers;

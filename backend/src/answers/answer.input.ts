@@ -15,6 +15,9 @@ export class AnswerInput {
   @IsInt()
   selectedOptionIds: number[];
 
+  @Field({ nullable: true })
+  textResponse?: string;
+
   @Field(() => ID)
   @IsInt()
   userId: number;

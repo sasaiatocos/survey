@@ -35,6 +35,10 @@ export class Answer {
   @ManyToOne(() => Option, (option) => option.answers, { onDelete: 'CASCADE' })
   selectedOption: Option;
 
+  @Field({ nullable: true })
+  @Column({ type: 'text', nullable: true })
+  textResponse?: string;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;

@@ -7,11 +7,21 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Survey } from './survey.entity';
 import { Option } from 'src/surveys/entities/option.entity';
 import { Answer } from 'src/answers/entities/answer.entity';
+
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  OPEN_ENDED = 'OPEN_ENDED'
+}
+
+registerEnumType(QuestionType, {
+  name: 'QuestionType',
+})
 
 @Entity('questions')
 @ObjectType()
@@ -24,6 +34,10 @@ export class Question {
   @Field()
   @MaxLength(50)
   text: string;
+
+  @Column({ type: 'enum', enum: QuestionType })
+  @Field(() => QuestionType)
+  type: QuestionType
 
   @CreateDateColumn()
   @Field()

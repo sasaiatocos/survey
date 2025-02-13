@@ -1,4 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { QuestionType } from '../entities/question.entity';
+import { IsEnum, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateOptionInput {
@@ -11,7 +13,12 @@ export class CreateQuestionInput {
   @Field()
   text: string;
 
-  @Field(() => [CreateOptionInput])
+  @Field(() => QuestionType)
+  @IsEnum(QuestionType)
+  type: QuestionType;
+
+  @Field(() => [CreateOptionInput], { nullable: true })
+  @IsOptional()
   options: CreateOptionInput[];
 }
 
