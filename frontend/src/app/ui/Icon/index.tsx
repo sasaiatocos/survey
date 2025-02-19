@@ -6,6 +6,7 @@ export type Props = {
   type:
   | 'admin'
   | 'alert'
+  | 'arrow'
   | 'close'
   | 'home'
   | 'plus'

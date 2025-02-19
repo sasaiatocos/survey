@@ -11,21 +11,30 @@ import { TextField } from '@/app/ui/TextField';
 import { Button } from '@/app/ui/Button';
 import { Label } from '@/app/ui/Label/index';
 import { Icon } from '@/app/ui/Icon';
+import { Select } from '@/app/ui/Select';
 import { surveySchema } from './schema';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
+
+const QUESTION_TYPES = {
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  OPEN_ENDED: 'OPEN_ENDED',
+};
 
 const SurveyCreatePage = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [questions, setQuestions] = useState([{ text: '', options: ['', ''] }]);
+  const [questions, setQuestions] = useState([
+    { text: '', type: QUESTION_TYPES.MULTIPLE_CHOICE, options: ['', ''] }
+  ]);
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createSurvey] = useMutation(CREATE_SURVEY_MUTATION);
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { text: '', options: ['', ''] }]);
+    setQuestions([...questions, { text: '', type: QUESTION_TYPES.MULTIPLE_CHOICE, options: ['', ''] }]);
   };
 
   const handleRemoveQuestion = (qIndex: number) => {
@@ -34,9 +43,21 @@ const SurveyCreatePage = () => {
     }
   };
 
-  const handleQuestionChange = (index: number, value: string) => {
+  const handleQuestionChange = (index: number, field: 'text' | 'type', value: string) => {
     const newQuestions = [...questions];
     newQuestions[index].text = value;
+    if (field === 'text') {
+      newQuestions[index].text = value;
+    } else if (field === 'type') {
+      newQuestions[index].type = value;
+      if (value === QUESTION_TYPES.SINGLE_CHOICE) {
+        newQuestions[index].options = ['', ''];
+      } else if (value === QUESTION_TYPES.OPEN_ENDED) {
+        newQuestions[index].options = [];
+      } else if (value === QUESTION_TYPES.MULTIPLE_CHOICE) {
+        newQuestions[index].options = ['', ''];
+      }
+    }
     setQuestions(newQuestions);
   };
 
@@ -67,12 +88,17 @@ const SurveyCreatePage = () => {
       description,
       questions: questions.map((q) => ({
         text: q.text,
-        options: q.options.filter((option) => option).map((option) => ({text: option,})),
+        type: q.type,
+        options: q.type !== QUESTION_TYPES.OPEN_ENDED
+          ?  q.options.filter((option) => option).map((option) => ({ text: option }))
+          : [],
       })),
     };
 
     for (const question of surveyData.questions) {
-    if (question.options.length === 0) {
+      if (question.type !== QUESTION_TYPES.OPEN_ENDED &&
+        (!question.options || question.options.length === 0)
+      ) {
       setErrors(['各質問には少なくとも1つの選択肢を追加してください。']);
       return;
     }
@@ -91,7 +117,10 @@ const SurveyCreatePage = () => {
           description: surveyData.description,
           questions: surveyData.questions.map((q) => ({
             text: q.text,
-            options: q.options,
+            type: q.type,
+            options: q.type === QUESTION_TYPES.OPEN_ENDED
+              ? q.options
+              : [],
           })),
         }
       });
@@ -145,59 +174,57 @@ const SurveyCreatePage = () => {
           <div className={styles.row}>
             {questions.map((question, qIndex) => (
               <div key={qIndex} className={styles.questionContainer}>
+                <Label size='xsmall'>質問タイプ</Label>
+                <Select
+                  className={styles.questionType}
+                  value={question.type}
+                  onChange={(e) => handleQuestionChange(qIndex, 'type', e.target.value)}
+                >
+                  <option value={QUESTION_TYPES.MULTIPLE_CHOICE}>マルチアンサー</option>
+                  <option value={QUESTION_TYPES.SINGLE_CHOICE}>シングルアンサー</option>
+                  <option value={QUESTION_TYPES.OPEN_ENDED}>フリーアンサー</option>
+                </Select>
                 <Label size='xsmall'>質問</Label>
                 <TextField
-                  className={styles.question_text}
+                  className={styles.questionText}
                   type='text'
                   value={question.text}
-                  onChange={(e) =>
-                    handleQuestionChange(qIndex, e.target.value)
-                  }
+                  onChange={(e) => handleQuestionChange(qIndex, 'text', e.target.value)}
                   placeholder={`質問 ${qIndex + 1}`}
                 />
-                {question.options.map((option, oIndex) => (
-                  <div key={oIndex} className={styles.optionContainer}>
-                    <div className={styles.options}>
-                      <Label size='xsmall'>選択肢</Label>
+                {question.type !== QUESTION_TYPES.OPEN_ENDED &&
+                  question.options.map((option, oIndex) => (
+                    <div key={oIndex} className={styles.optionContainer}>
                       <TextField
-                        className={styles.option_text}
-                        key={oIndex}
+                        className={styles.optionText}
                         type='text'
                         value={option}
-                        onChange={(e) =>
-                          handleOptionChange(qIndex, oIndex, e.target.value)
-                        }
+                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
                         placeholder={`選択肢 ${oIndex + 1}`}
                       />
-                    </div>
-                    {question.options.length > 1 && (
-                      <Button
-                        className={styles.removeOptionButton}
-                        onClick={() => handleRemoveOption(qIndex, oIndex)}
-                      >
+                      <Button className={styles.removeOptionButton} onClick={() => handleRemoveOption(qIndex, oIndex)}>
                         <Icon type='close' />
                       </Button>
-                    )}
-                  </div>
-                ))}
-                <Button
-                  className={styles.addOptionButton}
-                  onClick={() => handleAddOption(qIndex)}
-                >
-                  <Icon type='plus' />
-                </Button>
-                {questions.length > 1 && (
-                  <Button onClick={() => handleRemoveQuestion(qIndex)}>
-                    質問を削除
+                    </div>
+                  ))}
+                {question.type !== QUESTION_TYPES.OPEN_ENDED &&
+                  <Button
+                    className={styles.addOptionButton}
+                    onClick={() => handleAddOption(qIndex)}>
+                    <Icon type='plus' />
                   </Button>
-                )}
+                }
+                <Button
+                  className={styles.removeQuestionButton}
+                  onClick={() => handleRemoveQuestion(qIndex)}>
+                  質問を削除
+                </Button>
               </div>
-            ))}
+            )
+            )}
           </div>
-          <Button onClick={handleAddQuestion} disabled={isSubmitting}>設問を追加</Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? '送信中...' : 'アンケートを作成'}
-          </Button>
+          <Button onClick={handleAddQuestion}>設問を追加</Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting}>アンケートを作成</Button>
         </div>
       </Section>
     </>

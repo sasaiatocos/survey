@@ -17,6 +17,7 @@ function storyFactory(type: Props['type']): Story {
 
 export const Admin = storyFactory('admin');
 export const Alarm = storyFactory('alert');
+export const Arrow = storyFactory('arrow');
 export const Close = storyFactory('close');
 export const Home = storyFactory('home');
 export const Plus = storyFactory('plus');

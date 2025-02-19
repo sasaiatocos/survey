@@ -75,6 +75,11 @@
   -webkit-mask-image: url('./assets/alert.svg');
 }
 
+.arrow::before {
+  mask-image: url('./assets/arrow.svg');
+  -webkit-mask-image: url('./assets/arrow.svg');
+}
+
 .close::before {
   mask-image: url('./assets/close.svg');
   -webkit-mask-image: url('./assets/close.svg');

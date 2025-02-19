@@ -9,6 +9,7 @@ export const CREATE_SURVEY_MUTATION = gql`
     questions {
       id
       text
+      type
       options {
         id
         text

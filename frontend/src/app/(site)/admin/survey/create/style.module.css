@@ -18,6 +18,10 @@
   margin-bottom: 16px;
 }
 
+.questionType {
+  margin: 10px 0;
+}
+
 .optionContainer {
   display: flex;
   align-items: center;
@@ -31,13 +35,17 @@
   margin-top: 10px;
 }
 
-.option_text {
+.optionText {
   flex: 1;
   width: 80vw;
 }
 
-.question_text, .title, .description {
+.questionText, .title, .description {
   width: 100%;
+}
+
+.questionText, .optionText {
+  margin: 10px 0;
 }
 
 @media (min-width: 640px) {
@@ -62,7 +70,6 @@
   justify-content: center;
   position: relative;
   padding: 4px;
-  top: 20px;
 }
 
 .removeOptionButton:hover {
