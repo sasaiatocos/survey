@@ -66,7 +66,7 @@ export class SurveyService {
     const survey = new Survey();
     survey.title = title;
     survey.description = description ?? null;
-    survey.user = user
+    survey.user = user;
 
     const manager = this.surveyRepository.manager;
     return await manager.transaction(async (transactionalEntityManager: EntityManager) => {
@@ -82,21 +82,35 @@ export class SurveyService {
         savedSurvey.questions = savedSurvey.questions ? [...savedSurvey.questions, savedQuestion] : [savedQuestion];
 
         if (questionInput.type === QuestionType.OPEN_ENDED) {
+          savedQuestion.options = null;
+          await transactionalEntityManager.save(Question, savedQuestion);
           continue;
         }
 
         const optionsToSave =
-          questionInput.type === QuestionType.SINGLE_CHOICE
-            ? [{ text: 'はい' }, { text: 'いいえ' }]
-            : questionInput.options || [];
+          questionInput.type === QuestionType.SINGLE_CHOICE || questionInput.type === QuestionType.MULTIPLE_CHOICE
+            ? (questionInput.options.length > 0 && questionInput.options ? questionInput.options : null)
+            : null;
 
-        for (const optionInput of optionsToSave) {
-          const option = new Option();
-          option.text = optionInput.text;
-          option.question = savedQuestion;
+        if (optionsToSave && Array.isArray(optionsToSave)) {
+          savedQuestion.options = [];
+          for (const optionInput of optionsToSave) {
+            const option = new Option();
+            option.text = optionInput.text;
+            option.question = savedQuestion;
 
-          await transactionalEntityManager.save(Option, option);
-          savedQuestion.options = savedQuestion.options ? [...savedQuestion.options, option] : [option];
+            await transactionalEntityManager.save(Option, option);
+            savedQuestion.options.push(option);
+          }
+          await transactionalEntityManager.save(Question, savedQuestion);
+        } else {
+          savedQuestion.options = [];
+          await transactionalEntityManager.save(Question, savedQuestion);
+        }
+        const questionIndex = savedSurvey.questions.findIndex(q => q.id === savedQuestion.id);
+        if (questionIndex !== -1) {
+          savedSurvey.questions[questionIndex].options = savedQuestion.options;
+          savedSurvey.questions[questionIndex] = savedQuestion;
         }
       }
       return savedSurvey;

@@ -20,14 +20,16 @@ const QUESTION_TYPES = {
   MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
   SINGLE_CHOICE: 'SINGLE_CHOICE',
   OPEN_ENDED: 'OPEN_ENDED',
-};
+}
 
 const SurveyCreatePage = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [questions, setQuestions] = useState([
-    { text: '', type: QUESTION_TYPES.MULTIPLE_CHOICE, options: ['', ''] }
+    {
+      text: '', type: QUESTION_TYPES.MULTIPLE_CHOICE, options: ['', '']
+    }
   ]);
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +57,7 @@ const SurveyCreatePage = () => {
       } else if (value === QUESTION_TYPES.OPEN_ENDED) {
         newQuestions[index].options = [];
       } else if (value === QUESTION_TYPES.MULTIPLE_CHOICE) {
-        newQuestions[index].options = ['', ''];
+        newQuestions[index].options = ['', '', ''];
       }
     }
     setQuestions(newQuestions);
@@ -89,20 +91,11 @@ const SurveyCreatePage = () => {
       questions: questions.map((q) => ({
         text: q.text,
         type: q.type,
-        options: q.type !== QUESTION_TYPES.OPEN_ENDED
-          ?  q.options.filter((option) => option).map((option) => ({ text: option }))
-          : [],
+        options: q.type === QUESTION_TYPES.OPEN_ENDED
+          ? []
+          : q.options.filter((option) => option).map((option) => ({ text: option })),
       })),
     };
-
-    for (const question of surveyData.questions) {
-      if (question.type !== QUESTION_TYPES.OPEN_ENDED &&
-        (!question.options || question.options.length === 0)
-      ) {
-      setErrors(['各質問には少なくとも1つの選択肢を追加してください。']);
-      return;
-    }
-  }
 
     const validationResult = surveySchema.safeParse(surveyData);
     if (!validationResult.success) {
@@ -119,8 +112,8 @@ const SurveyCreatePage = () => {
             text: q.text,
             type: q.type,
             options: q.type === QUESTION_TYPES.OPEN_ENDED
-              ? q.options
-              : [],
+              ? []
+              : q.options.filter((option) => option).map((option) => ({ text: option.text })),
           })),
         }
       });
@@ -206,7 +199,8 @@ const SurveyCreatePage = () => {
                         <Icon type='close' />
                       </Button>
                     </div>
-                  ))}
+                  ))
+                }
                 {question.type !== QUESTION_TYPES.OPEN_ENDED &&
                   <Button
                     className={styles.addOptionButton}

@@ -33,7 +33,7 @@ export class Option {
   updatedAt: Date;
 
   @Field(() => [Question])
-  @ManyToOne(() => Question, (question) => question.options)
+  @ManyToOne(() => Question, (question) => question.options, { onDelete: 'CASCADE' })
   question: Question;
 
   @Field(() => [Answer], { nullable: true })

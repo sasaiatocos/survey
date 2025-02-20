@@ -48,7 +48,7 @@ type Question {
   createdAt: DateTime!
   updatedAt: DateTime!
   survey: [Survey!]!
-  options: [Option!]!
+  options: [Option!]
   answers: [Answer!]!
 }
 
@@ -114,7 +114,7 @@ type Mutation {
 input CreateQuestionInput {
   text: String!
   type: QuestionType!
-  options: [CreateOptionInput!]
+  options: [CreateOptionInput] = []
 }
 
 input CreateOptionInput {

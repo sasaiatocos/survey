@@ -51,9 +51,9 @@ export class Question {
   @ManyToOne(() => Survey, (survey) => survey.questions)
   survey: Survey;
 
-  @Field(() => [Option])
-  @OneToMany(() => Option, (option) => option.question)
-  options: Option[];
+  @Field(() => [Option], { nullable: true})
+  @OneToMany(() => Option, (option) => option.question, { cascade: true, eager: true })
+  options: Option[] | null;
 
   @Field(() => [Answer])
   @OneToMany(() => Answer, (answer) => answer.question)
