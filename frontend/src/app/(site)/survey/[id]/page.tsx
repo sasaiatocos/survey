@@ -10,11 +10,12 @@ import { HeadGroup } from '@/app/ui/HeadGroup';
 import { Heading } from '@/app/ui/Heading';
 import { Typography } from '@/app/ui/Typography';
 import { Button } from '@/app/ui/Button';
-import { Option, Question } from '@/app/libs/type';
+import { Option, Question, QuestionType } from '@/app/libs/type';
 import { AlertLabel } from '@/app/ui/AlertLabel';
 import styles from './style.module.css';
 import { Label } from '@/app/ui/Label';
 import { AlertText } from '@/app/ui/AlertText';
+import { TextField } from '@/app/ui/TextField';
 
 const SurveyAnswerPage = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const SurveyAnswerPage = () => {
   const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
   const [selectedOption, setSelectedOption] = useState<{ [key: number]: number[] }>({});
+  const [textResponses, setTextResponses] = useState<{ [key: number]: string }>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const { currentUser } = useAuth();
@@ -59,8 +61,11 @@ const SurveyAnswerPage = () => {
     );
   }
 
-  const handleOptionChange = (questionId: number, optionId: number) => {
+  const handleOptionChange = (questionId: number, optionId: number, questionType: QuestionType) => {
     setSelectedOption((prev) => {
+      if (questionType === QuestionType.SINGLE_CHOICE) {
+        return { ...prev, [questionId]: [optionId] };
+      }
       const currentOptions = prev[questionId] || [];
       const isAlreadySelected = currentOptions.includes(optionId);
       const updatedOptions = isAlreadySelected
@@ -73,15 +78,28 @@ const SurveyAnswerPage = () => {
     });
   };
 
+  const handleTextChange = (questionId: number, text: string) => {
+    setTextResponses({ ...textResponses, [questionId]: text });
+  };
+
   const handleAnswerSubmit = async () => {
-    const answers = Object.entries(selectedOption).flatMap(([questionId, optionIds]) =>
-      optionIds.map((selectedOptionIds) => ({
-        surveyId: id,
-        userId: userId,
-        questionId: questionId,
-        selectedOptionIds
-      }))
-    );
+    const answers = data?.getSurvey.questions.flatMap((question: Question) => {
+      if (question.type === QuestionType.OPEN_ENDED) {
+        return {
+          surveyId: id,
+          userId: userId,
+          questionId: question.id,
+          textResponse: textResponses[question.id] || '',
+        };
+      } else {
+        return (selectedOption[question.id] || []).map(optionId => ({
+          surveyId: id,
+          userId: userId,
+          questionId: question.id,
+          selectedOptionIds: [parseInt(String(optionId), 10)]
+        }));
+      }
+    }) || [];
     if (answers.length === 0) {
       setErrorMessage('少なくとも1つの選択肢を選んでください');
       return;
@@ -99,6 +117,7 @@ const SurveyAnswerPage = () => {
         setErrorMessage('予期しないエラーが発生しました');
       }
     }
+    console.log('answers:', answers);
   };
 
   return (
@@ -113,23 +132,36 @@ const SurveyAnswerPage = () => {
           {data?.getSurvey.questions.map((question: Question) => (
             <div key={question.id} className={styles.questionContainer}>
               <Typography>{question.text}</Typography>
-              {question.options.map((option: Option) => (
-                <div key={option.id} className={styles.optionContainer}>
-                  <Label htmlFor={`question-${question.id}-option-${option.id}`} className={styles.customCheckbox}>
-                    <input
-                      type='checkbox'
-                      name={`question-${question.id}`}
-                      value={option.id}
-                      id={`question-${question.id}-option-${option.id}`}
-                      onChange={() => handleOptionChange(question.id, option.id)}
-                      checked={selectedOption[question.id]?.includes(option.id) || false}
-                    />
-                    <span className={styles.checkbox}></span>
-                    {option.text}
-                  </Label>
-                </div>
-              ))}
-            </div>
+              {question.type === 'OPEN_ENDED' ? (
+                <TextField
+                  className={styles.title}
+                  type='text'
+                  value={textResponses[question.id] || ''}
+                  onChange={(e) => handleTextChange(question.id, e.target.value)}
+                  placeholder='回答'
+                />
+              ) : (
+                  question.options.map((option: Option) => (
+                    <div key={option.id} className={styles.optionContainer}>
+                      <Label
+                        htmlFor={`question-${question.id}-option-${option.id}`}
+                        className={styles.customCheckbox}
+                      >
+                        <input
+                        type={question.type === QuestionType.SINGLE_CHOICE ? 'radio' : 'checkbox'}
+                        name={`question-${question.id}`}
+                        value={option.id}
+                        id={`question-${question.id}-option-${option.id}`}
+                        onChange={() => handleOptionChange(question.id, option.id, question.type)}
+                        checked={selectedOption[question.id]?.includes(option.id) || false}
+                      />
+                        <span className={styles.checkbox}></span>
+                        {option.text}
+                      </Label>
+                    </div>
+                  ))
+                )}
+              </div>
           ))}
         </Typography>
         {errorMessage && (

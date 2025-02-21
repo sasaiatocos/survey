@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AnswerService } from './answer.service';
 import { Answer } from './entities/answer.entity';
-import { AnswerInput } from './answer.input';
+import { AnswerInput } from './dto/answer.input';
 
 @Resolver('Answer')
 export class AnswerResolver {

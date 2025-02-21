@@ -6,6 +6,7 @@ export const GET_MY_SURVEYS = gql`
       id
       title
       description
+      isPublic
     }
   }
 `;

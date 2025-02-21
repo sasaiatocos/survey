@@ -21,7 +21,7 @@ export enum QuestionType {
 
 registerEnumType(QuestionType, {
   name: 'QuestionType',
-})
+});
 
 @Entity('questions')
 @ObjectType()

@@ -4,7 +4,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
@@ -31,9 +31,9 @@ export class Answer {
   @ManyToOne(() => Question, (question) => question.answers, { onDelete: 'CASCADE' })
   question: Question;
 
-  @Field(() => Option)
+  @Field(() => Option, { nullable: true })
   @ManyToOne(() => Option, (option) => option.answers, { onDelete: 'CASCADE' })
-  selectedOption: Option;
+  selectedOption?: Option;
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
@@ -47,3 +47,7 @@ export class Answer {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+function JoinColumn(arg0: { name: string; }): (target: Answer, propertyKey: "selectedOption") => void {
+  throw new Error('Function not implemented.');
+}
+

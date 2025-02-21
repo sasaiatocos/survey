@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { User } from 'src/users/entities/user.entity';
-import { LoginResponse } from 'src/users/dto/login-response.output';
+import { LoginResponse } from 'src/users/dto/login-response';
 import { Response } from 'express';
 
 export interface JwtPayload {

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PUBLIC_SURVEYS } from './graphql';
 import Link from 'next/link';
@@ -13,9 +13,16 @@ import { AlertText } from '../ui/AlertText';
 import { Survey } from '../libs/type';
 import { Tag } from '../ui/Tag';
 import styles from './style.module.css';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const HomePage: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_PUBLIC_SURVEYS);
+  const { loading, error, data, refetch } = useQuery(GET_PUBLIC_SURVEYS);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    refetch();
+  }, [pathname, searchParams, refetch]);
 
   if (loading) {
     return (

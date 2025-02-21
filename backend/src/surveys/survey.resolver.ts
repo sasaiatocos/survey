@@ -24,14 +24,6 @@ export class SurveyResolver {
   }
 
   @Query(() => [Survey])
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  async getMySurveys(@CurrentUser() user: User): Promise<Survey[]> {
-    console.log(user);
-    return this.surveyService.getMySurveys(user);
-  }
-
-  @Query(() => [Survey])
   async getPublicSurveys(): Promise<Survey[]> {
     return this.surveyService.findPublicSurveys();
   }
@@ -41,7 +33,17 @@ export class SurveyResolver {
     return this.surveyService.findPrivateSurveys();
   }
 
+  @Query(() => [Survey])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async getMySurveys(@CurrentUser() user: User): Promise<Survey[]> {
+    console.log(user);
+    return this.surveyService.getMySurveys(user);
+  }
+
   @Mutation(() => Survey)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async toggleSurveyVisibility(
     @Args('id', { type: () => ID }) id: number,
     @Args('isPublic') isPublic: boolean,

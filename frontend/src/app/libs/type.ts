@@ -1,3 +1,9 @@
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  SINGLE_CHOICE = 'SINGLE_CHOICE',
+  OPEN_ENDED = 'OPEN_ENDED',
+}
+
 export interface Survey {
   id: number;
   title: string;
@@ -8,6 +14,7 @@ export interface Survey {
 export interface Question {
   id: number;
   text: string;
+  type: QuestionType;
   options: Option[];
 }
 

@@ -11,8 +11,7 @@ export class AnswerInput {
   @IsInt()
   questionId: number;
 
-  @Field(() => ID)
-  @IsInt()
+  @Field(() => ID, { nullable: true })
   selectedOptionIds: number[];
 
   @Field({ nullable: true })

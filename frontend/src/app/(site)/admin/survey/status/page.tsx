@@ -17,8 +17,7 @@ const SurveyStatusPage = () => {
     await toggleSurveyVisibility({
       variables: { id, isPublic: !currentStatus },
     });
-    refetch();
-    window.location.reload();
+    await refetch();
   };
 
   if (loading) return (

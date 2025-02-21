@@ -9,6 +9,7 @@ export const GET_SURVEY = gql`
       questions {
         id
         text
+        type
         options {
           id
           text
@@ -22,6 +23,12 @@ export const SUBMIT_ANSWER = gql`
   mutation SubmitAnswers($answers: [AnswerInput!]!) {
     submitAnswers(answers: $answers) {
       id
+      question {
+        id
+      }
+      survey {
+        id
+      }
       selectedOption {
         id
       }

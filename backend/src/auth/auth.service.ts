@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { constant } from './common/constants';
 import { comparePassword } from './common/helper';
-import { LoginResponse } from 'src/users/dto/login-response.output';
+import { LoginResponse } from 'src/users/dto/login-response';
 
 @Injectable()
 export class AuthService {

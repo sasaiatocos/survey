@@ -26,7 +26,7 @@ type Answer {
   user: User!
   survey: Survey!
   question: Question!
-  selectedOption: Option!
+  selectedOption: Option
   textResponse: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -95,9 +95,9 @@ type LoginResponse {
 type Query {
   getAllSurveys: [Survey!]!
   getSurvey(id: ID!): Survey!
-  getMySurveys: [Survey!]!
   getPublicSurveys: [Survey!]!
   getPrivateSurveys: [Survey!]!
+  getMySurveys: [Survey!]!
   getSurveyStats(surveyId: ID!): SurveyStats!
   user: User!
 }
@@ -124,7 +124,7 @@ input CreateOptionInput {
 input AnswerInput {
   surveyId: ID!
   questionId: ID!
-  selectedOptionIds: ID!
+  selectedOptionIds: ID
   textResponse: String
   userId: ID!
 }

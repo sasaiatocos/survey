@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Survey } from './entities/survey.entity';
@@ -15,7 +15,11 @@ export class SurveyService {
     @InjectRepository(Survey)
     private surveyRepository: Repository<Survey>,
     @InjectRepository(Answer)
-    private answerRepository: Repository<Answer>
+    private answerRepository: Repository<Answer>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
+    @InjectRepository(Option)
+    private optionRepository: Repository<Option>,
   ) {}
 
   async findAll(): Promise<Survey[]> {
@@ -49,12 +53,18 @@ export class SurveyService {
   }
 
   async toggleVisibility(id: number, isPublic: boolean): Promise<Survey> {
-    await this.surveyRepository.update(id, { isPublic });
+    console.log('toggleVisibility called with id:', id, 'isPublic:', isPublic);
+    const updateResult = await this.surveyRepository.update(id, { isPublic });
+    console.log('updateResult:', updateResult);
+    if (updateResult.affected === 0) {
+      throw new NotFoundException(`Survey with id ${id} not found`);
+    }
     const survey = await this.surveyRepository.findOneBy({ id });
+    console.log('survey:', survey);
     if (!survey) {
-    throw new Error(`Survey with id ${id} not found`);
-  }
-  return survey;
+      throw new NotFoundException(`Survey with id ${id} not found`);
+    };
+    return survey;
   }
 
   async createSurvey(createSurveyInput: CreateSurveyInput, user: User): Promise<Survey> {
@@ -87,10 +97,9 @@ export class SurveyService {
           continue;
         }
 
-        const optionsToSave =
-          questionInput.type === QuestionType.SINGLE_CHOICE || questionInput.type === QuestionType.MULTIPLE_CHOICE
-            ? (questionInput.options.length > 0 && questionInput.options ? questionInput.options : null)
-            : null;
+        const hasOptions = questionInput.options && questionInput.options.length > 0;
+        const isChoiceType = questionInput.type === QuestionType.SINGLE_CHOICE || questionInput.type === QuestionType.MULTIPLE_CHOICE;
+        const optionsToSave = isChoiceType && hasOptions ? questionInput.options : null;
 
         if (optionsToSave && Array.isArray(optionsToSave)) {
           savedQuestion.options = [];

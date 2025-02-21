@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/app/_components/AuthContext';
 import { Section } from '@/app/ui/Section';
 import { HeadGroup } from '@/app/ui/HeadGroup';
@@ -14,10 +14,17 @@ import { Typography } from '@/app/ui/Typography';
 import { Tag } from '@/app/ui/Tag';
 import styles from './style.module.css';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 const AdminTop: React.FC = () => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
-  const { data } = useQuery(GET_MY_SURVEYS);
+  const { data, refetch } = useQuery(GET_MY_SURVEYS);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    refetch();
+  }, [pathname, searchParams, refetch]);
 
   if (loading) {
     return (
