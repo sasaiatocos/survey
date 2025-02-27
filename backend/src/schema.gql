@@ -122,9 +122,9 @@ input CreateOptionInput {
 }
 
 input AnswerInput {
-  surveyId: ID!
-  questionId: ID!
-  selectedOptionIds: ID
+  surveyId: Int!
+  questionId: Int!
+  selectedOptionIds: [Int!]
   textResponse: String
-  userId: ID!
+  userId: Int!
 }

@@ -62,8 +62,7 @@ const AdminTop: React.FC = () => {
             管理者用トップ
           </Heading>
         </HeadGroup>
-        <CardContainer>
-          {data?.getMySurveys.length > 0 ? (
+        {data?.getMySurveys.length > 0 ? (
           <CardContainer>
             {data.getMySurveys.map((survey: Survey) => (
               <Link href={`/survey/${survey.id}`} key={survey.id}>
@@ -79,6 +78,7 @@ const AdminTop: React.FC = () => {
           </CardContainer>
         )
         }
+        <CardContainer>
           <LinkButton color='orange' href='/admin/survey/create'>
             アンケートの作成
           </LinkButton>

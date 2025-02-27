@@ -1,23 +1,23 @@
-import { InputType, Field, ID } from '@nestjs/graphql';
+import { InputType, Field, ID, Int } from '@nestjs/graphql';
 import { IsInt } from 'class-validator';
 
 @InputType()
 export class AnswerInput {
-  @Field(() => ID)
+  @Field(() => Int)
   @IsInt()
   surveyId: number;
 
-  @Field(() => ID)
+  @Field(() => Int)
   @IsInt()
   questionId: number;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => [Int!]!, { nullable: true })
   selectedOptionIds: number[];
 
   @Field({ nullable: true })
   textResponse?: string;
 
-  @Field(() => ID)
+  @Field(() => Int)
   @IsInt()
   userId: number;
 }

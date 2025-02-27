@@ -18,8 +18,10 @@ import { AlertText } from '@/app/ui/AlertText';
 import { TextField } from '@/app/ui/TextField';
 
 const SurveyAnswerPage = () => {
-  const { id } = useParams();
-  const userId = useAuth().currentUser?.id;
+  const { id: idString } = useParams();
+  const userIdString = useAuth().currentUser?.id;
+  const id = parseInt(idString, 10);
+  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
   const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
   const [submitAnswer] = useMutation(SUBMIT_ANSWER);
   const [selectedOption, setSelectedOption] = useState<{ [key: number]: number[] }>({});
@@ -61,7 +63,8 @@ const SurveyAnswerPage = () => {
     );
   }
 
-  const handleOptionChange = (questionId: number, optionId: number, questionType: QuestionType) => {
+  const handleOptionChange = (questionId: number, optionIdString: string, questionType: QuestionType) => {
+    const optionId = parseInt(optionIdString, 10);
     setSelectedOption((prev) => {
       if (questionType === QuestionType.SINGLE_CHOICE) {
         return { ...prev, [questionId]: [optionId] };
@@ -83,20 +86,24 @@ const SurveyAnswerPage = () => {
   };
 
   const handleAnswerSubmit = async () => {
+    if (userId === undefined) {
+      setErrorMessage('ユーザーIDが取得できませんでした。');
+      return;
+    }
     const answers = data?.getSurvey.questions.flatMap((question: Question) => {
       if (question.type === QuestionType.OPEN_ENDED) {
         return {
           surveyId: id,
           userId: userId,
-          questionId: question.id,
+          questionId: parseInt(String(question.id), 10),
           textResponse: textResponses[question.id] || '',
         };
       } else {
         return (selectedOption[question.id] || []).map(optionId => ({
           surveyId: id,
           userId: userId,
-          questionId: question.id,
-          selectedOptionIds: [parseInt(String(optionId), 10)]
+          questionId: parseInt(String(question.id), 10),
+          selectedOptionIds: [optionId]
         }));
       }
     }) || [];
@@ -150,9 +157,9 @@ const SurveyAnswerPage = () => {
                         <input
                         type={question.type === QuestionType.SINGLE_CHOICE ? 'radio' : 'checkbox'}
                         name={`question-${question.id}`}
-                        value={option.id}
+                        value={String(option.id)}
                         id={`question-${question.id}-option-${option.id}`}
-                        onChange={() => handleOptionChange(question.id, option.id, question.type)}
+                        onChange={() => handleOptionChange(question.id, String(option.id), question.type)}
                         checked={selectedOption[question.id]?.includes(option.id) || false}
                       />
                         <span className={styles.checkbox}></span>
