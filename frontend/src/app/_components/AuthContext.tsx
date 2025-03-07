@@ -37,6 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { data, loading, refetch } = useQuery(USER_QUERY);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [logoutMutation] = useMutation(LOGOUT_MUTATION);
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (!loading && data?.user) {
@@ -47,37 +49,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [data, loading]);
 
   const refetchUser = async () => {
+    setIsRefetching(true);
     try {
       const { data } = await refetch();
-      setCurrentUser(data.user);
+      setCurrentUser(data.user as User);
     } catch (error) {
       console.error("Failed to fetch current user:", error);
       setCurrentUser(null);
+    } finally {
+      setIsRefetching(false);
     }
   };
 
   const logout = async () => {
+    setIsLoggingOut(true);
     try {
       await logoutMutation();
       setCurrentUser(null);
       client.clearStore();
     } catch (error) {
       console.error('Logout failed:', error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
   const isAuthenticated = !!currentUser;
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin = currentUser?.role === 'admin';
 
   return (
     <AuthContext.Provider value={{
       currentUser,
       isAuthenticated,
-      loading,
+      loading: loading || isRefetching || isLoggingOut,
       isAdmin,
       refetchUser,
       logout
-    }}>
+    } as AuthContextType}>
       {children}
     </AuthContext.Provider>
   );

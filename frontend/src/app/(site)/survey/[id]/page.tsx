@@ -18,8 +18,9 @@ import { AlertText } from '@/app/ui/AlertText';
 import { TextField } from '@/app/ui/TextField';
 
 const SurveyAnswerPage = () => {
-  const { id: idString } = useParams();
-  const userIdString = useAuth().currentUser?.id;
+  const { id: idStringOrArray } = useParams();
+  const idString = Array.isArray(idStringOrArray) ? idStringOrArray[0] : idStringOrArray;
+  const userIdString = String(useAuth().currentUser?.id);
   const id = parseInt(idString, 10);
   const userId = userIdString ? parseInt(userIdString, 10) : undefined;
   const { data, loading, error } = useQuery(GET_SURVEY, { variables: { id } });
@@ -107,6 +108,20 @@ const SurveyAnswerPage = () => {
         }));
       }
     }) || [];
+
+    const allQuestionsAnswered = data?.getSurvey.questions.every((question: Question) => {
+      if (question.type === QuestionType.OPEN_ENDED) {
+        return textResponses[question.id] && textResponses[question.id].trim() !== '';
+      } else {
+        return selectedOption[question.id] && selectedOption[question.id].length > 0;
+      }
+    });
+
+    if (!allQuestionsAnswered) {
+      setErrorMessage('すべての質問に回答してください。');
+      return;
+    }
+
     if (answers.length === 0) {
       setErrorMessage('少なくとも1つの選択肢を選んでください');
       return;

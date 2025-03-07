@@ -27,6 +27,25 @@ export class AnswerService {
     const savedAnswers: Answer[] = [];
     const answeredSurveys = new Set<number>();
 
+    if (!answers || answers.length === 0) {
+      throw new BadRequestException('回答が送信されていません');
+    }
+    const surveyId = answers[0].surveyId;
+    const survey = await this.surveyRepository.findOne({ where: { id: surveyId }, relations: ['questions'] });
+    if (!survey) throw new NotFoundException('アンケートが見つかりませんでした');
+
+    const allQuestionsAnswered = survey.questions.every((question) => {
+      const answer = answers.find((a) => a.questionId === question.id);
+      if (question.type === QuestionType.OPEN_ENDED) {
+        return answer && answer.textResponse && answer.textResponse.trim() !== '';
+      } else {
+        return answer && answer.selectedOptionIds && answer.selectedOptionIds.length > 0;
+      }
+    });
+
+    if (!allQuestionsAnswered) {
+      throw new BadRequestException('すべての質問に回答してください');
+    }
     for (const answerInput of answers) {
       await this.validateAnswerInput(answerInput, answeredSurveys);
       const savedAnswersArray = await this.saveAnswer(answerInput);
