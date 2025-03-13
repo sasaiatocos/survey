@@ -17,8 +17,8 @@ export class CreateQuestionInput {
   @IsEnum(QuestionType)
   type: QuestionType;
 
-  @Field(() => [CreateOptionInput], { nullable: 'itemsAndList' })
-  options: CreateOptionInput[] = [];
+  @Field(() => [CreateOptionInput], { nullable: true })
+  options?: CreateOptionInput[];
 }
 
 @InputType()

@@ -4,6 +4,12 @@
 
 directive @upper on FIELD_DEFINITION
 
+type UserSurvey {
+  id: ID!
+  user: User!
+  survey: Survey!
+}
+
 type User {
   id: ID!
   name: String!
@@ -13,7 +19,7 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   answers: [Answer!]!
-  surveys: [Survey!]!
+  userSurveys: [UserSurvey!]!
 }
 
 """
@@ -21,15 +27,27 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type SurveyAnswer {
+  id: ID!
+  survey: Survey!
+  answer: Answer!
+}
+
 type Answer {
   id: ID!
   user: User!
-  survey: Survey!
   question: Question!
-  selectedOption: Option
+  surveyAnswers: [SurveyAnswer!]!
+  answerOptions: [AnswerOption!]!
   textResponse: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type AnswerOption {
+  id: ID!
+  answer: Answer!
+  option: Option!
 }
 
 type Option {
@@ -37,8 +55,8 @@ type Option {
   text: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  question: [Question!]!
-  answers: [Answer!]
+  question: Question!
+  answerOptions: [AnswerOption!]!
 }
 
 type Question {
@@ -66,8 +84,8 @@ type Survey {
   createdAt: DateTime!
   updatedAt: DateTime!
   questions: [Question!]!
-  user: [User!]!
-  answers: [Answer!]!
+  userSurveys: [UserSurvey!]!
+  surveyAnswers: [SurveyAnswer!]!
 }
 
 type OptionStats {
@@ -114,7 +132,7 @@ type Mutation {
 input CreateQuestionInput {
   text: String!
   type: QuestionType!
-  options: [CreateOptionInput] = []
+  options: [CreateOptionInput!]
 }
 
 input CreateOptionInput {
@@ -124,7 +142,7 @@ input CreateOptionInput {
 input AnswerInput {
   surveyId: Int!
   questionId: Int!
-  selectedOptionIds: [Int!]
+  optionIds: [Int!]
   textResponse: String
   userId: Int!
 }

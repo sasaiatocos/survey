@@ -5,10 +5,11 @@ import styles from './style.module.css';
 
 type Props = ComponentPropsWithoutRef<'label'> & {
   size?: 'xsmall' | 'small' | 'medium' | 'large';
+  children: React.ReactNode;
 };
 
 export const Label = forwardRef<HTMLLabelElement, Props>(function LabelBase(
-  { size = 'medium', className, ...props },
+  { size = 'medium', className, children, ...props },
   ref,
 ) {
   return (
@@ -16,6 +17,8 @@ export const Label = forwardRef<HTMLLabelElement, Props>(function LabelBase(
       {...props}
       ref={ref}
       className={clsx(styles.label, styles[size], className)}
-    />
+    >
+      {children}
+    </label>
   );
 });

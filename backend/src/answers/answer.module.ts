@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { Answer } from '../answers/entities/answer.entity';
-import { Survey } from 'src/surveys/entities/survey.entity';
-import { Question } from 'src/surveys/entities/question.entity';
+import { Survey } from '../surveys/entities/survey.entity';
+import { Question } from '../surveys/entities/question.entity';
 import { AnswerResolver } from './answer.resolver';
 import { AnswerService } from './answer.service';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Option } from 'src/surveys/entities/option.entity';
+import { Option } from '../surveys/entities/option.entity';
+import { SurveyAnswer } from '../entities/survey-answer.entity';
+import { AnswerOption } from '../entities/answer-option.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Survey, Option, Question, Answer])],
+  imports: [TypeOrmModule.forFeature([User, Survey, Option, Question, Answer, SurveyAnswer, AnswerOption])],
   providers: [AnswerResolver, AnswerService],
   exports: [TypeOrmModule, AnswerService],
 })

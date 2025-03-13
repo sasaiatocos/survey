@@ -12,7 +12,7 @@ export class AnswerInput {
   questionId: number;
 
   @Field(() => [Int!]!, { nullable: true })
-  selectedOptionIds: number[];
+  optionIds: number[];
 
   @Field({ nullable: true })
   textResponse?: string;

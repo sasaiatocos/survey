@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,8 +9,8 @@ import {
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Question } from './question.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Answer } from 'src/answers/entities/answer.entity';
+import { UserSurvey } from '../../entities/user-survey.entity';
+import { SurveyAnswer } from '../../entities/survey-answer.entity';
 
 @Entity('surveys')
 @ObjectType()
@@ -45,12 +44,11 @@ export class Survey {
   @OneToMany(() => Question, (question) => question.survey, { cascade: true })
   questions: Question[];
 
-  @Field(() => [User])
-  @ManyToOne(() => User, (user) => user.surveys, { nullable: false })
-  user: User;
+  @OneToMany(() => UserSurvey, userSurvey => userSurvey.survey)
+  @Field(() => [UserSurvey])
+  userSurveys: UserSurvey[];
 
-  @Field(() => [Answer])
-  @OneToMany(() => Answer, (answer) => answer.survey)
-  answers: Answer[];
-
+  @OneToMany(() => SurveyAnswer, surveyAnswer => surveyAnswer.survey)
+  @Field(() => [SurveyAnswer])
+  surveyAnswers: SurveyAnswer[];
 }

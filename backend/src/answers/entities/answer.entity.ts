@@ -3,14 +3,15 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-import { Survey } from 'src/surveys/entities/survey.entity';
-import { Question } from 'src/surveys/entities/question.entity';
-import { Option } from 'src/surveys/entities/option.entity';
+import { User } from '../../users/entities/user.entity';
+import { Question } from '../../surveys/entities/question.entity';
+import { SurveyAnswer } from '../../entities/survey-answer.entity';
+import { AnswerOption } from '../../entities/answer-option.entity';
 
 @Entity('answers')
 @ObjectType()
@@ -23,17 +24,17 @@ export class Answer {
   @ManyToOne(() => User, (user) => user.answers, { onDelete: 'CASCADE' })
   user: User;
 
-  @Field(() => Survey)
-  @ManyToOne(() => Survey, (survey) => survey.answers, { onDelete: 'CASCADE' })
-  survey: Survey;
-
   @Field(() => Question)
   @ManyToOne(() => Question, (question) => question.answers, { onDelete: 'CASCADE' })
   question: Question;
 
-  @Field(() => Option, { nullable: true })
-  @ManyToOne(() => Option, (option) => option.answers, { onDelete: 'CASCADE' })
-  selectedOption?: Option;
+  @Field(() => [SurveyAnswer])
+  @OneToMany(() => SurveyAnswer, surveyAnswer => surveyAnswer.answer)
+  surveyAnswers: SurveyAnswer[];
+
+  @Field(() => [AnswerOption])
+  @OneToMany(() => AnswerOption, answerOption => answerOption.answer)
+  answerOptions: AnswerOption[];
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
@@ -46,8 +47,5 @@ export class Answer {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
-}
-function JoinColumn(arg0: { name: string; }): (target: Answer, propertyKey: "selectedOption") => void {
-  throw new Error('Function not implemented.');
 }
 

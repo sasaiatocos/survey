@@ -1,6 +1,6 @@
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { DirectiveLocation, GraphQLDirective } from 'graphql';
-import { upperDirectiveTransformer } from 'src/common/directives/upper-case.directive';
+import { upperDirectiveTransformer } from '../common/directives/upper-case.directive';
 
 export const GraphQLConfig: ApolloDriverConfig = {
   driver: ApolloDriver,

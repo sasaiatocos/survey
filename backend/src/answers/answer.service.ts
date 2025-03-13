@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Answer } from './entities/answer.entity';
 import { User } from '../users/entities/user.entity';
-import { Question, QuestionType } from 'src/surveys/entities/question.entity';
-import { Option } from 'src/surveys/entities/option.entity';
-import { Survey } from 'src/surveys/entities/survey.entity';
+import { Question, QuestionType } from '../surveys/entities/question.entity';
+import { Option } from '../surveys/entities/option.entity';
+import { Survey } from '../surveys/entities/survey.entity';
 import { AnswerInput } from './dto/answer.input';
+import { SurveyAnswer } from '../entities/survey-answer.entity';
+import { AnswerOption } from '../entities/answer-option.entity';
 
 @Injectable()
 export class AnswerService {
@@ -21,6 +23,10 @@ export class AnswerService {
     private userRepository: Repository<User>,
     @InjectRepository(Option)
     private optionRepository: Repository<Option>,
+    @InjectRepository(SurveyAnswer)
+    private surveyAnswerRepository: Repository<SurveyAnswer>,
+    @InjectRepository(AnswerOption)
+    private answerOptionRepository: Repository<AnswerOption>,
   ) { }
 
   async submitAnswer(answers: AnswerInput[]): Promise<Answer[]> {
@@ -39,7 +45,7 @@ export class AnswerService {
       if (question.type === QuestionType.OPEN_ENDED) {
         return answer && answer.textResponse && answer.textResponse.trim() !== '';
       } else {
-        return answer && answer.selectedOptionIds && answer.selectedOptionIds.length > 0;
+        return answer && answer.optionIds && answer.optionIds.length > 0;
       }
     });
 
@@ -55,13 +61,16 @@ export class AnswerService {
   }
 
   private async validateAnswerInput(answerInput: AnswerInput, answeredSurveys: Set<number>): Promise<void> {
-    const { surveyId, questionId, selectedOptionIds, textResponse, userId } = answerInput;
+    const { surveyId, questionId, optionIds, textResponse, userId } = answerInput;
 
     const survey = await this.surveyRepository.findOne({ where: { id: surveyId }, relations: ['questions'] });
     if (!survey) throw new NotFoundException('アンケートが見つかりませんでした');
 
     if (!answeredSurveys.has(surveyId)) {
-      const existingAnswer = await this.answerRepository.findOne({ where: { survey: { id: surveyId }, user: { id: userId } } });
+      const existingAnswer = await this.surveyAnswerRepository.findOne({
+        where: { survey: { id: surveyId }, answer: { user: { id: userId } } },
+        relations: ['answer']
+      });
       if (existingAnswer) throw new ForbiddenException('このアンケートはすでに回答済みです');
       answeredSurveys.add(surveyId);
     }
@@ -76,15 +85,15 @@ export class AnswerService {
       if (!textResponse || textResponse.trim() === '')
         throw new BadRequestException('自由記述の回答が必要です');
     } else {
-      if (!selectedOptionIds || selectedOptionIds.length === 0)
+      if (!optionIds || optionIds.length === 0)
         throw new BadRequestException('選択肢を選択してください');
-      if (question.type === QuestionType.SINGLE_CHOICE && selectedOptionIds.length > 1)
+      if (question.type === QuestionType.SINGLE_CHOICE && optionIds.length > 1)
         throw new BadRequestException('YES/NOの質問には1つの選択肢のみ選択してください');
     }
   }
 
   private async saveAnswer(answerInput: AnswerInput): Promise<Answer[]> {
-    const { surveyId, questionId, selectedOptionIds, textResponse, userId } = answerInput;
+    const { surveyId, questionId, optionIds, textResponse, userId } = answerInput;
 
     const survey = await this.surveyRepository.findOne({ where: { id: surveyId } });
     const question = await this.questionRepository.findOne({ where: { id: questionId } });
@@ -92,21 +101,37 @@ export class AnswerService {
 
     if (question.type === QuestionType.OPEN_ENDED) {
       const answer = new Answer();
-      answer.survey = survey;
       answer.question = question;
       answer.user = user;
       answer.textResponse = textResponse;
-      return [await this.answerRepository.save(answer)];
+      const savedAnswer = await this.answerRepository.save(answer);
+
+      const surveyAnswer = new SurveyAnswer();
+      surveyAnswer.survey = survey;
+      surveyAnswer.answer = savedAnswer;
+      await this.surveyAnswerRepository.save(surveyAnswer);
+
+      return [savedAnswer];
     } else {
       const savedAnswers: Answer[] = [];
-      for (const optionId of selectedOptionIds) {
+      for (const optionId of optionIds) {
         const selectedOption = await this.optionRepository.findOne({ where: { id: optionId, question: { id: questionId } } });
         const answer = new Answer();
-        answer.survey = survey;
         answer.question = question;
         answer.user = user;
-        answer.selectedOption = selectedOption;
-        savedAnswers.push(await this.answerRepository.save(answer));
+        const savedAnswer = await this.answerRepository.save(answer);
+
+        const surveyAnswer = new SurveyAnswer();
+        surveyAnswer.survey = survey;
+        surveyAnswer.answer = savedAnswer;
+        await this.surveyAnswerRepository.save(surveyAnswer);
+
+        const answerOption = new AnswerOption();
+        answerOption.answer = savedAnswer;
+        answerOption.option = selectedOption;
+        await this.answerOptionRepository.save(answerOption);
+
+        savedAnswers.push(savedAnswer);
       }
       return savedAnswers;
     }

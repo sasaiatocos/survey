@@ -104,7 +104,7 @@ const SurveyAnswerPage = () => {
           surveyId: id,
           userId: userId,
           questionId: parseInt(String(question.id), 10),
-          selectedOptionIds: [optionId]
+          optionIds: [optionId]
         }));
       }
     }) || [];
@@ -167,9 +167,9 @@ const SurveyAnswerPage = () => {
                     <div key={option.id} className={styles.optionContainer}>
                       <Label
                         htmlFor={`question-${question.id}-option-${option.id}`}
-                        className={styles.customCheckbox}
                       >
                         <input
+                        className={styles.input}
                         type={question.type === QuestionType.SINGLE_CHOICE ? 'radio' : 'checkbox'}
                         name={`question-${question.id}`}
                         value={String(option.id)}
@@ -177,7 +177,6 @@ const SurveyAnswerPage = () => {
                         onChange={() => handleOptionChange(question.id, String(option.id), question.type)}
                         checked={selectedOption[question.id]?.includes(option.id) || false}
                       />
-                        <span className={styles.checkbox}></span>
                         {option.text}
                       </Label>
                     </div>

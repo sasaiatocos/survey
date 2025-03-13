@@ -10,8 +10,8 @@ import {
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
 import { Survey } from './survey.entity';
-import { Option } from 'src/surveys/entities/option.entity';
-import { Answer } from 'src/answers/entities/answer.entity';
+import { Option } from '../../surveys/entities/option.entity';
+import { Answer } from '../../answers/entities/answer.entity';
 
 export enum QuestionType {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',

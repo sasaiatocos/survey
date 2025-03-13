@@ -29,9 +29,7 @@ export const SUBMIT_ANSWER = gql`
       survey {
         id
       }
-      selectedOption {
-        id
-      }
+      optionIds
     }
   }
 `;

@@ -1,13 +1,13 @@
 import { JwtService } from '@nestjs/jwt';
 import { BadGatewayException, Injectable, NotFoundException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { constant } from './common/constants';
 import { comparePassword } from './common/helper';
-import { LoginResponse } from 'src/users/dto/login-response';
+import { LoginResponse } from '../users/dto/login-response';
 
 @Injectable()
 export class AuthService {

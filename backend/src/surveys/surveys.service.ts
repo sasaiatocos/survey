@@ -8,6 +8,8 @@ import { Option } from './entities/option.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CreateSurveyInput } from './dto/create-survey.input';
 import { SurveyStats } from './dto/result-surveys';
+import { SurveyAnswer } from '../entities/survey-answer.entity';
+import { UserSurvey } from '../entities/user-survey.entity';
 
 @Injectable()
 export class SurveyService {
@@ -20,6 +22,10 @@ export class SurveyService {
     private questionRepository: Repository<Question>,
     @InjectRepository(Option)
     private optionRepository: Repository<Option>,
+    @InjectRepository(SurveyAnswer)
+    private surveyAnswerRepository: Repository<SurveyAnswer>,
+    @InjectRepository(UserSurvey)
+    private userSurveyRepository: Repository<UserSurvey>,
   ) {}
 
   async findAll(): Promise<Survey[]> {
@@ -36,12 +42,14 @@ export class SurveyService {
   }
 
   async getMySurveys(user: User): Promise<Survey[]> {
-    return await this.surveyRepository
-      .createQueryBuilder('survey')
-      .leftJoinAndSelect('survey.questions', 'question')
-      .leftJoinAndSelect('question.options', 'option')
-      .where('survey.userId = :userId', { userId: user.id })
-      .getMany();
+    const surveys = await this.surveyRepository
+    .createQueryBuilder('survey')
+    .leftJoin('user_surveys', 'userSurvey', 'userSurvey.surveyId = survey.id')
+    .leftJoinAndSelect('survey.questions', 'question')
+    .leftJoinAndSelect('question.options', 'option')
+    .where('userSurvey.userId = :userId', { userId: user.id })
+    .getMany();
+    return surveys;
   }
 
   async findPublicSurveys(): Promise<Survey[]> {
@@ -52,7 +60,7 @@ export class SurveyService {
     return this.surveyRepository.find({ where: { isPublic: false } });
   }
 
-  async toggleVisibility(id: number, isPublic: boolean): Promise<Survey> {
+  async toggleSurveyVisibility(id: number, isPublic: boolean): Promise<Survey> {
     console.log('toggleVisibility called with id:', id, 'isPublic:', isPublic);
     const updateResult = await this.surveyRepository.update(id, { isPublic });
     console.log('updateResult:', updateResult);
@@ -76,11 +84,15 @@ export class SurveyService {
     const survey = new Survey();
     survey.title = title;
     survey.description = description ?? null;
-    survey.user = user;
 
     const manager = this.surveyRepository.manager;
     return await manager.transaction(async (transactionalEntityManager: EntityManager) => {
       const savedSurvey = await transactionalEntityManager.save(Survey, survey);
+
+      const userSurvey = new UserSurvey();
+      userSurvey.user = user;
+      userSurvey.survey = savedSurvey;
+      await transactionalEntityManager.save(UserSurvey, userSurvey);
 
       for (const questionInput of questions) {
         const question = new Question();
@@ -127,13 +139,14 @@ export class SurveyService {
   };
 
   async getSurveyStats(surveyId: number): Promise<SurveyStats> {
-    const totalResponses = await this.answerRepository.count({ where: { survey: { id: surveyId } } });
+    const totalResponses = await this.surveyAnswerRepository.count({ where: { survey: { id: surveyId } } });
 
-    const uniqueRespondentsResult = await this.answerRepository
-      .createQueryBuilder('answer')
+    const uniqueRespondentsResult = await this.surveyAnswerRepository
+      .createQueryBuilder('surveyAnswer')
+      .leftJoin('surveyAnswer.answer', 'answer')
       .leftJoin('answer.user', 'user')
       .select('COUNT(DISTINCT user.id)', 'count')
-      .where('answer.surveyId = :surveyId', { surveyId })
+      .where('surveyAnswer.surveyId = :surveyId', { surveyId })
       .getRawOne();
 
     const uniqueRespondents = uniqueRespondentsResult ? parseInt(uniqueRespondentsResult.count, 10) : 0;

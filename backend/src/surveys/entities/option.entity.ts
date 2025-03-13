@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { MaxLength } from 'class-validator';
-import { Question } from 'src/surveys/entities/question.entity';
-import { Answer } from 'src/answers/entities/answer.entity';
+import { Question } from './question.entity';
+import { AnswerOption } from '../../entities/answer-option.entity';
 
 @Entity('options')
 @ObjectType()
@@ -32,11 +32,11 @@ export class Option {
   @Field()
   updatedAt: Date;
 
-  @Field(() => [Question])
+  @Field(() => Question)
   @ManyToOne(() => Question, (question) => question.options, { onDelete: 'CASCADE' })
   question: Question;
 
-  @Field(() => [Answer], { nullable: true })
-  @OneToMany(() => Answer, (answer) => answer.selectedOption)
-  answers: Answer[];
+  @OneToMany(() => AnswerOption, answerOption => answerOption.option)
+  @Field(() => [AnswerOption])
+  answerOptions: AnswerOption[];
 }
