@@ -26,10 +26,6 @@ export const SUBMIT_ANSWER = gql`
       question {
         id
       }
-      survey {
-        id
-      }
-      optionIds
     }
   }
 `;

@@ -98,6 +98,7 @@ const SurveyAnswerPage = () => {
           userId: userId,
           questionId: parseInt(String(question.id), 10),
           textResponse: textResponses[question.id] || '',
+          optionIds: null
         };
       } else {
         return (selectedOption[question.id] || []).map(optionId => ({

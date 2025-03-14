@@ -3,13 +3,14 @@ import { SurveyService } from './surveys.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Survey } from './entities/survey.entity';
 import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
-import { Question } from './entities/question.entity';
+import { Question, QuestionType } from './entities/question.entity';
 import { Option } from './entities/option.entity';
 import { UserSurvey } from '../entities/user-survey.entity';
 import { SurveyAnswer } from '../entities/survey-answer.entity';
 import { Answer } from '../answers/entities/answer.entity';
 import { User } from 'src/users/entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { CreateSurveyInput } from './dto/create-survey.input';
 
 describe('SurveyService', () => {
   let surveyService: SurveyService;
@@ -21,6 +22,17 @@ describe('SurveyService', () => {
   let surveyAnswerRepository: Repository<SurveyAnswer>;
   let entityManager: EntityManager;
 
+  const mockSurveyRepositoryQueryBuilder = {
+    createQueryBuilder: jest.fn(() => ({
+      leftJoin: jest.fn().mockReturnThis(),
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockReturnValue([]),
+      groupBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn().mockReturnValue([]),
+    })),
+  };
+
   const mockSurveyRepository = {
     manager: {
       transaction: jest.fn(),
@@ -30,14 +42,9 @@ describe('SurveyService', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     findOneBy: jest.fn(),
-    createQueryBuilder: jest.fn(() => ({
-      leftJoin: jest.fn().mockReturnThis(),
-      leftJoinAndSelect: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      getMany: jest.fn(),
-      groupBy: jest.fn().mockReturnThis(),
-      getRawMany: jest.fn().mockResolvedValue([]),
-    } as unknown as SelectQueryBuilder<Survey>)),
+    createQueryBuilder: jest.fn(() =>
+      mockSurveyRepositoryQueryBuilder as unknown as SelectQueryBuilder<Survey>
+    ),
   };
 
   const mockQuestionRepository = {
@@ -187,6 +194,7 @@ describe('SurveyService', () => {
         answers: [],
         userSurveys: []
       };
+
       const expectedSurveys = [{
         id: 1,
         title: 'My Survey 1',
@@ -196,12 +204,8 @@ describe('SurveyService', () => {
           options: [{ id: 1, text: 'Option 1' }]
         }]
       }];
-      (surveyRepository.createQueryBuilder as jest.Mock).mockReturnValue({
-        leftJoin: jest.fn().mockReturnThis(),
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue(expectedSurveys),
-      });
+
+      (mockSurveyRepositoryQueryBuilder.getMany as jest.Mock).mockResolvedValue(expectedSurveys);
       const result = await surveyService.getMySurveys(user);
       expect(result).toEqual(expectedSurveys);
       expect(surveyRepository.createQueryBuilder).toHaveBeenCalledWith('survey');
@@ -271,6 +275,101 @@ describe('SurveyService', () => {
           { id: 1, text: 'Question 1', options: [{ id: 1, text: 'Option 1', responseCount: 3 }, { id: 2, text: 'Option 2', responseCount: 7 }] },
         ],
       });
+    });
+  });
+
+  describe('createSurvey', () => {
+    it('should create a survey', async () => {
+      const createSurveyInput: CreateSurveyInput = {
+        title: 'Test Survey',
+        description: 'Test Description',
+        questions: [
+          {
+            text: 'Question 1',
+            type: QuestionType.SINGLE_CHOICE,
+            options: [{ text: 'Option 1' }, { text: 'Option 2' }]
+          },
+          {
+            text: 'Question 2',
+            type: QuestionType.OPEN_ENDED
+          },
+        ],
+      };
+      const user: User = { id: 1, role: 'admin' } as User;
+      const savedSurvey: Survey = {
+        id: 1,
+        title: 'Test Survey',
+        description: 'Test Description',
+        questions: []
+      } as Survey;
+      const savedUserSurvey: UserSurvey = {
+        id: 1,
+        user,
+        survey: savedSurvey
+      } as UserSurvey;
+      const savedQuestion1: Question = {
+        id: 1,
+        text: 'Question 1',
+        type: QuestionType.SINGLE_CHOICE,
+        survey: savedSurvey,
+        options: []
+      } as Question;
+      const savedOption1: Option = {
+        id: 1,
+        text: 'Option 1',
+        question: savedQuestion1
+      } as Option;
+      const savedOption2: Option = {
+        id: 2,
+        text: 'Option 2',
+        question: savedQuestion1
+      } as Option;
+      const savedQuestion2: Question = {
+        id: 2,
+        text: 'Question 2',
+        type: QuestionType.OPEN_ENDED,
+        survey: savedSurvey,
+        options: null
+      } as Question;
+
+      (entityManager.transaction as jest.Mock).mockImplementation(async (callback) => {
+        const transactionalEntityManager = {
+          save: jest.fn().mockImplementation((entity, data) => {
+            if (entity === Survey) return Promise.resolve(savedSurvey);
+            if (entity === UserSurvey) return Promise.resolve(savedUserSurvey);
+            if (entity === Question) {
+              if (data.text === 'Question 1') return Promise.resolve(savedQuestion1);
+              if (data.text === 'Question 2') return Promise.resolve(savedQuestion2);
+            }
+            if (entity === Option) {
+              if (data.text === 'Option 1') return Promise.resolve(savedOption1);
+              if (data.text === 'Option 2') return Promise.resolve(savedOption2);
+            }
+          }),
+        } as unknown as EntityManager;
+        return callback(transactionalEntityManager);
+      });
+
+      const result = await surveyService.createSurvey(createSurveyInput, user);
+
+      expect(result).toEqual({
+        ...savedSurvey, questions: [
+          { ...savedQuestion1, options: [savedOption1, savedOption2] },
+          savedQuestion2
+        ]
+      });
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('should throw ForbiddenException if user is not admin', async () => {
+      const createSurveyInput: CreateSurveyInput = {
+        title: 'Test Survey',
+        description: 'Test Description',
+        questions: [],
+      };
+      const user: User = { id: 1, role: 'user' } as User;
+
+      await expect(surveyService.createSurvey(createSurveyInput, user)).rejects.toThrow(ForbiddenException);
     });
   });
 });
