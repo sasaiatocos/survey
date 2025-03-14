@@ -61,18 +61,11 @@ export class SurveyService {
   }
 
   async toggleSurveyVisibility(id: number, isPublic: boolean): Promise<Survey> {
-    console.log('toggleVisibility called with id:', id, 'isPublic:', isPublic);
     const updateResult = await this.surveyRepository.update(id, { isPublic });
-    console.log('updateResult:', updateResult);
     if (updateResult.affected === 0) {
       throw new NotFoundException(`Survey with id ${id} not found`);
     }
-    const survey = await this.surveyRepository.findOneBy({ id });
-    console.log('survey:', survey);
-    if (!survey) {
-      throw new NotFoundException(`Survey with id ${id} not found`);
-    };
-    return survey;
+    return this.surveyRepository.findOneBy({ id });
   }
 
   async createSurvey(createSurveyInput: CreateSurveyInput, user: User): Promise<Survey> {
