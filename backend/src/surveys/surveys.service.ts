@@ -91,7 +91,6 @@ export class SurveyService {
         const question = new Question();
         question.text = questionInput.text;
         question.type = questionInput.type;
-        question.survey = savedSurvey;
 
         const savedQuestion = await transactionalEntityManager.save(Question, question);
         savedSurvey.questions = savedSurvey.questions ? [...savedSurvey.questions, savedQuestion] : [savedQuestion];
@@ -111,9 +110,9 @@ export class SurveyService {
           for (const optionInput of optionsToSave) {
             const option = new Option();
             option.text = optionInput.text;
-            option.question = savedQuestion;
 
-            await transactionalEntityManager.save(Option, option);
+            const savedOption = await transactionalEntityManager.save(Option, option);
+            option.id = savedOption.id;
             savedQuestion.options.push(option);
           }
           await transactionalEntityManager.save(Question, savedQuestion);
