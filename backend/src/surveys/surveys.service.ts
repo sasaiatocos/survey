@@ -91,6 +91,7 @@ export class SurveyService {
         const question = new Question();
         question.text = questionInput.text;
         question.type = questionInput.type;
+        question.survey = savedSurvey;
 
         const savedQuestion = await transactionalEntityManager.save(Question, question);
         savedSurvey.questions = savedSurvey.questions ? [...savedSurvey.questions, savedQuestion] : [savedQuestion];
@@ -147,7 +148,8 @@ export class SurveyService {
       .createQueryBuilder('survey')
       .leftJoin('survey.questions', 'question')
       .leftJoin('question.options', 'option')
-      .leftJoin('option.answers', 'answer')
+      .leftJoin('option.answerOptions', 'answerOption')
+      .leftJoin('answerOption.answer', 'answer')
       .select([
         'question.id AS questionId',
         'question.text AS questionText',
@@ -156,7 +158,7 @@ export class SurveyService {
         'COUNT(answer.id) AS responseCount',
       ])
       .where('survey.id = :surveyId', { surveyId })
-      .groupBy('question.id, option.id')
+      .groupBy('question.id, question.type, option.id')
       .getRawMany();
 
     const questionStats = questions.reduce((acc, curr) => {
