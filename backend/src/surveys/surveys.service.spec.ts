@@ -312,8 +312,8 @@ describe('SurveyService', () => {
       } as Survey;
       const savedUserSurvey: UserSurvey = {
         id: 1,
-        user,
-        survey: savedSurvey
+        user: { id: 1 } as User,
+        survey: { id: 1 } as Survey,
       } as UserSurvey;
       const savedOption1 = {
         id: 1,
@@ -331,12 +331,14 @@ describe('SurveyService', () => {
           { ...savedOption1, question: undefined },
           { ...savedOption2, question: undefined },
         ],
+        survey: { id: 1 } as Survey,
       } as Question;
       const savedQuestion2: Question = {
         id: 2,
         text: 'Question 2',
         type: QuestionType.OPEN_ENDED,
-        options: null
+        options: null,
+        survey: { id: 1 } as Survey,
       } as Question;
 
       mockEntityManager.save.mockImplementation((entity, data) => {
@@ -352,8 +354,8 @@ describe('SurveyService', () => {
           };
         }
         if (entity === Option) {
-          if (data.text === 'Option 1') return Promise.resolve({ ...savedOption1, ...data, question: undefined });
-          if (data.text === 'Option 2') return Promise.resolve({ ...savedOption2, ...data, question: undefined });
+          if (data.text === 'Option 1') return Promise.resolve({ ...savedOption1, ...data, question: { id: 1 } as Question });
+          if (data.text === 'Option 2') return Promise.resolve({ ...savedOption2, ...data, question: { id: 1 } as Question });
         }
         return Promise.resolve(data);
       });
@@ -370,7 +372,7 @@ describe('SurveyService', () => {
         description: 'Test Description',
         questions: [
           {
-            ...savedQuestion1,
+            id: savedQuestion1.id,
             text: 'Question 1',
             type: QuestionType.SINGLE_CHOICE,
             options: [
@@ -379,7 +381,7 @@ describe('SurveyService', () => {
             ],
           },
           {
-            ...savedQuestion2,
+            id: savedQuestion2.id,
             text: 'Question 2',
             type: QuestionType.OPEN_ENDED,
             options: null,
